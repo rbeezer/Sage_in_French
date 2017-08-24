@@ -1,0 +1,21 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="numbertheory">
+  <title>Corps finis et th&#xe9;orie des nombres</title>
+  <introduction>
+    <blockquote>
+    Ce chapitre d&#xe9;crit l'utilisation de \Sage en th&#xe9;orie des nombres,
+    pour manipuler des objets sur des anneaux ou corps finis
+    (<xref ref="sec_numbertheory_finite_rings">&#xa7;</xref>), pour tester la primalit&#xe9; 
+    (<xref ref="sec_numbertheory_isprime">&#xa7;</xref>) ou factoriser un entier
+    (<xref ref="sec_numbertheory_intfactor">&#xa7;</xref>);
+    enfin nous discutons quelques applications
+    (<xref ref="sec_numbertheory_intapplis">&#xa7;</xref>).
+    </blockquote>
+  </introduction>
+  <xi:include  href="sec_numbertheory_finite_rings.ptx" />
+  <xi:include  href="sec_numbertheory_isprime.ptx" />
+  <xi:include  href="sec_numbertheory_intfactor.ptx" />
+  <xi:include  href="sec_numbertheory_intapplis.ptx" />
+</chapter>
+

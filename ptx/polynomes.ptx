@@ -1,0 +1,64 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="polynomes">
+  <title>Polyn&#xf4;mes</title>
+  <introduction>
+    <p>
+      \bottomrule
+      \end{tabular}
+    </p>
+
+    <p>
+      \DefineShortVerb{\|}
+      \VerbatimFootnotes
+    </p>
+
+    <p>
+      Ce chapitre est consacr&#xe9; aux polyn&#xf4;mes et aux objets apparent&#xe9;s, comme les fractions rationnelles et les s&#xe9;ries formelles.
+    </p>
+
+    <p>
+      Nous avons vu au <xref ref="calculus">chapitre</xref> comment effectuer des calculs sur des <em>expressions formelles</em>, &#xe9;l&#xe9;ments de <q> l'anneau symbolique </q> <c>SR</c>. Quelques-unes des m&#xe9;thodes applicables &#xe0; ces expressions, par exemple <c>degree</c>, sont destin&#xe9;es aux polyn&#xf4;mes :
+    </p>
+
+    <sage>
+      <input>
+        x = var('x'); p = (2*x+1)*(x+2)*(x^4-1)
+        print p, "est de degr\'e", p.degree(x)
+      </input>
+      <output>
+        (x + 2)*(2*x + 1)*(x^4 - 1) est de degr\'e 6
+      </output>
+    </sage>
+
+    <p>
+      Dans certains syst&#xe8;mes de calcul formel, dont Maple et Maxima, repr&#xe9;senter les polyn&#xf4;mes comme des expressions formelles particuli&#xe8;res est la mani&#xe8;re habituelle de les manipuler. &#xc0; l'image d'Axiom, Magma ou Mupad, <em>Sage</em>  permet aussi de traiter les polyn&#xf4;mes de fa&#xe7;on plus alg&#xe9;brique, et <q> sait calculer </q> dans des anneaux comme <m>\Q[x]</m> ou <m>\Z/4\Z\,[x,y,z]</m>.
+    </p>
+
+    <p>
+      Ainsi, pour reproduire l'exemple pr&#xe9;c&#xe9;dent en travaillant dans un anneau de polyn&#xf4;mes bien d&#xe9;termin&#xe9;, on affecte &#xe0; la variable Python<nbsp /><c>x</c> l'<em>ind&#xe9;termin&#xe9;e de l'anneau des polyn&#xf4;mes en<nbsp /><m>x</m> &#xe0; coefficients rationnels</em>, donn&#xe9;e par <c>polygen(QQ, 'x')</c>, au lieu de la <em>variable symbolique<nbsp /><m>x</m></em> renvoy&#xe9;e<fn>Une petite diff&#xe9;rence : alors que <c>var('x')</c> a  le m&#xea;me effet que <c>x = var('x')</c> en utilisation interactive, <c>polygen(QQ, 'x')</c> sans affectation ne change pas la valeur de la variable Python<nbsp /><c>x</c>.</fn>par <c>var('x')</c> :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(QQ, 'x'); p = (2*x+1)*(x+2)*(x^4-1)
+        print p, "est de degr\'e", p.degree()
+      </input>
+      <output>
+        2*x^6 + 5*x^5 + 2*x^4 - 2*x^2 - 5*x - 2 est de degr\'e 6
+      </output>
+    </sage>
+
+    <p>
+      Observons que le polyn&#xf4;me est automatiquement d&#xe9;velopp&#xe9;. Les polyn&#xf4;mes <q> alg&#xe9;briques </q> sont toujours repr&#xe9;sent&#xe9;s sous forme normale. C'est une diff&#xe9;rence cruciale par rapport aux polyn&#xf4;mes de<nbsp /><c>SR</c>. En particulier, lorsque deux polyn&#xf4;mes sont math&#xe9;matiquement &#xe9;gaux, leur repr&#xe9;sentation informatique est la m&#xea;me, et une comparaison coefficient par coefficient suffit &#xe0; tester l'&#xe9;galit&#xe9;.
+    </p>
+
+    <p>
+      La premi&#xe8;re moiti&#xe9; du chapitre est consacr&#xe9;e aux objets &#xe0; une ind&#xe9;termin&#xe9;e. Nous y explorons l'utilisation de <em>Sage</em>  pour calculer dans les anneaux de polyn&#xf4;mes<nbsp /><m>A[x]</m>, leurs quotients <m>A[x]/\langle P(x) \rangle</m>, les corps de fractions rationnelles<nbsp /><m>K(x)</m> ou encore les anneaux de s&#xe9;ries formelles<nbsp /><m>A[[x]]</m>.
+      La seconde partie porte sur les polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es, et en particulier sur les syst&#xe8;mes polynomiaux <mdash /> un vaste domaine dont ce livre n'aborde que quelques bases.
+    </p>
+  </introduction>
+  <xi:include  href="sec_polynomes_univaries.ptx" />
+  <xi:include  href="sec_polynomes_multivaries.ptx" />
+</chapter>
+

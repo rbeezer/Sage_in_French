@@ -1,0 +1,549 @@
+
+
+<section xml:id="equadiff">
+  <title>&#xc9;quations diff&#xe9;rentielles num&#xe9;riques</title>
+  <introduction>
+    <p>
+      On s'int&#xe9;resse dans cette section &#xe0; la r&#xe9;solution num&#xe9;rique d'&#xe9;quations
+      diff&#xe9;rentielles ordinaires. Les fonctions de r&#xe9;solution disponibles
+      dans <em>Sage</em>  sont capables de traiter des syst&#xe8;mes d'&#xe9;quations de la
+      forme:
+      <me>
+        \left\{
+        \begin{array}{rcl}
+        \frac{\dd{y_1}}{\dd{t}}(t) \amp  = \amp  f_1(t, y_1(t), y_2(t), \ldots, y_n(t)) \\
+        \frac{\dd{y_2}}{\dd{t}}(t) \amp  = \amp  f_2(t, y_1(t), y_2(t), \ldots, y_n(t)) \\
+        \vdots \amp  \amp  \\
+        \frac{\dd{y_n}}{\dd{t}}(t) \amp  = \amp  f_n(t, y_1(t), y_2(t), \ldots, y_n(t))
+        \end{array}  \right.
+      </me>
+      avec des conditions initiales <m>(y_1(0), y_2(0), \ldots, y_n(0))</m> connues.
+    </p>
+
+    <p>
+      Cette formalisation permet aussi de s'int&#xe9;resser &#xe0; des probl&#xe8;mes
+      de dimension sup&#xe9;rieure &#xe0; <m>1</m>, en introduisant des variables suppl&#xe9;mentaires
+      (voir l'exemple d&#xe9;velopp&#xe9; en (<xref ref="equadiff_exemple">&#xa7;</xref>)).
+      Elle ne permet cependant pas d'exprimer le syst&#xe8;me d'&#xe9;quations v&#xe9;rifi&#xe9;
+      par la fonction <m>\rho</m> de Dickman:
+      <me>
+        \left\{
+        \begin{array}{rcll}
+          u\rho'(u) + \rho(u-1) \amp  = \amp  0 \amp  \text{ pour }  u \geqslant 1 \\
+          \rho(u) \amp  = \amp  1 \amp  \text{ pour }  0 \leqslant u \leqslant 1.
+        \end{array} 
+        \right.
+      </me>
+    </p>
+
+    <p>
+      Les outils de r&#xe9;solution d'&#xe9;quations diff&#xe9;rentielles ordinaires ne sont
+      en effet pas adapt&#xe9;s &#xe0; une telle &#xe9;quation (dite <em>&#xe0; retard</em>).
+    </p>
+
+    <p>
+      Les m&#xe9;thodes de r&#xe9;solution num&#xe9;rique dites <q>&#xe0; un pas</q> utilisent
+      toutes un m&#xea;me principe g&#xe9;n&#xe9;ral: pour un pas <m>h</m> et des valeurs de
+      <m>y(t_0)</m> et <m>y'(t_0)</m> connues, on calcule une valeur approch&#xe9;e
+      de <m>y(t_0+h)</m> &#xe0; partir d'une estimation de <m>y'(t)</m> prise sur
+      l'intervalle <m>[t_0, t_0+h]</m>. Par exemple la m&#xe9;thode la plus simple
+      consiste &#xe0; faire l'approximation:
+      <md>
+        <mrow>\forall t \in [t_0, t_0+h], y'(t) \amp  \approx \amp  y'(t_0)</mrow>
+        <mrow>\int_{t_0}^{t_0+h}y'(t)\dd{t} \amp  \approx \amp  hy'(t_0)</mrow>
+        <mrow>y(t_0+h) \amp  \approx \amp  y(t_0) + hy'(t_0).</mrow>
+      </md>
+    </p>
+
+    <p>
+      On reconna&#xee;t ici la m&#xea;me approximation utilis&#xe9;e que dans la m&#xe9;thode
+      d'int&#xe9;gration num&#xe9;rique des rectangles. La m&#xe9;thode obtenue est d'ordre
+      <m>1</m>, c'est-&#xe0;-dire que l'erreur obtenue apr&#xe8;s un pas de calcul est en <m>\mathcal{O}(h^2)</m> sous
+      l'hypoth&#xe8;se que <m>f</m> est suffisamment r&#xe9;guli&#xe8;re. De mani&#xe8;re g&#xe9;n&#xe9;rale une m&#xe9;thode
+      est d'ordre <m>p</m> si l'erreur qu'elle commet sur un pas de longueur <m>h</m> est
+      en <m>\mathcal{O}(h^{p+1})</m>. La valeur obtenue en
+      <m>t_1=t_0+h</m> sert alors de point de d&#xe9;part pour progresser d'un pas de
+      plus, aussi loin que d&#xe9;sir&#xe9;.
+    </p>
+
+    <p>
+      Cette m&#xe9;thode d'ordre <m>1</m>, appel&#xe9;e m&#xe9;thode d'Euler, n'est pas r&#xe9;put&#xe9;e
+      pour sa pr&#xe9;cision (tout comme la m&#xe9;thode des rectangles pour
+      l'int&#xe9;gration) et il existe des m&#xe9;thodes d'ordre plus &#xe9;lev&#xe9;, par
+      exemple la m&#xe9;thode Runge-Kutta d'ordre <m>2</m>:
+      <md>
+        <mrow>k_1 \amp  = \amp  h  f(t_n, y(t_n))</mrow>
+        <mrow>k_2 \amp  = \amp  h  f(t_n+\frac{1}{2}h, y(t_n)+\frac{1}{2}k_1)</mrow>
+        <mrow>y(t_{n+1}) \amp  \approx \amp  y(t_n) + k_2 + \mathcal{O}(h^3).</mrow>
+      </md>
+    </p>
+
+    <p>
+      Dans cette m&#xe9;thode, on essaie d'&#xe9;valuer <m>y'(t_n+h/2)</m> pour obtenir une
+      meilleure estimation de <m>y(t_n+h)</m>.
+    </p>
+
+    <p>
+      On trouve aussi des m&#xe9;thodes multi-pas (c'est le cas par exemple des
+      m&#xe9;thodes de Gear) qui consistent &#xe0; calculer <m>y(t_n)</m> &#xe0; partir des
+      valeurs d&#xe9;j&#xe0; obtenues <m>(y(t_{n-1}), y(t_{n-2}), \ldots, y(t_{n-\ell}))</m>
+      pour un certain nombre de pas <m>\ell</m>. Ces m&#xe9;thodes d&#xe9;marrent
+      n&#xe9;cessairement par une phase d'initialisation avant qu'un nombre
+      suffisant de pas soient calcul&#xe9;s.
+    </p>
+
+    <p>
+      Tout comme la m&#xe9;thode de Gauss-Kronrod pour l'int&#xe9;gration num&#xe9;rique,
+      il existe des m&#xe9;thodes hybrides pour la r&#xe9;solution d'&#xe9;quations
+      diff&#xe9;rentielles. Ainsi la m&#xe9;thode de Dormand et Prince calcule avec
+      les m&#xea;mes points d'approximation une valeur aux ordres <m>4</m> et <m>5</m>, la
+      deuxi&#xe8;me servant pour l'estimation d'erreur de la premi&#xe8;re. On parle
+      dans ce cas de m&#xe9;thode adaptative.
+    </p>
+
+    <p>
+      On distingue encore les m&#xe9;thodes dites explicites des m&#xe9;thodes
+      implicites: dans une m&#xe9;thode explicite, la valeur de <m>y(t_{n+1})</m> est
+      donn&#xe9;e par une formule n'utilisant que des valeurs connues; pour une
+      m&#xe9;thode implicite il faut r&#xe9;soudre une &#xe9;quation. Prenons l'exemple de
+      la m&#xe9;thode d'Euler implicite:
+      <me>
+        y(t_{n}+h) = y(t_n) + hf(t_n+h, y(t_{n}+h)).
+      </me>
+    </p>
+
+    <p>
+      On constate que la valeur recherch&#xe9;e <m>y(t_n+h)</m> appara&#xee;t des deux
+      c&#xf4;t&#xe9;s de l'&#xe9;quation; si la fonction <m>f</m> est suffisamment complexe
+      il faudra r&#xe9;soudre un syst&#xe8;me alg&#xe9;brique non lin&#xe9;aire, typiquement
+      avec la m&#xe9;thode de Newton.
+    </p>
+
+    <p>
+      A priori, on s'attend &#xe0; obtenir des r&#xe9;sultats plus pr&#xe9;cis &#xe0; mesure que
+      l'on diminue le pas d'int&#xe9;gration; outre le co&#xfb;t en calculs
+      suppl&#xe9;mentaires que cela repr&#xe9;sente, ce gain esp&#xe9;r&#xe9; en pr&#xe9;cision est
+      toutefois temp&#xe9;r&#xe9; par un plus grand nombre d'erreurs d'arrondi qui
+      risquent, &#xe0; la longue, de polluer le r&#xe9;sultat.
+    </p>
+  </introduction>
+
+  <subsection xml:id="equadiff_exemple">
+    <title>Exemple de r&#xe9;solution</title>
+    <p>
+      Consid&#xe9;rons l'oscillateur de Van der Pol de param&#xe8;tre <m>\mu</m> v&#xe9;rifiant
+      l'&#xe9;quation diff&#xe9;rentielle suivante:
+      <me>
+        \frac{\dd{}^2x}{\dd{t}^2}(t) -\mu (1 - x^2)\frac{\dd{x}}{\dd{t}}(t) + x(t) = 0.
+      </me>
+    </p>
+
+    <p>
+      Posons <m>y_0(t) = x(t)</m> et <m>y_1(t) = \frac{\dd{x}}{\dd{t}}</m>, on obtient ce
+      syst&#xe8;me d'ordre <m>1</m>:
+      <me>
+        \left\{
+        \begin{array}{rcl}
+        \frac{\dd{y_0}}{\dd{t}} \amp  = \amp  y_1,\\
+        \frac{\dd{y_1}}{\dd{t}} \amp  = \amp  \mu(1-y_0^2)y_1 - y_0.
+        \end{array}  \right.
+      </me>
+    </p>
+
+    <p>
+      Pour le r&#xe9;soudre, nous allons utiliser un objet <q>solveur</q> que l'on
+      obtient avec la commande <c>ode_solver</c>:
+    </p>
+
+    <sage>
+      <input>
+        T = ode_solver()
+      </input>
+    </sage>
+
+    <p>
+      Un objet solveur sert &#xe0; enregistrer les param&#xe8;tres et la d&#xe9;finition du
+      syst&#xe8;me que l'on cherche &#xe0; r&#xe9;soudre; il donne acc&#xe8;s aux fonctions de
+      r&#xe9;solution num&#xe9;rique d'&#xe9;quations diff&#xe9;rentielles disponibles dans la
+      biblioth&#xe8;que <em>GSL</em> , d&#xe9;j&#xe0; mentionn&#xe9;e au sujet de l'int&#xe9;gration
+      num&#xe9;rique.
+    </p>
+
+    <p>
+      Les &#xe9;quations du syst&#xe8;me sont renseign&#xe9;es sous la forme d'une
+      fonction:
+    </p>
+
+    <sage>
+      <input>
+        def f_1(t,y,params):
+        return[y[1],-y[0]-params[0]*y[1]*(y[0]**2-1.0)]
+        T.function=f_1
+      </input>
+    </sage>
+
+    <p>
+      Le param&#xe8;tre <c>y</c> repr&#xe9;sente le vecteur des fonctions inconnues,
+      et on doit renvoyer en fonction de <m>t</m> et d'un param&#xe8;tre optionnel le
+      vecteur des membres droits du syst&#xe8;me d'&#xe9;quations.
+    </p>
+
+    <p>
+      Certains des algorithmes de <em>GSL</em>  n&#xe9;cessitent de plus de
+      conna&#xee;tre la jacobienne du syst&#xe8;me (la matrice dont le terme <m>(i,j)</m>
+      est <m>\frac{\partial{f_i}}{\partial{y_j}}</m>):
+    </p>
+
+    <sage>
+      <input>
+        def j_1(t,y,params):
+        return [ [0.0, 1.0],
+        [-2.0*params[0]*y[0]*y[1]-1.0,
+        -params[0]*(y[0]*y[0]-1.0)],
+        [0.0,0.0] ]
+        T.jacobian=j_1
+      </input>
+    </sage>
+
+    <p>
+      Il est maintenant possible de demander une r&#xe9;solution num&#xe9;rique. On choisit l'algorithme,
+      l'intervalle sur lequel calculer la solution et le nombre de pas voulus (ce qui d&#xe9;termine
+      <m>h</m>):
+    </p>
+
+    <sage>
+      <input>
+        T.algorithm="rk8pd"
+        T.ode_solve(y_0=[1,0],t_span=[0,100],params=[10.0],
+        num_points=1000)
+        f = T.interpolate_solution()
+      </input>
+    </sage>
+
+    <p>
+      Ici on a pris l'algorithme de Runge-Kutta Dormand-Prince pour calculer
+      la solution sur <m>[0, 100]</m>; les conditions initiales ainsi que la
+      valeur des param&#xe8;tres (ici un seul) sont pr&#xe9;cis&#xe9;es.
+    </p>
+
+    <p>
+      Pour afficher la solution:
+    </p>
+
+    <sage>
+      <input>
+        P = plot(f, 0, 100)
+        show(P)
+      </input>
+    </sage>
+
+    <p>
+      <image width="70%" source="images/eqdiff_van_der_pol.png" />
+    </p>
+  </subsection>
+
+  <subsection xml:id="equadiff_dispos">
+    <title>Fonctions de r&#xe9;solution disponibles</title>
+    <p>
+      Nous avons d&#xe9;j&#xe0; &#xe9;voqu&#xe9; pour les objets solveur de <em>GSL</em>  la
+      m&#xe9;thode <c>rk8pd</c>. D'autres m&#xe9;thodes sont disponibles:
+      <ul>
+        <li>
+          <title>\texttt{rkf45}:</title>
+          <p>
+            Runga-Kutta-Felhberg, une m&#xe9;thode adaptative d'ordres <m>5</m> et <m>4</m>;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{rk2}:</title>
+          <p>
+            Runge-Kutta adaptative d'ordres <m>3</m> et <m>2</m>;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{rk4}:</title>
+          <p>
+            la m&#xe9;thode Runge-Kutta classique d'ordre <m>4</m>;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{rk2imp}:</title>
+          <p>
+            une m&#xe9;thode de Runge-Kutta implicite d'ordre
+              <m>2</m> avec &#xe9;valuation au milieu de l'intervalle;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{rk4imp}:</title>
+          <p>
+            une m&#xe9;thode de Runge-Kutta implicite d'ordre
+              <m>4</m> avec &#xe9;valuation aux <q>points Gaussiens</q><fn>Il s'agit des
+              racines du polyn&#xf4;me de Legendre de degr&#xe9; <m>2</m> d&#xe9;cal&#xe9;s sur
+              l'intervalle <m>[t, t+h]</m>, nomm&#xe9;es en r&#xe9;f&#xe9;rence &#xe0; la m&#xe9;thode
+              d'int&#xe9;gration de Gauss-Legendre.</fn>;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{bsimp}:</title>
+          <p>
+            la m&#xe9;thode implicite de Burlisch-Stoer;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{gear1}:</title>
+          <p>
+            la m&#xe9;thode implicite de Gear &#xe0; un pas;
+          </p>
+        </li>
+
+        <li>
+          <title>\texttt{gear2}:</title>
+          <p>
+            la m&#xe9;thode implicite de Gear &#xe0; deux pas.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      Nous renvoyons le lecteur int&#xe9;ress&#xe9; par les d&#xe9;tails de toutes ces m&#xe9;thodes
+      &#xe0;<nbsp /><nbsp /><xref ref="AscherPetzold1998" />.
+    </p>
+
+    <p>
+      Il faut noter que la limitation de <em>GSL</em>  aux flottants
+      machine-donc de pr&#xe9;cision fix&#xe9;e-&#xe9;voqu&#xe9;e pour l'int&#xe9;gration num&#xe9;rique
+      reste valide pour les m&#xe9;thodes de r&#xe9;solution d'&#xe9;quations
+      diff&#xe9;rentielles.
+    </p>
+
+    <p>
+      <em>Maxima</em>  dispose aussi de ses routines de r&#xe9;solution num&#xe9;rique, avec
+      sa syntaxe propre:
+    </p>
+
+    <sage>
+      <input>
+        x, y = var('x y')
+        desolve_rk4(x*y*(2-y), y, ics=[0,1], end_points=[0, 1],
+        step=0.5)
+      </input>
+      <output>
+        [[0, 1], [0.5, 1.12419127425], [1.0, 1.46159016229]]
+      </output>
+    </sage>
+
+    <p>
+      La fonction <c>desolve_rk4</c> utilise la m&#xe9;thode de Runge-Kutta
+      d'ordre <m>4</m> (la m&#xea;me que <c>rk4</c> pour <em>GSL</em> ) et prend comme param&#xe8;tres:
+      <ul>
+        <li>
+          <p>
+            le membre droit de l'&#xe9;quation <m>y'(t) = f(t, y(t))</m>;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            le nom de la variable fonction inconnue;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            les conditions initiales <c>ics</c>;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            l'intervalle de r&#xe9;solution <c>end_points</c>;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            le pas <c>step</c>.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      Nous ne d&#xe9;veloppons pas la commande similaire
+      <c>desolve_system_rk4</c>, d&#xe9;j&#xe0; &#xe9;voqu&#xe9;e au chapitre <xref ref="graphique">&#xa7;</xref> et qui
+      s'applique &#xe0; un syst&#xe8;me d'&#xe9;quations diff&#xe9;rentielles. <em>Maxima</em> 
+      se limite aussi &#xe0; la pr&#xe9;cision machine.
+    </p>
+
+    <p>
+      Si l'on recherche des solutions calcul&#xe9;es en pr&#xe9;cision arbitrairement grande, il est possible
+      de se tourner vers <c>odefun</c> du module <c>mpmath</c>:
+    </p>
+
+    <sage>
+      <input>
+        import mpmath
+        sol = mpmath.odefun(lambda t, y: y, 0, 1)
+        sol(1)
+      </input>
+      <output>
+        mpf('2.7182818284590451')
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        mpmath.mp.prec=100
+        sol(1)
+      </input>
+      <output>
+        mpf('2.7182818284590452353602874802307')
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        N(exp(1), 100)
+      </input>
+      <output>
+        2.7182818284590452353602874714
+      </output>
+    </sage>
+
+    <p>
+      Les arguments de la fonction <c>mpmath.odefun</c> sont:
+      <ul>
+        <li>
+          <p>
+            les membres droits du syst&#xe8;me d'&#xe9;quations, sous la forme d'une
+              fonction <m>(t, y)\mapsto f(t, y(t))</m> comme pour la fonction
+              <c>ode_solver</c>. La dimension du syst&#xe8;me est d&#xe9;duite
+              automatiquement de la dimension de la valeur de retour de la fonction;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            les conditions initiales <m>t_0</m> et <m>y(t_0)</m>.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      Par exemple pour ce syst&#xe8;me de dimension <m>2</m>
+      <me>
+        \left\{ \begin{array}{rcl}
+          y_1' \amp  = \amp  -y_2 \\
+          y_2' \amp  = \amp  y_1
+        \end{array}  \right.
+      </me>
+      dont les solutions sont <m>(\cos(t), \sin(t))</m>:
+    </p>
+
+    <sage>
+      <input>
+        f = mpmath.odefun(lambda t, y: [-y[1], y[0]], 0, [1, 0])
+        f(3)
+      </input>
+      <output>
+        [mpf('-0.98999249660044545727157279473154'),
+         mpf('0.14112000805986722210074480280816')]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        (cos(3.), sin(3.))
+      </input>
+      <output>
+        (-0.989992496600445, 0.141120008059867)
+      </output>
+    </sage>
+
+    <p>
+      La fonction <c>mpmath.odefun</c> utilise la m&#xe9;thode de Taylor. Pour
+      un degr&#xe9; <m>p</m> on calcule:
+      <me>
+        y(t_{n+1}) = y(t_n) +
+         h\frac{\dd{y}}{\dd{t}}(t_n) +
+         \frac{h^2}{2!}\frac{\dd{}^2y}{\dd{t}^2}(t_n) + \ldots +
+         \frac{h^p}{p!}\frac{\dd{}^py}{\dd{t}^p}(t_n) + \mathcal{O}(h^{p+1}).
+      </me>
+    </p>
+
+    <p>
+      La principale question est celle du calcul des d&#xe9;riv&#xe9;s de <m>y</m>. Pour ce
+      faire, <c>mpmath.odefun</c> calcule des valeurs approch&#xe9;es
+      <me>
+        \left[\widetilde{y}(t_n+h), 
+           \ldots,
+           \widetilde{y}(t_n+ph)\right] \approx
+           \left[y(t_n+h),
+           \ldots,
+           y(t_n+ph)\right]
+      </me>
+      par <m>p</m> pas de la m&#xe9;thode peu pr&#xe9;cise d'Euler. On calcule ensuite
+      <md>
+        <mrow>\widetilde{\frac{\dd{y}}{\dd{t}}(t_n)} \amp  \approx \amp  \frac{\widetilde{y}(t_n+h) - \widetilde{y}(t_n)}{h}</mrow>
+        <mrow>\widetilde{\frac{\dd{y}}{\dd{t}}(t_n+h)} \amp  \approx \amp  \frac{\widetilde{y}(t_n+2h) - \widetilde{y}(t_n+h)}{h}</mrow>
+      </md>
+      puis
+      <me>
+        \widetilde{\frac{\dd{}^2y}{\dd{t}^2}(t_n)} \approx \frac{\widetilde{\frac{\dd{y}}{\dd{t}}(t_n+h)}
+          - \widetilde{\frac{\dd{y}}{\dd{t}}(t_n)}}{h}
+      </me>
+      et ainsi de suite jusqu'&#xe0; obtenir des estimations des d&#xe9;riv&#xe9;s de <m>y</m>
+      en <m>t_n</m> jusqu'&#xe0; l'ordre <m>p</m>.
+    </p>
+
+    <p>
+      Il faut &#xea;tre vigilant lorsque l'on change la pr&#xe9;cision de calcul
+      flottant de <c>mpmath</c> comme cela est fait dans l'exemple
+      ci-dessus, car on a chang&#xe9; la pr&#xe9;cision &#xe0; laquelle seront calcul&#xe9;es
+      les &#xe9;valuations de <m>y(t)</m> mais le calcul des approximations des
+      <m>(y^{(i)}(t_n))_i</m> ne change pas et a &#xe9;t&#xe9; effectu&#xe9; dans la pr&#xe9;cision
+      pr&#xe9;c&#xe9;dente. Pour illustrer ce probl&#xe8;me, reprenons la r&#xe9;solution de
+      l'&#xe9;quation diff&#xe9;rentielle <m>y'=y</m> v&#xe9;rifi&#xe9;e par la fonction <m>\exp</m>
+      donn&#xe9;e plus haut:
+    </p>
+
+    <sage>
+      <input>
+        mpmath.mp.prec=10 
+        sol = mpmath.odefun(lambda t, y: y, 0, 1)
+        sol(1)
+      </input>
+      <output>
+        mpf('2.7148')
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        mpmath.mp.prec=100                       
+        sol(1)
+      </input>
+      <output>
+        mpf('2.7135204235459511323824699502438')
+      </output>
+    </sage>
+
+    <p>
+      L'approximation de <m>\exp(1)</m> est tr&#xe8;s mauvaise, et pourtant elle est
+      calcul&#xe9;e avec <m>100</m> bits de pr&#xe9;cision! La fonction solution
+      <c>sol</c> (un <q>interpolant</q> dans le jargon <c>mpmath</c>) a &#xe9;t&#xe9;
+      calcul&#xe9;e avec seulement <m>10</m> bits de pr&#xe9;cision et ses coefficients ne
+      sont pas recalcul&#xe9;s en cas de changement de pr&#xe9;cision, ce qui explique
+      le r&#xe9;sultat.
+    </p>
+  </subsection>
+</section>
+

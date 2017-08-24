@@ -1,0 +1,29 @@
+
+
+<section>
+  <title>Alg&#xe8;bre lin&#xe9;aire num&#xe9;rique</title>
+  <p>
+    \begin{correction}{exo:linsolve_racine}
+    On consid&#xe8;re la factorisation de Cholesky <m>A= C\trans{C}</m>, puis la
+    d&#xe9;composition en valeurs singuli&#xe8;res de <m>C</m>: <m>C=U \Sigma \trans{V}</m>.
+    Alors, <m>X=U \Sigma \trans{U}</m>.
+    En effet:
+    <m>A=C\trans{C}= (U \Sigma \trans{V})(V\Sigma \trans{U})=U \Sigma \trans{U} U \Sigma \trans{U}= X^2.</m>
+  </p>
+
+  <pre>
+    # fabriquer une matrice sym\'etrique d\'efinie positive:
+    m = random\_matrix(RDF,4)
+    a = transpose(m)*m
+    c = a.cholesky\_decomposition()
+    U,S,V = c.SVD()
+    X = U*S*transpose(U)
+    # verification
+    print(X*X-a)
+  </pre>
+
+  <p>
+    \end{correction}
+  </p>
+</section>
+

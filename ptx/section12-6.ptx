@@ -1,0 +1,352 @@
+
+
+<section>
+  <title>Polyn&#xf4;mes</title>
+  <p>
+    \DefineShortVerb{\|}
+    \VerbatimFootnotes
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:chebyshev}
+    Une solution simple consiste &#xe0; effectuer des divisions euclidiennes
+    successives par les polyn&#xf4;mes de Tchebycheff pris par degr&#xe9;s
+    d&#xe9;croissants : si le polyn&#xf4;me<nbsp /><m>p</m> &#xe0; r&#xe9;&#xe9;crire sur la base de Tchebycheff
+    est de degr&#xe9;<nbsp /><m>n</m>, on pose <m>p = c_n T_n + R_{n-1}</m> avec
+    <m>c_n \in \Q</m> et <m>\deg R_{n-1} \leq n-1</m>, puis <m>R_{n-1} = c_{n-1} T_{n-1}
+    + R_{n-2}</m>, et ainsi de suite.
+  </p>
+
+  <p>
+    Dans le code <em>Sage</em>  suivant, plut&#xf4;t que de renvoyer les coefficients
+    <m>c_n</m> obtenus comme une simple liste, on a choisi de construire une
+    expression symbolique o&#xf9; le polyn&#xf4;me<nbsp /><m>T_n</m> est repr&#xe9;sent&#xe9; comme une
+    fonction <q> inerte </q> (c'est-&#xe0;-dire gard&#xe9;e sous forme non &#xe9;valu&#xe9;e)<nbsp /><c>T</c>.
+  </p>
+
+  <p>
+    \begin{sageblock}
+    T = sage.symbolic.function_factory.function('T', nargs=2)
+    def to_chebyshev_basis(pol):
+    (x,) = pol.variables()
+    res = 0
+    for n in xrange(pol.degree(), -1, -1):
+    quo, pol = pol.quo_rem(chebyshev_T(n, x))
+    res += quo * T(n, x)
+    return res
+    \end{sageblock}
+  </p>
+
+  <p>
+    Testons cette fonction. Pour v&#xe9;rifier les r&#xe9;sultats, il suffit de
+    substituer &#xe0; notre fonction inerte<nbsp /><c>T</c> la fonction qui calcule les
+    polyn&#xf4;mes de Tchebycheff, et de d&#xe9;velopper :
+  </p>
+
+  <sage>
+    <input>
+      p = QQ['x'].random_element(degree=6); p
+    </input>
+    <output>
+      4*x^6 + 4*x^5 + 1/9*x^4 - 2*x^3 + 2/19*x^2 + 1
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      p_cheb = to_chebyshev_basis(p); p_cheb
+    </input>
+    <output>
+      1069/456*T(0, x) + T(1, x) + 2713/1368*T(2, x) + 3/4*T(3, x)
+      + 55/72*T(4, x) + 1/4*T(5, x) + 1/8*T(6, x)
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      p_cheb.substitute_function(T, chebyshev_T).expand()
+    </input>
+    <output>
+      4*x^6 + 4*x^5 + 1/9*x^4 - 2*x^3 + 2/19*x^2 + 1
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:puissances croissantes}
+    Une traduction directe de l'algorithme en <em>Sage</em>  donne quelque chose
+    comme :
+  </p>
+
+  <pre>
+    def mydiv(num, den, n):
+        cc = den.constant_coefficient()
+        quo = 0; rem = num
+        for k in xrange(n):
+            u = rem[0]/cc
+            rem = (rem - u*den) >> 1  # division par x par d\'ecalage
+            quo += u*x^k
+        return quo, rem
+  </pre>
+
+  <p>
+    (On pourra chronom&#xe9;trer cette fonction sur des exemples un peu
+    gros, et essayer de rendre le code plus efficace sans changer
+    l'algorithme.)
+  </p>
+
+  <p>
+    Mais le quotient dans la division par les puissances croissantes jusqu'&#xe0;
+    l'ordre<nbsp /><m>n</m> est simplement le d&#xe9;veloppement en s&#xe9;rie de la fraction
+    rationnelle <m>u/v</m>, tronqu&#xe9; &#xe0; l'ordre<nbsp /><m>n</m>. En utilisant la division de
+    s&#xe9;ries formelles (voir <xref ref="sec_polynomes_series">&#xa7;</xref>), on peut donc
+    calculer la division suivant les puissances croissantes comme suit.
+  </p>
+
+  <pre>
+    def mydiv2(num, den, n):
+        x = num.parent().gen()
+        quo = (num/(den + O(x^n))).polynomial()
+        rem = (num - quo*den) >> n
+        return quo, rem
+  </pre>
+
+  <p>
+    La ligne <c>quo = ...</c> utilise, premi&#xe8;rement, qu'ajouter un terme d'erreur
+    <m>O(\cdot)</m> &#xe0; un polyn&#xf4;me le convertit automatiquement en s&#xe9;rie tronqu&#xe9;e,
+    et deuxi&#xe8;mement, que la division d'un polyn&#xf4;me par une s&#xe9;rie se fait par
+    d&#xe9;faut &#xe0; la pr&#xe9;cision du diviseur.
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:irreductibilite sur Z}
+    Le polyn&#xf4;me<nbsp /><m>p</m> est un polyn&#xf4;me pair, de degr&#xe9; au plus<nbsp /><m>40</m>, &#xe0;
+    coefficients tir&#xe9;s au hasard entre <m>0</m> et<nbsp /><m>9</m>. Il n'est gu&#xe8;re
+    surprenant qu'il soit irr&#xe9;ductible. On pourrait faire le m&#xea;me
+    raisonnement sur sa d&#xe9;riv&#xe9;e, et en effet, celle-ci est irr&#xe9;ductible
+    sur<nbsp /><m>\Q</m> avec forte probabilit&#xe9;. Mais comme<nbsp /><m>p</m> est pair, tous les
+    coefficients de<nbsp /><m>p'</m> sont divisibles par<nbsp /><m>2</m>, et <m>p'</m> (qui n'est pas
+    constant) ne peut donc pas &#xea;tre irr&#xe9;ductible sur<nbsp /><m>\Z</m>.
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:unrolling}
+    Tout d'abord, on s'attend &#xe0; ce que <m>u_{10^{100}}</m> ait de l'ordre de
+    <m>10^{100}</m> chiffres. Il est donc compl&#xe8;tement hors de question de
+    chercher &#xe0; le calculer enti&#xe8;rement, mais puisqu'on ne s'int&#xe9;resse qu'aux
+    cinq derniers chiffres, ce n'est pas vraiment un probl&#xe8;me : on fera tout
+    le calcul modulo <m>10^5</m>. La m&#xe9;thode par exponentiation rapide
+    pr&#xe9;sent&#xe9;e en <xref ref="sec_programmation_binexp">&#xa7;</xref> demande alors quelques
+    centaines de multiplications de matrices <m>1000 \times 1000</m> &#xe0;
+    coefficients dans <m>\Z/10^5\Z</m>. Chacun de ces produits de matrices
+    revient &#xe0; un milliard de multiplications modulo <m>10^5</m>, ou un peu
+    moins avec un algorithme rapide. Ce n'est pas compl&#xe8;tement inaccessible,
+    mais un essai sur une seule multiplication laisse penser que le calcul
+    avec <em>Sage</em>  sans astuce particuli&#xe8;re<fn>Le lecteur int&#xe9;ress&#xe9; pourra chercher une solution <em>avec</em>
+    astuce plus efficace, par exemple en s'appuyant sur les remarques de la
+    <xref ref="sec_linsolve_efficacite">section</xref> sur les performances des divers
+    produits matriciels.</fn>prendrait un &#xe0; deux jours :
+  </p>
+
+  <sage>
+    <input>
+      m1, m2 = (Mat.random_element() for i in (1,2))
+      %time m1*m2
+    </input>
+    <output>
+      CPU times: user 410.49 s, sys: 0.16 s, total: 410.65 s
+      Wall time: 410.87 s
+    </output>
+  </sage>
+
+  <p>
+    Il est possible de faire beaucoup mieux du point de vue algorithmique.
+    Notons<nbsp /><m>S</m> l'op&#xe9;rateur de d&#xe9;calage <m>(a_n)_{n\in\N} \mapsto
+    (a_{n+1})_{n\in\N}</m>. L'&#xe9;quation satisfaite par<nbsp /><m>u=(u_n)_{n\in\N}</m> se
+    r&#xe9;&#xe9;crit <m>P(S) \cdot u = 0</m>, o&#xf9;
+    <m>P(x) = x^{1000} - 23 x^{729} + 5 x^2 - 12 x - 7</m> ;
+    et pour tout <m>N</m> (notamment <m>N=10^{100}</m>), le terme <m>u_N</m> est le premier
+    de la suite <m>S^N\cdot u</m>. Soit<nbsp /><m>R</m> le reste de la division euclidienne
+    de <m>x^N</m> par<nbsp /><m>P</m>. Comme <m>P(S) \cdot u = 0</m>, on a <m>S^N\cdot u = R(S)
+    \cdot u</m>. Il suffit donc de calculer l'image de <m>x^N</m> dans
+    <m>(\Z/10^5\Z)\,[x]/\langle P(x) \rangle</m>. On aboutit au code suivant :
+  </p>
+
+  <sage>
+    <input>
+      Poly.&lt;x> = Integers(100000)[]
+      P = x^1000 - 23*x^729 + 5*x^2 - 12*x - 7
+      Quo.&lt;s> = Poly.quo(P)
+      op = s^(10^100)
+      add(op[n]*(n+7) for n in range(1000))
+    </input>
+    <output>
+      7472
+    </output>
+  </sage>
+
+  <p>
+    Les cinq chiffres cherch&#xe9;s sont donc <m>07472</m>.
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:guessing}
+    <ol>
+      <li>
+        <p>
+          Supposons <m>a_s u_{n+s} + a_{s-1} u_{n+s-1} + \cdots + a_0 u_n = 0</m>
+          pour tout <m>n \geq 0</m>, et notons <m>u(z) = \sum_{n=0}^\infty u_n z^n</m>.
+          Soit <m>Q(z) = a_s + a_{s-1} z + \cdots + a_0 z^s</m>. 
+          Alors
+          <me>
+            S(z)
+            = Q(z) \, u(z)
+            = \sum_{n=0}^\infty (a_s u_n + a_{s-1} u_{n-1} + \cdots + a_0 u_{n-s})
+            z^n,
+          </me>
+          avec la convention que <m>u_n=0</m> pour <m>n \lt  0</m>. Le coefficient de <m>z^n</m>
+          dans <m>S(z)</m> est nul pour <m>n \geq s</m>, donc <m>S(z)</m> est un polyn&#xf4;me, et
+          <m>u(z) = S(z)/Q(z)</m>. Le d&#xe9;nominateur <m>Q(z)</m> est le polyn&#xf4;me r&#xe9;ciproque du
+          polyn&#xf4;me caract&#xe9;ristique de la r&#xe9;currence, et le num&#xe9;rateur code les
+          conditions initiales.
+        </p>
+      </li>
+
+      <li>
+        <p>
+          Les quelques premiers coefficients suffisent pour deviner une
+          r&#xe9;currence d'ordre 3 que satisfont manifestement les coefficients
+          donn&#xe9;s. Avec <c>rational_reconstruct</c>, on obtient une fraction rationnelle
+          qu'il suffit de d&#xe9;velopper en s&#xe9;rie pour retrouver tous les coefficients
+          donn&#xe9;s, et des coefficients suivants vraisemblables :
+
+          <sage>
+            <input>
+              p = previous_prime(2^30); ZpZx.&lt;x> = Integers(p)[]
+              s = ZpZx([1, 1, 2, 3, 8, 11, 34, 39, 148, 127, 662, 339])
+              num, den = s.rational_reconstruct(x^12, 6, 6)
+              S = ZpZx.completion(x)
+              map(signed_lift, S(num)/S(den))
+            </input>
+            <output>
+              [1, 1, 2, 3, 8, 11, 34, 39, 148, 127, 662, 339, 3056, 371,
+              14602, -4257, 72268, -50489, 369854, -396981]
+            </output>
+          </sage>
+
+          (La fonction <c>signed_lift</c> est celle d&#xe9;finie dans le texte du chapitre.
+          Les 20 premiers coefficients de la suite sont largement inf&#xe9;rieurs &#xe0;
+          <m>2^{29}</m>, de sorte qu'on peut se permettre de d&#xe9;rouler la r&#xe9;currence
+          modulo <m>2^{30}</m> puis de remonter le r&#xe9;sultat dans <m>\Z</m> plut&#xf4;t que le
+          contraire.)
+
+          Avec <c>berlekamp_massey</c>, le r&#xe9;sultat est le polyn&#xf4;me caract&#xe9;ristique de
+          la r&#xe9;currence, directement &#xe0; coefficients dans <m>\Z</m> :
+
+          <sage>
+            <input>
+              berlekamp_massey([1, 1, 2, 3, 8, 11, 34, 39, 148, 127])
+            </input>
+            <output>
+              x^3 - 5*x + 2
+            </output>
+          </sage>
+
+          On v&#xe9;rifie que tous les coefficients donn&#xe9;s satisfont <m>u_{n+3} =
+          5u_{n+1}-2u_n</m>, et l'on devine &#xe0; partir de l&#xe0; les coefficients manquants
+          <m>72268=5\cdot14602-2\cdot371</m>, <m>-50489=5\cdot(-4257) - 2\cdot14602</m>,
+          et ainsi de suite.
+        </p>
+      </li>
+    </ol>
+  </p>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:cauchy}
+    On commence par calculer un polyn&#xf4;me de degr&#xe9;<nbsp /><m>3</m> qui satisfait la
+    condition d'interpolation donn&#xe9;e, ce qui fournit une solution avec <m>\deg
+    p=4</m> :
+  </p>
+
+  <sage>
+    <input>
+      R.&lt;x> = GF(17)[]
+      s = R(QQ['x'].lagrange_polynomial([(0,-1),(1,0),(2,7),(3,5)]))
+      s
+    </input>
+    <output>
+      6*x^3 + 2*x^2 + 10*x + 16
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      [s(i) for i in range(4)]
+    </input>
+    <output>
+      [16, 0, 7, 5]
+    </output>
+  </sage>
+
+  <p>
+    On s'est ainsi ramen&#xe9; au probl&#xe8;me de reconstruction rationnelle
+    <me>
+      p/q \equiv s \mod x(x-1)(x-2)(x-3).
+    </me>
+  </p>
+
+  <p>
+    Comme <m>s</m> n'est pas inversible modulo <m>x(x-1)(x-2)(x-3)</m> (car <m>s(1)=0</m>),
+    il n'y a pas de solution avec <m>p</m> constant. Avec <m>\deg p=1</m>, on trouve :
+  </p>
+
+  <sage>
+    <input>
+      s.rational_reconstruct(mul(x-i for i in range(4)), 1, 2)
+    </input>
+    <output>
+      (15*x + 2, x^2 + 11*x + 15)
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:polynomes:tangente}
+    Le raisonnement est le m&#xea;me que dans l'exemple du texte : on r&#xe9;&#xe9;crit
+    l'&#xe9;quation <m>\tan x = \int_0^x (1+\tan^2 t) \dd t</m>, et l'on cherche un
+    point fixe en partant de la condition initiale <m>\tan(0)=0</m>.
+  </p>
+
+  <sage>
+    <input>
+      S.&lt;x> = PowerSeriesRing(QQ)
+      t = S(0)
+      for i in range(8):
+      # le O(x^15) \'evite que l'ordre de troncature ne grandisse
+      t = (1+t^2).integral() + O(x^15)
+      t
+    </input>
+    <output>
+      x + 1/3*x^3 + 2/15*x^5 + 17/315*x^7 + 62/2835*x^9 + 1382/155925*x^11
+      + 21844/6081075*x^13 + O(x^15)
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+</section>
+

@@ -1,0 +1,569 @@
+
+
+<section xml:id="sec_numbertheory_finite_rings">
+  <title>Anneaux et corps finis</title>
+  <introduction>
+    <p>
+      Les anneaux et corps finis sont un objet fondamental en th&#xe9;orie des
+      nombres, et en calcul symbolique en g&#xe9;n&#xe9;ral. En effet, de nombreux
+      algorithmes de calcul formel se ram&#xe8;nent &#xe0; des calculs sur des corps
+      finis, puis on exploite l'information obtenue via des techniques
+      comme la remont&#xe9;e de Hensel ou la reconstruction par les restes chinois.
+      Citons par exemple l'algorithme de Cantor-Zassenhaus pour la factorisation de
+      polyn&#xf4;me univari&#xe9; &#xe0; coefficients entiers, qui commence par factoriser
+      le polyn&#xf4;me donn&#xe9; sur un corps fini.
+    </p>
+  </introduction>
+
+  <subsection xml:id="subsec_numbertheory_rings">
+    <title>Anneau des entiers modulo <m>n</m></title>
+    <p>
+      En <em>Sage</em> , l'anneau <m>\Z/n\Z</m> des entiers modulo <m>n</m> se d&#xe9;finit &#xe0; l'aide du
+      constructeur <c>IntegerModRing</c> (ou plus simplement <c>Integers</c>).
+      Tous les objets construits &#xe0; partir de ce constructeur et leurs d&#xe9;riv&#xe9;s
+      sont syst&#xe9;matiquement r&#xe9;duits modulo <m>n</m>, et ont donc une forme
+      canonique, c'est-&#xe0;-dire que deux variables repr&#xe9;sentant la m&#xea;me valeur
+      modulo <m>n</m> ont la m&#xea;me repr&#xe9;sentation interne.
+      Dans certains cas bien particuliers, il est plus efficace de retarder les
+      r&#xe9;ductions modulo <m>n</m>, par exemple si on multiplie des matrices avec de
+      tels coefficients; on pr&#xe9;f&#xe9;rera alors travailler avec des entiers,
+      et effectuer les r&#xe9;ductions modulo <m>n</m> \og &#xe0; la main \fg<nbsp />via
+      <c>a <percent /> n</c>.
+      Attention, le module <m>n</m> n'appara&#xee;t pas explicitement dans la valeur
+      affich&#xe9;e:
+    </p>
+
+    <sage>
+      <input>
+        a=IntegerModRing(15)(3); b=IntegerModRing(17)(3);
+      </input>
+      <output>
+        print a, b
+        3 3
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        a == b
+      </input>
+      <output>
+        False
+      </output>
+    </sage>
+
+    <p>
+      Une cons&#xe9;quence est que si l'on \og copie-colle \fg<nbsp />des entiers modulo <m>n</m>,
+      on perd l'information sur <m>n</m>. &#xc9;tant donn&#xe9;e une variable contenant un
+      entier modulo <m>n</m>, on retrouve l'information sur <m>n</m> via les m&#xe9;thodes
+      <c>base_ring</c> ou <c>parent</c>, et la valeur de <m>n</m> via la m&#xe9;thode
+      <c>characteristic</c>:
+    </p>
+
+    <sage>
+      <input>
+        R=a.base_ring(); R
+      </input>
+      <output>
+        Ring of integers modulo 15
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        R.characteristic()
+      </input>
+      <output>
+        15
+      </output>
+    </sage>
+
+    <p>
+      Les op&#xe9;rateurs de base (addition, soustraction, multiplication) sont
+      surcharg&#xe9;s pour les entiers modulo <m>n</m>, et appellent les fonctions
+      correspondantes, de m&#xea;me que les entiers sont automatiquement convertis,
+      d&#xe8;s lors qu'un des op&#xe9;randes est un entier modulo <m>n</m>:
+    </p>
+
+    <sage>
+      <input>
+        print a+a, a-17, a*a+1, a^3
+      </input>
+      <output>
+        6 1 10 12
+      </output>
+    </sage>
+
+    <p>
+      Quant &#xe0; l'inversion <m>1/a \bmod n</m> ou la division <m>b/a \bmod n</m>,
+      <em>Sage</em>  l'effectue quand elle est possible, sinon il renvoie une erreur
+      <c>ZeroDivisionError</c>, i.e., quand <m>a</m> et <m>n</m> ont un pgcd non-trivial:
+    </p>
+
+    <sage>
+      <input>
+        1/(a+1)
+      </input>
+      <output>
+        4
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        1/a
+      </input>
+      <output>
+        ZeroDivisionError: Inverse does not exist.
+      </output>
+    </sage>
+
+    <p>
+      Pour obtenir la valeur de <m>a</m> <mdash /> en tant qu'entier <mdash /> &#xe0; partir du
+      r&#xe9;sidu <m>a \bmod n</m>, on peut utiliser la m&#xe9;thode <c>lift</c> ou bien
+      <c>ZZ</c>:
+    </p>
+
+    <sage>
+      <input>
+        z=lift(a); y=ZZ(a); print y, type(y), y==z
+      </input>
+      <output>
+        3 &lt;lt/>type 'sage.rings.integer.Integer'> True
+      </output>
+    </sage>
+
+    <p>
+      L'<em>ordre additif</em> de <m>a</m> modulo <m>n</m> est le plus petit entier <m>k > 0</m> tel
+      que <m>ka = 0 \bmod n</m>.
+      Il vaut <m>k=n/g</m> o&#xf9; <m>g = \pgcd(a,n)</m>, et
+      est donn&#xe9; par la m&#xe9;thode <c>additive_order</c> (on voit au passage
+      qu'on peut aussi utiliser <c>Mod</c> ou <c>mod</c> pour d&#xe9;finir les
+      entiers modulo <m>n</m>):
+    </p>
+
+    <sage>
+      <input>
+        [Mod(x,15).additive_order() for x in range(0,15)]
+      </input>
+      <output>
+        [1, 15, 15, 5, 15, 3, 5, 15, 15, 5, 3, 15, 5, 15, 15]
+      </output>
+    </sage>
+
+    <p>
+      L'<em>ordre multiplicatif</em> de <m>a</m> modulo <m>n</m>, pour <m>a</m> premier avec <m>n</m>,
+      est le plus petit entier <m>k > 0</m> tel que <m>a^k = 1 \bmod n</m>.
+      (Si <m>a</m> a un diviseur commun <m>p</m> avec <m>n</m>, alors <m>a^k \bmod n</m> est un
+      multiple de <m>p</m> quel que soit <m>k</m>.)
+      Si cet ordre multiplicatif &#xe9;gale <m>\phi(n)</m>, &#xe0; savoir l'ordre du groupe
+      multiplicatif modulo <m>n</m>, on dit que <m>a</m> est un <em>g&#xe9;n&#xe9;rateur</em> de ce
+      groupe. Ainsi pour <m>n=15</m>, il n'y a pas de g&#xe9;n&#xe9;rateur, puisque l'ordre
+      maximal est <m>4 \lt  8 = \phi(15)</m>:
+    </p>
+
+    <sage>
+      <input>
+        [[x,Mod(x,15).multiplicative_order()]
+      </input>
+      <output>
+        for x in range(1,15) if gcd(x,15)==1]
+        [[1, 1], [2, 4], [4, 2], [7, 4], [8, 4], [11, 2], [13, 4], [14, 2]]
+      </output>
+    </sage>
+
+    <p>
+      Voici un exemple avec <m>n=p</m> premier, o&#xf9; <m>3</m> est g&#xe9;n&#xe9;rateur:
+    </p>
+
+    <sage>
+      <input>
+        p=10^20+39; mod(2,p).multiplicative_order()
+      </input>
+      <output>
+        50000000000000000019
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        mod(3,p).multiplicative_order()
+      </input>
+      <output>
+        100000000000000000038
+      </output>
+    </sage>
+
+    <p>
+      Une op&#xe9;ration importante sur <m>\Z/n\Z</m> est
+      l'<em>exponentiation modulaire</em>, qui consiste &#xe0; calculer <m>a^e \bmod n</m>.
+      Le crypto-syst&#xe8;me RSA repose sur cette op&#xe9;ration. Pour
+      calculer efficacement <m>a^e \bmod n</m>, les algorithmes les plus efficaces
+      n&#xe9;cessitent de l'ordre de <m>\log e</m> multiplications ou carr&#xe9;s modulo <m>n</m>.
+      Il est crucial de r&#xe9;duire syst&#xe9;matiquement tous les calculs modulo <m>n</m>,
+      au lieu de calculer d'abord <m>a^e</m> en tant qu'entier,
+      comme le montre l'exemple suivant:
+    </p>
+
+    <sage>
+      <input>
+        n=3^100000; a=n-1; e=100
+        %timeit (a^e) % n
+      </input>
+      <output>
+        5 loops, best of 3: 387 ms per loop
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        %timeit power_mod(a,e,n)
+      </input>
+      <output>
+        125 loops, best of 3: 3.46 ms per loop
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="subsec_numbertheory_finite_fields">
+    <title>Corps finis</title>
+    <p>
+      Les corps finis<fn>En fran&#xe7;ais, le corps fini &#xe0; <m>q</m> &#xe9;l&#xe9;ments
+      est not&#xe9; usuellement <m>\F_q</m>, alors qu'en anglais on utilise plut&#xf4;t
+      <m>{ GF}(q)</m>. On utilise ici la notation fran&#xe7;aise pour d&#xe9;signer le
+      concept math&#xe9;matique, et la notation anglaise pour d&#xe9;signer du code \Sage.</fn>en <em>Sage</em>  se d&#xe9;finissent &#xe0; l'aide du constructeur
+      <c>FiniteField</c> (ou plus simplement <c>GF</c>).
+      On peut aussi bien construire les <em>corps premiers</em> <c>GF(p)</c> avec
+      <m>p</m> premier que les corps compos&#xe9;s <c>GF(q)</c> avec <m>q=p^k</m>, <m>p</m> premier
+      et <m>k > 1</m> un entier. Comme pour les anneaux, les objets cr&#xe9;&#xe9;s dans un
+      tel corps ont une forme canonique, par cons&#xe9;quent une r&#xe9;duction est
+      effectu&#xe9;e &#xe0; chaque op&#xe9;ration. Les corps finis jouissent des m&#xea;mes
+      propri&#xe9;t&#xe9;s que les anneaux (<xref ref="subsec_numbertheory_rings">&#xa7;</xref>),
+      avec en plus la possibilit&#xe9; d'inverser un &#xe9;l&#xe9;ment non nul:
+    </p>
+
+    <sage>
+      <input>
+        R = GF(17); [1/R(x) for x in range(1,17)]
+      </input>
+      <output>
+        [1, 9, 6, 13, 7, 3, 5, 15, 2, 12, 14, 10, 4, 11, 8, 16]
+      </output>
+    </sage>
+
+    <p>
+      Un corps non premier <m>\F_{p^k}</m> avec <m>p</m> premier et <m>k>1</m> est isomorphe &#xe0;
+      l'anneau quotient des polyn&#xf4;mes de <m>\F_p[x]</m> modulo un polyn&#xf4;me <m>f</m>
+      unitaire et irr&#xe9;ductible de degr&#xe9; <m>k</m>.
+      Dans ce cas, <em>Sage</em>  demande un nom pour le <em>g&#xe9;n&#xe9;rateur</em> du corps,
+      c'est-&#xe0;-dire la variable <m>x</m>:
+    </p>
+
+    <sage>
+      <input>
+        R = GF(9,name='x'); R
+      </input>
+      <output>
+        Finite Field in x of size 3^2
+      </output>
+    </sage>
+
+    <p>
+      Ici, <em>Sage</em>  a choisi automatiquement le polyn&#xf4;me <m>f</m>:
+    </p>
+
+    <sage>
+      <input>
+        R.polynomial()
+      </input>
+      <output>
+        x^2 + 2*x + 2
+      </output>
+    </sage>
+
+    <p>
+      Les &#xe9;l&#xe9;ments du corps sont alors repr&#xe9;sent&#xe9;s par des polyn&#xf4;mes
+      <m>a_{k-1} x^{k-1} + \cdots + a_1 x + a_0</m>, o&#xf9; les <m>a_i</m> sont des &#xe9;l&#xe9;ments
+      de <m>\F_p</m>:
+    </p>
+
+    <sage>
+      <input>
+        [r for r in R]
+      </input>
+      <output>
+        [0, 2*x, x + 1, x + 2, 2, x, 2*x + 2, 2*x + 1, 1]
+      </output>
+    </sage>
+
+    <p>
+      On peut aussi imposer &#xe0; <em>Sage</em>  le polyn&#xf4;me irr&#xe9;ductible <m>f</m>:
+    </p>
+
+    <sage>
+      <input>
+        Q.&lt;x> = PolynomialRing(GF(3))
+        R2 = GF(9,name='x',modulus=x^2+1); R2
+      </input>
+      <output>
+        Finite Field in x of size 3^2
+      </output>
+    </sage>
+
+    <p>
+      Attention cependant, car si les deux instances <c>R</c> et <c>R2</c>
+      cr&#xe9;&#xe9;es ci-dessus sont isomorphes &#xe0;
+      <m>\F_9</m>, l'isomorphisme n'est pas explicite:
+    </p>
+
+    <sage>
+      <input>
+        p = R(x+1); R2(p)
+      </input>
+      <output>
+        TypeError: unable to coerce from a finite field other than the
+        prime subfield
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="subsec_numbertheory_rational_reconstruction">
+    <title>Reconstruction rationnelle</title>
+    <p>
+      Le probl&#xe8;me de la <em>reconstruction rationnelle</em> constitue
+      une jolie application des calculs modulaires. &#xc9;tant donn&#xe9; un r&#xe9;sidu <m>a</m>
+      modulo <m>m</m>, il s'agit de trouver un \og petit \fg<nbsp />rationnel <m>x/y</m> tel que
+      <m>x/y \equiv a \bmod m</m>. Si on sait qu'un tel petit rationnel existe,
+      au lieu de calculer directement <m>x/y</m> en tant que rationnel, on calcule
+      <m>x/y</m> modulo <m>m</m>, ce qui donne le r&#xe9;sidu <m>a</m>, puis on retrouve
+      <m>x/y</m> par reconstruction rationnelle. Cette seconde approche est souvent plus
+      efficace, car on remplace des calculs rationnels <mdash /> faisant intervenir de
+      co&#xfb;teux pgcds <mdash /> par des calculs modulaires.
+    </p>
+
+    <lemma>
+      <statement>
+        <p>
+          Soient <m>a, m \in \N</m>, avec <m>0 \lt  a \lt  m</m>.
+          Il existe au plus une paire d'entiers
+          <m>x, y \in \Z</m> premiers entre eux
+          tels que <m>x/y \equiv a \bmod m</m> avec <m>0 \lt  <c>x</c>, y \leq \sqrt{m/2}</m>.
+        </p>
+      </statement>
+    </lemma>
+
+    <p>
+      Il n'existe pas toujours de telle paire <m>x, y</m>, par exemple
+      pour <m>a=2</m> et <m>m=5</m>.
+      L'algorithme de reconstruction rationnelle est bas&#xe9; sur l'algorithme de
+      pgcd &#xe9;tendu. Le pgcd &#xe9;tendu de <m>m</m> et <m>a</m> calcule une suite d'entiers
+      <m>a_i = \alpha_i m + \beta_i a</m>, o&#xf9; les entiers <m>a_i</m> d&#xe9;croissent, et les
+      coefficients <m>\alpha_i, \beta_i</m> croissent en valeur absolue.
+      Il suffit donc de s'arr&#xea;ter d&#xe8;s que <m><c>a_i</c>, <c>\beta_i</c> \lt  \sqrt{m/2}</m>,
+      et la solution est alors <m>x/y = a_i/\beta_i</m>.
+      Cet algorithme est disponible via la fonction
+      <c>rational_reconstruction</c> de <em>Sage</em> , qui renvoie <m>x/y</m> lorsqu'une
+      telle solution existe, et une erreur sinon:
+    </p>
+
+    <sage>
+      <input>
+        rational_reconstruction(411,1000)
+      </input>
+      <output>
+        -13/17
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        rational_reconstruction(409,1000)
+      </input>
+      <output>
+        Traceback (most recent call last):                                      
+        ...
+        ValueError: Rational reconstruction of 409 (mod 1000) does not
+        exist.
+      </output>
+    </sage>
+
+    <p>
+      Pour illustrer la reconstruction rationnelle, consid&#xe9;rons le calcul du
+      nombre harmonique <m>H_n = 1 + 1/2 + \cdots + 1/n</m>. Le calcul na&#xef;f avec
+      des nombres rationnels est le suivant:
+    </p>
+
+    <sage>
+      <input>
+        def harmonic(n):
+      </input>
+      <output>
+        return add([1/x for x in range(1,n+1)])
+      </output>
+    </sage>
+
+    <p>
+      Or nous savons que <m>H_n</m> peut s'&#xe9;crire sous la forme <m>p_n/q_n</m> avec
+      <m>p_n, q_n</m> entiers, o&#xf9; <m>q_n</m> est le ppcm de <m>1, 2, \ldots, n</m>.
+      On sait par ailleurs que <m>H_n \leq \log n + 1</m>, ce qui permet de borner
+      <m>p_n</m>.
+      On en d&#xe9;duit la fonction suivante qui d&#xe9;termine <m>H_n</m> par calcul modulaire
+      et reconstruction rationnelle:
+    </p>
+
+    <pre>
+      def harmonic_mod(n,m):
+         return add([1/x % m for x in range(1,n+1)])
+      def harmonic2(n):
+         q = lcm(range(1,n+1))
+         pmax = RR(q*(log(n)+1))
+         m = ZZ(2*pmax^2)
+         m = ceil(m/q)*q + 1
+         a = harmonic_mod(n,m)
+         return rational_reconstruction(a,m)
+    </pre>
+
+    <p>
+      La ligne <c>m = ZZ(2*pmax^2)</c> garantit que la reconstruction rationnelle
+      va trouver <m>p \leq \sqrt{m/2}</m>, tandis que la ligne suivante garantit que
+      <m>m</m> est premier avec <m>x = 1, 2, \ldots, n</m>, sinon <m>1/x \bmod n</m> provoquerait
+      une erreur.
+    </p>
+
+    <sage>
+      <input>
+        harmonic(100) == harmonic2(100)
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <p>
+      Sur cet exemple, la fonction <c>harmonic2</c> n'est pas plus efficace
+      que la fonction <c>harmonic</c>, mais elle illustre bien notre propos.
+    </p>
+
+    <p>
+      Dans certains cas, il n'est pas n&#xe9;cessaire de conna&#xee;tre une borne
+      rigoureuse sur <m>x</m> et <m>y</m>, une estimation \og &#xe0; la louche \fg<nbsp />suffit,
+      car on peut v&#xe9;rifier facilement par ailleurs que <m>x/y</m> est la solution
+      cherch&#xe9;e.
+    </p>
+
+    <p>
+      On peut g&#xe9;n&#xe9;raliser la reconstruction rationnelle avec un num&#xe9;rateur
+      <m>x</m> et un d&#xe9;nominateur <m>y</m> de tailles diff&#xe9;rentes
+      (voir par exemple la section 5.10 du livre<nbsp /><xref ref="voGe03" />).
+    </p>
+  </subsection>
+
+  <subsection xml:id="subsec_numbertheory_crt">
+    <title>Restes chinois</title>
+    <p>
+      Une autre application utile des calculs modulaires est ce qu'on appelle
+      commun&#xe9;ment les \og restes chinois \fg. &#xc9;tant donn&#xe9;s deux modules
+      <m>m</m> et <m>n</m> premiers entre eux, soit <m>x</m> un entier inconnu tel que
+      <m>x \equiv a \bmod m</m> et <m>x \equiv b \bmod n</m>. Alors le <em>th&#xe9;or&#xe8;me des
+      restes chinois</em> permet de reconstruire de fa&#xe7;on unique la valeur de <m>x</m>
+      modulo le produit <m>m n</m>. En effet, on d&#xe9;duit de <m>x \equiv a \bmod m</m> que
+      <m>x</m> s'&#xe9;crit sous la forme <m>x = a + \lambda m</m> avec <m>\lambda \in \Z</m>.
+      En rempla&#xe7;ant cette valeur dans <m>x \equiv b \bmod n</m>, on obtient
+      <m>\lambda \equiv \lambda_0 \bmod n</m>, o&#xf9; <m>\lambda_0 = (b-a)/m \bmod n</m>.
+      Il en r&#xe9;sulte <m>x = x_0 + \mu n m</m>, o&#xf9; <m>x_0 = a + \lambda_0 m</m>.
+    </p>
+
+    <p>
+      On a d&#xe9;crit ici la variante la plus simple des \og restes chinois \fg.
+      On peut &#xe9;galement consid&#xe9;rer le cas o&#xf9; <m>m</m> et <m>n</m> ne sont pas premiers
+      entre eux, ou bien le cas de plusieurs moduli <m>m_1, m_2, \ldots, m_k</m>.
+      La commande <em>Sage</em>  pour trouver <m>x_0</m> &#xe0; partir de <m>a, b, m, n</m> est
+      <c>crt(a,b,m,n)</c>:
+    </p>
+
+    <sage>
+      <input>
+        a=2; b=3; m=5; n=7; lambda0=(b-a)/m % n; a+lambda0*m
+      </input>
+      <output>
+        17
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        crt(2,3,5,7)
+      </input>
+      <output>
+        17
+      </output>
+    </sage>
+
+    <p>
+      Reprenons l'exemple du calcul de <m>H_n</m>.
+      Calculons d'abord <m>H_n \bmod m_i</m> pour <m>i=1,2,\ldots,k</m>,
+      ensuite nous d&#xe9;duisons <m>H_n \bmod (m_1 \cdots m_k)</m> par restes chinois,
+      enfin nous retrouvons <m>H_n</m> par reconstruction rationnelle:
+    </p>
+
+    <sage>
+      <input>
+        
+      </input>
+      <output>
+        def harmonic3(n):
+           q = lcm(range(1,n+1))
+           pmax = RR(q*(log(n)+1))
+           B = ZZ(2*pmax^2)
+           m = 1; a = 0; p = 2^63
+           while m&lt;B:
+              p = next_prime(p)
+              b = harmonic_mod(n,p)
+              a = crt(a,b,m,p)
+              m = m*p
+           return rational_reconstruction(a,m)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        harmonic(100) == harmonic3(100)
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <p>
+      La fonction <c>crt</c> de <em>Sage</em>  fonctionne aussi quand les moduli <m>m</m> et <m>n</m>
+      ne sont pas premiers entre eux. Soit <m>g = \gcd(m,n)</m>, il y a une solution
+      si et seulement si <m>a \bmod g \equiv b \bmod g</m>:
+    </p>
+
+    <sage>
+      <input>
+        crt(15,1,30,4)
+      </input>
+      <output>
+        45
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        crt(15,2,30,4)
+      </input>
+      <output>
+        ...
+        ValueError: No solution to crt problem since gcd(30,4) does not
+        divide 15-2
+      </output>
+    </sage>
+
+    <p>
+      Une application plus complexe des restes chinois est pr&#xe9;sent&#xe9;e dans
+      l'<xref ref="exo_beauzamy">exercice</xref>.
+    </p>
+  </subsection>
+</section>
+

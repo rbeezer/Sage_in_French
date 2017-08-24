@@ -1,0 +1,16 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="graphique">
+  <title>Graphiques</title>
+  <introduction>
+    <p>
+      La visualisation de fonctions d'une ou deux variables, d'une s&#xe9;rie de donn&#xe9;es,
+      facilite la perception de ph&#xe9;nom&#xe8;nes math&#xe9;matiques ou physiques et permet de
+      conjecturer des r&#xe9;sultats efficacement. Dans ce chapitre, on illustre sur des
+      exemples les capacit&#xe9;s graphiques de <em>Sage</em> .
+    </p>
+  </introduction>
+  <xi:include  href="section3-1.ptx" />
+  <xi:include  href="section3-2.ptx" />
+</chapter>
+

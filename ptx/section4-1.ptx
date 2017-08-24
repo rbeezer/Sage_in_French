@@ -1,0 +1,391 @@
+
+
+<section>
+  <title>Calculs inexacts en alg&#xe8;bre lin&#xe9;aire</title>
+  <introduction>
+    <p>
+      On s'int&#xe9;resse aux probl&#xe8;mes classiques de l'alg&#xe8;bre
+      lin&#xe9;aire (r&#xe9;solution de syst&#xe8;mes, calcul de valeurs et de vecteurs
+      propres, etc.),
+      r&#xe9;solus au moyen de
+      calculs inexacts. La premi&#xe8;re source d'inexactitude vient de
+      ce qu'on va utiliser une approximation flottante des nombres (r&#xe9;els
+      ou complexes), et donc non seulement travailler sur des objets connus
+      approximativement, mais aussi entacher tous les calculs
+      d'erreurs.
+      Les diff&#xe9;rents types de nombres flottants utilisables dans <em>Sage</em>  sont
+      d&#xe9;crits au <xref ref="nonlinear">chapitre</xref>.
+    </p>
+
+    <p>
+      Soit par exemple &#xe0; r&#xe9;soudre le syst&#xe8;me <m>Ax= b</m> o&#xf9; <m>A</m> est une matrice &#xe0;
+      coefficients r&#xe9;els. Quelle erreur <m>\delta x</m> commet-on si on perturbe
+      <m>A</m> de <m>\delta A</m> ou <m>b</m> de <m>\delta b</m>? On apporte quelques &#xe9;l&#xe9;ments
+      de r&#xe9;ponse dans ce chapitre.
+    </p>
+  </introduction>
+
+  <subsection>
+    <title>Normes de matrices et conditionnement</title>
+    <introduction>
+      <p>
+        Soit <m>A \in
+        \mathbb{R}^{n\times n}</m> (ou <m>\mathbb{C}^{n\times n}</m>).
+        On &#xe9;quipe
+        <m>\mathbb{R}^n</m> (ou <m>\mathbb{C}^{n}</m>)
+        d'une
+        norme <m>\mathopen\<c> x \mathclose\</c></m>, par exemple
+        la norme <m>\mathopen\<c> x\mathclose\</c>_{\infty}=\max<c>x_i</c></m> ou
+        <m>\mathopen\<c> x\mathclose\</c>_1= \sum_{i = 1}^n 
+        <c>x_i</c></m>, ou encore la norme euclidienne <m>\mathopen\|
+        x\mathclose\|_2=(\sum_{i = 1}^n x_i^2)^{1/2}</m>;
+        alors la quantit&#xe9;
+        <me>
+          \mathopen\<c> A\mathclose\</c>=\max_{\mathopen\<c> x\mathclose\</c>=1}
+          \frac{\mathopen\<c> A\ x\mathclose\</c>}{\mathopen\<c> x\mathclose\</c>}
+        </me>
+        d&#xe9;finit une norme sur
+        l'ensemble des matrices <m>n\times n</m>. On dit qu'il s'agit d'une
+        norme <em>subordonn&#xe9;e</em> &#xe0; la norme d&#xe9;finie sur <m>\mathbb{R}^n</m> (ou
+        <m>\mathbb{C}^{n}</m>). Le <em>conditionnement</em> de<nbsp /><m>A</m>
+        est d&#xe9;fini
+        par <m>\kappa(A)=\mathopen\<c> A^{-1}\mathclose\</c> \cdot\mathopen\<c> A\mathclose\</c></m>. Le r&#xe9;sultat fondamental est que, si
+        on fait subir &#xe0; <m>A</m> une (petite) perturbation<nbsp /><m>\delta A</m> et &#xe0; <m>b</m> une
+        perturbation<nbsp /><m>\delta b</m>, alors la solution <m>x</m> du syst&#xe8;me
+        lin&#xe9;aire <m>Ax = b</m> est perturb&#xe9;e de <m>\mathopen\<c> \delta x\mathclose\</c></m> qui v&#xe9;rifie:
+        <me>
+          \frac{\mathopen\<c> \delta x\mathclose\</c>}{\mathopen\|
+            x\mathclose\|}\leq \frac{\kappa(A)}{1-\kappa(A)\mathopen\| \delta
+            A\mathclose\<c>/\mathopen\</c> A\mathclose\|} 
+          \biggl( \frac{ \mathopen\<c> \delta A\mathclose\</c>}{\mathopen\|
+            A\mathclose\<c>}+\frac{ \mathopen\</c> \delta b\mathclose\<c>}{\mathopen\</c>
+            b\mathclose\|}\biggr).
+        </me>
+      </p>
+
+      <p>
+        Les normes
+        <m>\mathopen\<c> \cdot\mathclose\</c>_{\infty}</m>
+        et <m>\mathopen\<c> \cdot\mathclose\</c>_1</m> sont faciles &#xe0; calculer:
+        <m>\mathopen\<c> A\mathclose\</c>_{\infty}= \max_{1\leq i\leq n} (\sum_{j = 1}^n<c>A_{ij}</c>)</m>
+        et <m>\mathopen\<c> A\mathclose\</c>_{1}= \max_{1\leq j\leq n} (\sum_{i = 1}^n<c>A_{ij}</c>).</m>
+        En
+        revanche la norme <m>\mathopen\<c> \cdot\mathclose\</c>_2</m> ne s'obtient pas
+        simplement car
+        <m>\mathopen\<c> A\mathclose\</c>_2= \sqrt{\rho(\trans{A}A)}</m>, le rayon
+        spectral <m>\rho</m> d'une matrice <m>A</m> &#xe9;tant le maximum des modules de ses
+        valeurs propres.
+      </p>
+
+      <p>
+        La norme de Frobenius
+        est d&#xe9;finie par
+        <me>
+          \mathopen\<c> A\mathclose\</c>_F= \biggl(\sum_{i = 1}^n\sum_{j = 1}^n <c>a_{ij}</c>^2\biggr)^{1/2}.
+        </me>
+      </p>
+
+      <p>
+        &#xc0; la diff&#xe9;rence des normes pr&#xe9;c&#xe9;dentes, ce n'est pas une norme subordonn&#xe9;e.
+        On v&#xe9;rifie ais&#xe9;ment que <m>\mathopen\|
+          A\mathclose\|_F^2=\mathrm{trace}(\trans{A}A)</m>.
+      </p>
+
+      <p>
+        \paragraph{Le calcul des normes de matrice dans <c>Sage</c>.}
+        Les matrices
+        poss&#xe8;dent une m&#xe9;thode <c>norm(p)</c>. Selon la valeur de l'argument
+        <m>p</m>
+        on obtiendra:
+        <md>
+          <mrow>p\amp =1 : \amp \amp  \mathopen\<c> A\mathclose\</c>_1,\amp \amp \amp 
+          p\amp =2 : \amp \amp  \mathopen\<c> A\mathclose\</c>_2,</mrow>
+          <mrow>p\amp =\mathtt{Infinity} : \amp \amp  \mathopen\<c>A\mathclose\</c>_{\infty}, \amp \amp \amp 
+          p\amp =\mbox{\Verb<c>'frob'</c>}  : \amp \amp  \mathopen\<c>A\mathclose\</c>_F.</mrow>
+        </md>
+      </p>
+
+      <p>
+        Cette m&#xe9;thode n'est applicable que si les coefficients de la matrice
+        peuvent &#xea;tre convertis en nombres complexes
+        <c>CDF</c>.
+        Noter qu'on
+        &#xe9;crit <c>A.norm(Infinity)</c> mais
+        <c>A.norm('frob')</c>.
+        Avec <c>A.norm()</c> on
+        obtiendra la norme <m>\mathopen\<c> A\mathclose\</c>_2</m> (valeur par d&#xe9;faut).
+      </p>
+    </introduction>
+    <subsubsection>
+    <title>Erreurs et conditionnement: une illustration, avec des calculs
+      exacts, puis approch&#xe9;s</title>
+    <p>
+      Utilisons la
+      possibilit&#xe9; de <em>Sage</em>  de
+      faire des calculs exacts
+      quand les coefficients sont
+      rationnels. On consid&#xe8;re la matrice de Hilbert
+      <me>
+        A_{ij}=
+        1/(i+j-1), \ i,j = 1, \ldots ,n.
+      </me>
+    </p>
+
+    <p>
+      Le programme suivant calcule exactement le
+      conditionnement des matrices
+      de Hilbert, en norme <m>\mathopen\<c> \cdot\mathclose\</c>_{\infty}</m>:
+    </p>
+
+    <sage>
+      <input>
+        def cond_hilbert(n):
+        A = matrix(QQ, [[1/(i+j+1) for j in range(n)]
+        for i in range(n)])
+        return A.norm(Infinity) * (A^-1).norm(Infinity)
+      </input>
+    </sage>
+
+    <p>
+      Voici les r&#xe9;sultats, en fonction de <c>n</c>:
+    </p>
+    <tabular>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+      <row>
+        <cell><c>n</c></cell>
+        <cell>conditionnement</cell>
+      </row>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+      <row>
+        <cell>2</cell>
+        <cell>27</cell>
+      </row>
+      <row>
+        <cell>4</cell>
+        <cell>28375</cell>
+      </row>
+      <row>
+        <cell>8</cell>
+        <cell>33872791095</cell>
+      </row>
+      <row>
+        <cell>16</cell>
+        <cell>5.06277478751e+22</cell>
+      </row>
+      <row>
+        <cell>32</cell>
+        <cell>1.35710782493e+47</cell>
+      </row>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+    </tabular>
+    <p>
+      On remarque l'accroissement extr&#xea;mement rapide du conditionnement en
+      fonction de <m>n</m>.
+      On peut montrer que <m>\kappa(A) \simeq
+      e^{7n/2}</m>, ce qui &#xe9;videmment, est une quantit&#xe9; qui cro&#xee;t
+      tr&#xe8;s vite.
+      Toujours en calculant exactement dans l'ensemble des rationnels, on
+      peut perturber la
+      matrice <m>A</m>, et comparer la solution d'un syst&#xe8;me lin&#xe9;aire original &#xe0;
+      celle du m&#xea;me syst&#xe8;me perturb&#xe9;:
+    </p>
+
+    <sage>
+      <input>
+        x = vector(QQ,[1 for i in range(0,n)]) 
+        y = A*x
+        for k in range(0,n):
+        A[k,k]=(1/(2*k+1))*(1+1/(10^5)) #perturber la matrice
+        sol = A\y
+        diff = max(float(sol[i]-x[i]) for i in range(0,n))
+      </input>
+    </sage>
+
+    <p>
+      On obtient:
+    </p>
+    <tabular>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+      <row>
+        <cell><c>n</c></cell>
+        <cell>erreur (<c>diff</c>)</cell>
+      </row>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+      <row>
+        <cell>2</cell>
+        <cell>1.9999200e-05</cell>
+      </row>
+      <row>
+        <cell>4</cell>
+        <cell>0.00597609561</cell>
+      </row>
+      <row>
+        <cell>8</cell>
+        <cell>3.47053530779</cell>
+      </row>
+      <row>
+        <cell>16</cell>
+        <cell>63.2816091951</cell>
+      </row>
+      <row>
+        <cell>32</cell>
+        <cell>20034.3477421</cell>
+      </row>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+    </tabular>
+    <p>
+      et donc les calculs sont rapidement entach&#xe9;s d'une erreur
+      inacceptable.
+    </p>
+
+    <p>
+      Calculons maintenant avec des matrices et des vecteurs &#xe0;
+      coefficients flottants. Cette fois, on ne perturbe pas explicitement
+      la matrice <m>A</m>, mais l'arithm&#xe9;tique flottante va introduire de petites
+      perturbations.
+      On refait le calcul pr&#xe9;c&#xe9;dent: le second membre &#xe9;tant calcul&#xe9; par
+      <m>y = Ax</m>, on cherche &#xe0; retrouver <m>x</m> en r&#xe9;solvant le syst&#xe8;me
+      lin&#xe9;aire <m>As = y</m>:
+    </p>
+
+    <sage>
+      <input>
+        n = 8
+        A = matrix(RR, [[1/(i+j+1) for j in range(n)]
+        for i in range(n)])
+        x = vector(RR,[1 for i in range(0,n)])
+        y = A*x
+      </input>
+      <output>
+        #comparer la solution exacte x a celle du systeme perturbe s:
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        s = A.solve_right(y)
+        diff = [float(s[i]-x[i]) for i in range(0,n)]
+      </input>
+    </sage>
+
+    <p>
+      On obtient:
+    </p>
+    <tabular>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+      <row>
+        <cell><c>n</c></cell>
+        <cell>erreur (<c>diff</c>)</cell>
+      </row>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+      <row>
+        <cell>2</cell>
+        <cell>2.22044604925e-16</cell>
+      </row>
+      <row>
+        <cell>4</cell>
+        <cell>3.05977465587e-13</cell>
+      </row>
+      <row>
+        <cell>8</cell>
+        <cell>6.82028985288e-07</cell>
+      </row>
+      <row>
+        <cell>16</cell>
+        <cell>8.34139063331</cell>
+      </row>
+      <row>
+        <cell>32</cell>
+        <cell>257.663242705</cell>
+      </row>
+      <row bottom="minor">
+        <cell></cell>
+        <cell></cell>
+      </row>
+    </tabular>
+    <p>
+      On voit que pour <m>n = 16</m> par exemple, l'erreur sur la
+      solution (en norme
+      infinie) est telle qu'on ne calcule plus rien du tout
+      de pertinent (avec le choix particulier de <m>x</m> que nous avons fait
+      (<m>x = 1</m>), les erreurs absolues et relatives en norme infinie co&#xef;ncident).
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>Remarques</title>
+    <p>
+      Pourquoi donc alors calculer avec des nombres flottants? La
+      question des performances n'est pas forc&#xe9;ment pertinente depuis qu'il
+      existe des biblioth&#xe8;ques impl&#xe9;mentant efficacement des algorithmes d'alg&#xe8;bre
+      lin&#xe9;aire en arithm&#xe9;tique rationnelle (<em>Linbox</em>,
+      utilis&#xe9;e par <em>Sage</em> ), algorithmes qui, sans &#xea;tre aussi performants que
+      leur &#xe9;quivalent flottant, pourraient avantageusement &#xea;tre utilis&#xe9;s,
+      pour certains probl&#xe8;mes comme
+      la r&#xe9;solution de syst&#xe8;mes lin&#xe9;aires de taille mod&#xe9;r&#xe9;e.
+      Mais c'est ici
+      qu'intervient une deuxi&#xe8;me source d'incertitudes: dans les
+      applications r&#xe9;elles, les
+      coefficients ne peuvent &#xea;tre connus qu'approximativement: par
+      exemple la r&#xe9;solution d'un syst&#xe8;me d'&#xe9;quations non lin&#xe9;aires par la
+      m&#xe9;thode de Newton fait
+      naturellement appara&#xee;tre des termes calcul&#xe9;s de mani&#xe8;re inexacte.
+    </p>
+
+    <p>
+      Les syst&#xe8;mes lin&#xe9;aires mal conditionn&#xe9;s (sans &#xea;tre aussi
+      caricaturaux que la matrice de Hilbert) sont plut&#xf4;t la r&#xe8;gle que
+      l'exception:
+      il est fr&#xe9;quent (en physique, en chimie, en
+      biologie, etc.) de rencontrer des syst&#xe8;mes d'&#xe9;quations diff&#xe9;rentielles
+      ordinaires de la forme <m>du/dt = F(u)</m> o&#xf9; la
+      matrice jacobienne <m>DF(u)</m>, matrice des d&#xe9;riv&#xe9;es partielles
+      <m>\partial F_i(u)/\partial u_j</m>,
+      d&#xe9;finit un
+      syst&#xe8;me lin&#xe9;aire mal conditionn&#xe9;: les valeurs propres sont r&#xe9;parties
+      dans un ensemble
+      tr&#xe8;s vaste, ce qui entra&#xee;ne le mauvais conditionnement de
+      <m>DF(u)</m>; cette propri&#xe9;t&#xe9; traduit le fait que le syst&#xe8;me mod&#xe9;lise des
+      ph&#xe9;nom&#xe8;nes m&#xe9;langeant plusieurs &#xe9;chelles de temps. Malheureusement,
+      en pratique, il faut r&#xe9;soudre des syst&#xe8;mes
+      lin&#xe9;aires dont la matrice est <m>DF(u)</m>.
+    </p>
+
+    <p>
+      Tous les calculs (d&#xe9;composition de matrices, calcul d'&#xe9;l&#xe9;ments
+      propres, convergence de m&#xe9;thodes it&#xe9;ratives) sont affect&#xe9;s par le
+      conditionnement. Il convient donc d'avoir cette notion pr&#xe9;sente &#xe0;
+      l'esprit d&#xe8;s que l'on calcule en utilisant une repr&#xe9;sentation flottante des
+      nombres r&#xe9;els.
+    </p>
+
+    </subsubsection>
+  </subsection>
+</section>
+

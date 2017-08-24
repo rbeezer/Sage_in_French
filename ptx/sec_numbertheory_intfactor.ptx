@@ -1,0 +1,136 @@
+
+
+<section xml:id="sec_numbertheory_intfactor">
+  <title>Factorisation et logarithme discret</title>
+  <p>
+    On dit qu'un entier <m>a</m> est un carr&#xe9; <mdash /> ou r&#xe9;sidu quadratique <mdash />
+    modulo <m>n</m> s'il existe <m>x</m>, <m>0 \leq x \lt  n</m>, tel que <m>a \equiv x^2 \bmod n</m>.
+    Sinon, on dit que <m>a</m> est un non-r&#xe9;sidu quadratique modulo <m>n</m>.
+    Lorsque <m>n=p</m> est premier, ce test peut se d&#xe9;cider efficacement gr&#xe2;ce au
+    calcul du symbole de
+    Jacobi de <m>a</m> et <m>p</m>, not&#xe9; <m>(a|p)</m>, qui peut prendre les valeurs
+    <m>\{ -1,0, 1 \}</m>,
+    o&#xf9; <m>(a|p)=0</m> signifie que <m>a</m> est multiple de <m>p</m>,
+    et <m>(a|p)=1</m>                                        (respectivement <m>(a|p)=-1</m>)
+    signifie que <m>a</m> est (respectivement n'est pas) un carr&#xe9; modulo <m>p</m>.
+    La complexit&#xe9; du calcul du symbole de Jacobi <m>(a|n)</m> est essentiellement
+    la m&#xea;me que celle du calcul du pgcd de <m>a</m> et <m>n</m>, &#xe0; savoir
+    <m>O(M(\ell) \log\ell)</m> o&#xf9; <m>\ell</m> est la taille de <m>n</m>. Cependant toutes les
+    implantations du symbole de Jacobi <mdash /> voire du pgcd <mdash /> n'ont pas cette
+    complexit&#xe9; (<c>a.jacobi(n)</c> calcule <m>(a|n)</m>):
+  </p>
+
+  <sage>
+    <input>
+      p=(2^42737+1)//3; a=3^42737
+      %timeit a.gcd(p)
+    </input>
+    <output>
+      125 loops, best of 3: 4.3 ms per loop
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit a.jacobi(p)
+    </input>
+    <output>
+      25 loops, best of 3: 26.1 ms per loop
+    </output>
+  </sage>
+
+  <p>
+    Lorsque <m>n</m> est compos&#xe9;, trouver les solutions de
+    <m>x^2 \equiv a \bmod n</m> est aussi difficile que factoriser <m>n</m>.
+    Toutefois le symbole de Jacobi, qui est relativement facile &#xe0; calculer,
+    donne une information partielle.
+    En effet, si <m>(a|n)=-1</m>, il n'y a pas de solution, car une solution v&#xe9;rifie
+    n&#xe9;cessairement <m>(a|p)=1</m> pour tous les facteurs premiers <m>p</m> de <m>n</m>, donc
+    <m>(a|n)=1</m>.
+  </p>
+
+  <p>
+    \paragraph{Le logarithme discret.}
+  </p>
+
+  <p>
+    Soit <m>n</m> un entier positif, <m>g</m> un <em>g&#xe9;n&#xe9;rateur</em> du groupe
+    multiplicatif modulo <m>n</m> et <m>a</m> premier avec <m>n</m>, <m>0 \lt  a \lt  n</m>.
+    Par d&#xe9;finition du fait que <m>g</m> est un g&#xe9;n&#xe9;rateur, il existe un entier
+    <m>x</m> tel que <m>g^x = a \bmod n</m>.
+    Le probl&#xe8;me du <em>logarithme discret</em> consiste &#xe0; trouver un tel entier
+    <m>x</m>.
+    La m&#xe9;thode <c>log</c> permet de r&#xe9;soudre ce probl&#xe8;me:
+  </p>
+
+  <sage>
+    <input>
+      p=10^10+19; a=mod(17,p); a.log(2)
+    </input>
+    <output>
+      6954104378
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      mod(2,p)^6954104378
+    </input>
+    <output>
+      17
+    </output>
+  </sage>
+
+  <p>
+    Les meilleurs algorithmes connus pour calculer un logarithme discret sont de
+    m&#xea;me ordre de complexit&#xe9; <mdash /> en fonction de la taille de <m>n</m> <mdash /> que ceux
+    pour factoriser <m>n</m>.
+    Cependant l'implantation actuelle en <em>Sage</em>  du logarithme discret est peu
+    efficace:
+  </p>
+
+  <sage>
+    <input>
+      p=10^20+39; a=mod(17,p)
+      time r=a.log(3)
+    </input>
+    <output>
+      CPU times: user 89.63 s, sys: 1.70 s, total: 91.33 s
+    </output>
+  </sage>
+
+  <p>
+    \paragraph{Suites aliquotes.}
+    La <em>suite aliquote</em> associ&#xe9;e &#xe0; un entier positif <m>n</m> est la suite
+    <m>(s_k)</m> d&#xe9;finie par r&#xe9;currence: <m>s_0 = n</m> et <m>s_{k+1} = \sigma(s_k) - 
+    s_k</m>, o&#xf9; <m>\sigma(s_k)</m> est la somme des diviseurs de <m>s_k</m>, i.e.,
+    <m>s_{k+1}</m> est la suite des diviseurs <em>propres</em> de <m>s_k</m>,
+    c'est-&#xe0;-dire sans <m>s_k</m> lui-m&#xea;me.
+    On arr&#xea;te l'it&#xe9;ration lorsque <m>s_k=1</m> <mdash /> alors <m>s_{k-1}</m> est premier <mdash />
+    ou lorsque la suite <m>(s_k)</m> d&#xe9;crit un
+    cycle. Par exemple en partant de <m>n=30</m> on obtient:
+    <me>
+      30, 42, 54, 66, 78, 90, 144, 259, 45, 33, 15, 9, 4, 3, 1.
+    </me>
+  </p>
+
+  <p>
+    Lorsque le cycle est de longueur un, on dit que l'entier correspondant est
+    <em>parfait</em>, par exemple <m>6 = 1 + 2 + 3</m> et <m>28 = 1 + 2 + 4 + 7 + 14</m> sont
+    parfaits.
+    Lorsque le cycle est de longueur deux, on dit que les deux entiers en
+    question sont <em>amicaux</em>, comme <m>220</m> et <m>284</m>.
+    Lorsque le cycle est de longueur trois ou plus, les entiers formant ce cycle
+    sont dits <em>sociables</em>.
+  </p>
+
+  <paragraphs xml:id="exo_aliq">
+    <title>Exercice</title>
+    <p>
+      Calculer la suite aliquote commen&#xe7;ant par <m>840</m>, afficher les <m>5</m> premiers
+      et <m>5</m> derniers &#xe9;l&#xe9;ments, et tracer le graphe de <m>\log_{10} s_k</m> en
+      fonction de <m>k</m>. (On pourra utiliser la fonction <c>sigma</c>.)
+    </p>
+  </paragraphs>
+</section>
+

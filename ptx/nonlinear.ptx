@@ -1,0 +1,17 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="nonlinear">
+  <title>&#xc9;quations non lin&#xe9;aires</title>
+  <introduction>
+    <blockquote>
+    Ce chapitre explique comment <em>r&#xe9;soudre</em> une &#xe9;quation non
+      lin&#xe9;aire avec \Sage. Dans un premier temps, on d&#xe9;crit le
+      fonctionnement de quelques m&#xe9;thodes classiques, qu'elles soient
+      exactes ou approch&#xe9;es. Ensuite on indique les algorithmes
+      impl&#xe9;ment&#xe9;s dans \Sage.
+    </blockquote>
+  </introduction>
+  <xi:include  href="sec_equat-algebr.ptx" />
+  <xi:include  href="sec_resolution-numerique.ptx" />
+</chapter>
+

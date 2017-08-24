@@ -1,0 +1,131 @@
+
+
+<section xml:id="sec_equat-non-line">
+  <title>&#xc9;quations non lin&#xe9;aires</title>
+  <p>
+    \begin{correction}{exo:intervalgen} On a vu que pour stopper l'ex&#xe9;cution
+    de la fonction il faut utiliser le mot cl&#xe9; <c>return</c>. Il suffit
+    donc de tester si <c>f(u)</c> est nul ou pas. Pour &#xe9;viter d'&#xe9;valuer
+    la fonction <c>f</c> en <c>u</c> &#xe0; plusieurs reprises, on stocke
+    sa valeur dans une variable. Apr&#xe8;s modification on obtient donc la
+    fonction suivante.
+  </p>
+
+  <pre>
+    def intervalgen(f, phi, s, t):
+        msg = 'Wrong arguments: f({0}) * f({1}) >= 0)'.format(s, t)
+        assert (f(s) * f(t) &lt; 0), msg
+        yield s
+        yield t
+        while 1:
+            u = phi(s, t)
+            yield u
+            fu = f(u)
+            if fu == 0:
+                return
+            if fu * f(s) &lt; 0:
+                t = u
+            else:
+                s = u
+  </pre>
+
+  <p>
+    Testons cette fonction avec une &#xe9;quation dont on conna&#xee;t une solution,
+    par exemple construite &#xe0; partir d'une fonction lin&#xe9;aire.
+  </p>
+
+  <sage>
+    <input>
+      f(x) = 4 * x - 1
+      a, b = 0, 1
+      phi(s, t) = (s + t) / 2
+      bisection = intervalgen(f, phi, a, b)
+      for x in bisection:
+      print(x)
+    </input>
+    <output>
+      0
+      1
+      1/2
+      1/4
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:random} La fonction <c>phi</c> pass&#xe9;e en
+    param&#xe8;tre de <c>intervalgen</c> d&#xe9;termine le point o&#xf9; diviser un
+    intervalle. Il suffit donc de donner &#xe0; cette fonction la d&#xe9;finition
+    ad&#xe9;quate.
+  </p>
+
+  <sage>
+    <input>
+      f(x) = 4 * sin(x) - exp(x) / 2 + 1
+      a, b = RR(-pi), RR(pi)
+      phi(s, t) = RR.random_element(s, t)
+      random = intervalgen(f, phi, a, b)
+      try:
+      iterate(random)
+      except RuntimeError:
+      print('Sequence failed to converge')
+    </input>
+    <output>
+      Sequence failed to converge
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      random = intervalgen(f, phi, a, b)
+      try:
+      iterate(random, maxiter=10000)
+      except RuntimeError:
+      print('Sequence failed to converge')
+    </input>
+    <output>
+      'After 30 iterations: 2.15850191762026'
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:brent}
+  </p>
+
+  <pre>
+    from collections import deque
+    basering = PolynomialRing(SR, 'x')
+    def quadraticgen(f, r, s):
+        t = (r + s) / 2
+        yield t
+        points = deque([(r, f(r)), (s, f(s)), (t, f(t))], maxlen=3)
+        while 1:
+            temp = basering.lagrange_polynomial(points)
+            polynomial = 0
+            for c in temp.coefficients():
+                polynomial = x*polynomial + c
+            roots = polynomial.roots(x)
+            approx = None
+            for root in roots:
+                if root.is_real() and
+                    (root - points[2][0]) * (root - points[1][0]) &lt; 0:
+                    approx = root
+            if approx == None:
+                approx = (points[2][0] + points[2][0]) / 2
+            points.append((approx, f(approx)))
+            yield points[2][0]
+    a, b = pi/2, pi
+  </pre>
+
+  <p>
+    \end{correction}
+  </p>
+</section>
+

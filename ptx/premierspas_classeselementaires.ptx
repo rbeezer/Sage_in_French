@@ -1,0 +1,372 @@
+
+
+<section xml:id="premierspas_classeselementaires">
+  <title>Les classes &#xe9;l&#xe9;mentaires</title>
+  <p>
+    Les <em>classes &#xe9;l&#xe9;mentaires</em> sont form&#xe9;es d'expressions
+    sans variable, c'est-&#xe0;-dire de constantes : entiers, rationnels, nombres
+    flottants, bool&#xe9;ens, r&#xe9;sidus modulo <m>p</m> et nombres <m>p</m>-adiques.
+  </p>
+  <ul>
+  <li>
+    <title>invalidlabel</title>
+    <p>
+      <em>Entiers</em>
+
+      Dans un syst&#xe8;me de calcul formel les op&#xe9;rations sur des nombres entiers
+      ou rationnels sont exactes.
+
+      <paragraphs>
+        <title>Exemple</title>
+        <p>
+          Un calcul typique est celui de la factorielle de 100.
+        </p>
+
+        <sage>
+          <input>
+            factorial(100)
+          </input>
+        </sage>
+
+        <p>
+          <m>93326215443944152681699238856266700490715968264381621\backslash</m>
+        </p>
+
+        <p>
+          <m>46859296389521759999322991560894146397615651828625369\backslash</m>
+        </p>
+
+        <p>
+          <m>7920827223758251185210916864000000000000000000000000</m>
+        </p>
+      </paragraphs>
+      De nombreuses fonctions s'appliquent aux entiers.
+      Parmi celles qui sont sp&#xe9;cifiques aux entiers, citons :
+    </p>
+    <ul>
+      <li>
+        <p>
+          le reste modulo <m>k</m> :  <c>n<percent />k</c>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          la factorielle :  <m>n!=</m> <c>factorial(n)</c>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          les coefficients binomiaux :  <m>\binom{n}{k}=</m> <c>binomial(n,k)</c>
+        </p>
+      </li>
+    </ul>
+
+    <paragraphs xml:id="fermat">
+      <title>Exemple</title>
+      <p>
+        Fermat avait conjectur&#xe9; que tous les nombres de la forme <m>2^{2^n}+1</m>
+        &#xe9;taient premiers. Voici le premier exemple qui invalide sa conjecture :
+      </p>
+
+      <sage>
+        <input>
+          factor(2^(2^5)+1)
+        </input>
+        <output>
+          641 * 6700417
+        </output>
+      </sage>
+    </paragraphs>
+    Du point de vue de la simplification, tous les entiers sont repr&#xe9;sent&#xe9;s en
+    base dix (ou deux selon les syst&#xe8;mes), ce qui constitue une forme normale.
+    L'&#xe9;galit&#xe9; d'entiers est donc facile &#xe0; tester.
+
+    Toute op&#xe9;ration sur des entiers est imm&#xe9;diatement effectu&#xe9;e ; ainsi
+    <m>2^2</m> n'est pas repr&#xe9;sentable en <em>Sage</em> , il est imm&#xe9;diatement transform&#xe9; en <m>4</m>.
+    Cela signifie aussi qu'un nombre factoris&#xe9; ne peut pas &#xea;tre repr&#xe9;sent&#xe9; comme
+    un entier, puisqu'alors il serait imm&#xe9;diatement d&#xe9;velopp&#xe9;. Dans l'<xref ref="fermat">exemple</xref>, le r&#xe9;sultat est en r&#xe9;alit&#xe9; un produit de fonctions.
+
+
+    Cette biblioth&#xe8;que <c>Integer</c> de calcul sur les entiers est propre &#xe0; <em>Sage</em> .
+    Par d&#xe9;faut <em>Python</em>  utilise des entiers de type <c>int</c>. En g&#xe9;n&#xe9;ral
+    la conversion de l'un vers l'autre est automatique, mais il peut &#xea;tre
+    n&#xe9;cessaire d'indiquer explicitement cette conversion par l'une ou l'autre
+    de ces commandes :
+
+    <sage>
+      <input>
+        int(5) ; Integer(5)
+      </input>
+    </sage>
+
+  </li>
+
+  <li>
+    <title>invalidlabel</title>
+    <p>
+      <em>Rationnels</em>
+
+           La propri&#xe9;t&#xe9; de forme normale s'&#xe9;tend aux nombres rationnels. Non seulement
+      les additions, multiplications et quotients sont imm&#xe9;diatement ex&#xe9;cut&#xe9;s, mais en
+      plus les fractions rationnelles sont toutes r&#xe9;duites.
+
+      <paragraphs>
+        <title>Exemple</title>
+        <p>
+          Dans cet exemple, les factorielles sont d'abord &#xe9;valu&#xe9;es, puis
+          le rationnel obtenu est simplifi&#xe9; :
+        </p>
+
+        <sage>
+          <input>
+            factorial(99) / factorial(100) - 1 / 50
+          </input>
+          <output>
+            -1/100
+          </output>
+        </sage>
+      </paragraphs>
+    </p>
+  </li>
+
+  <li>
+    <title>invalidlabel</title>
+    <p>
+      <em>Flottants</em>
+
+           Les r&#xe8;gles de simplification automatique sont moins syst&#xe9;matiques pour
+      les nombres approch&#xe9;s num&#xe9;riquement, appel&#xe9;s aussi nombres en virgule flottante,
+      ou plus simplement flottants. Lorsqu'ils interviennent dans une somme,
+      un produit ou un quotient faisant intervenir par ailleurs des rationnels, ils sont
+      contagieux, c'est-&#xe0;-dire que toute l'expression devient un nombre flottant.
+
+      <paragraphs>
+        <title>Exemple</title>
+        <sage>
+          <input>
+            72/53-5/3*2.7
+          </input>
+          <output>
+            -3.14150943396227
+          </output>
+        </sage>
+      </paragraphs>
+      De m&#xea;me, lorsque l'argument d'une fonction est un flottant, le r&#xe9;sultat est
+      alors un flottant :
+
+      <paragraphs>
+        <title>Exemple</title>
+        <sage>
+          <input>
+            cos(1); cos(1.)
+          </input>
+          <output>
+            cos(1)
+            0.540302305868140
+          </output>
+        </sage>
+      </paragraphs>
+      Pour les autres expressions, la fonction de base pour ces calculs est
+      <c>numerical_approx</c>  (ou son alias <c>n</c>) qui &#xe9;value num&#xe9;riquement une
+      expression (tous les nombres sont transform&#xe9;s en flottants). Un argument
+      optionnel permet de pr&#xe9;ciser le nombre de chiffres significatifs utilis&#xe9;s lors
+      du calcul.
+
+      <paragraphs>
+        <title>Exemple</title>
+        <p>
+          Voici <m>\pi</m> avec 50 chiffres significatifs.
+        </p>
+
+        <sage>
+          <input>
+            pi.n(digits=50)  # N(pi,digits=10^6) aussi possible
+          </input>
+          <output>
+            3.1415926535897932384626433832795028841971693993751
+          </output>
+        </sage>
+      </paragraphs>
+      Dans <em>Sage</em> , les flottants sont li&#xe9;s &#xe0; leur pr&#xe9;cision : ainsi la valeur pr&#xe9;c&#xe9;dente
+      est diff&#xe9;rente syntaxiquement de la valeur de <m>\pi</m> calcul&#xe9;e avec dix chiffres
+      significatifs. Compte tenu de cette restriction, les flottants renvoy&#xe9;s par
+      <c>numerical_approx</c> sont sous forme normale.
+    </p>
+  </li>
+
+  <li>
+    <title>invalidlabel</title>
+    <p>
+      <em>Nombres complexes</em>
+
+      Les nombres complexes existent dans tous les syst&#xe8;mes de calcul formel.
+      En <em>Sage</em> , on note <c>I</c> ou <c>i</c> le nombre imaginaire <m>i</m>.
+
+
+      Les commandes principales sont <c>Re</c>, <c>Im</c>, <c>abs</c> donnant
+      respectivement la partie r&#xe9;elle, la partie imaginaire, le module.
+
+      <sage>
+        <input>
+          z = 3 * exp(I*pi/4)
+          z.real(), z.imag(), z.abs().simplify_exp()
+        </input>
+      </sage>
+
+      <me>
+        \frac32\sqrt2, \frac32\sqrt2, 3
+      </me>
+      Pour calculer un argument du complexe <m>z=x+iy</m>, on peut utiliser la fonction
+      \og <c>arctan2(y,x)=arctan2(z.im(), z.real())</c> .
+      Certes, il existe une fonction \og <c>arg</c> ; cependant, elle ne
+      s'applique qu'aux objets du type <c>CC</c> :
+
+      <sage>
+        <input>
+          z = CC(1,2); z.arg()
+        </input>
+        <output>
+          1.10714871779409
+        </output>
+      </sage>
+
+    </p>
+  </li>
+
+  <li>
+    <title>invalidlabel</title>
+    <p>
+      <em>Bool&#xe9;ens</em>
+
+           Les expressions bool&#xe9;ennes forment aussi une classe &#xe9;l&#xe9;mentaire. Les deux
+      formes normales sont <c>True</c> et <c>False</c>.
+
+      <paragraphs>
+        <title>Exemple</title>
+        <sage>
+          <input>
+            a, b, c = 0, 2, 3
+            a == 1 or (b == 2 and c == 3)
+          </input>
+          <output>
+            True
+          </output>
+        </sage>
+      </paragraphs>
+      Dans les tests et les boucles, les conditions compos&#xe9;es
+      &#xe0; l'aide des op&#xe9;rateurs <c>or</c> et <c>and</c> sont
+      &#xe9;valu&#xe9;es de fa&#xe7;on paresseuse de la gauche vers la droite.
+      Ceci signifie que
+      l'&#xe9;valuation d'une condition compos&#xe9;e par <c>or</c> se termine
+      apr&#xe8;s le premier pr&#xe9;dicat de valeur <c>True</c>, sans &#xe9;valuer les termes
+      plac&#xe9;s plus &#xe0; droite ; de m&#xea;me avec <c>and</c> et <c>False</c>.
+      Ainsi le test ci-dessous d&#xe9;crit la divisibilit&#xe9;<nbsp /><m>a|b</m> sur les entiers
+      et ne provoque aucune erreur m&#xea;me si <m>a=0</m> :
+
+      <sage>
+        <input>
+          a=0; b=12; (a==0)and(b==0) or (a!=0)and(b%a==0)
+        </input>
+      </sage>
+
+      Par ailleurs l'op&#xe9;rateur <c>not</c> est prioritaire sur <c>and</c>
+      qui est lui m&#xea;me prioritaire sur <c>or</c> ;
+      et les tests d'&#xe9;galit&#xe9; et de comparaison sont
+      eux m&#xea;me prioritaires sur les op&#xe9;rateurs bool&#xe9;ens.
+      Les deux tests suivants sont donc identiques au pr&#xe9;c&#xe9;dent :
+      <pre>
+        ((a==0)and(b==0)) or  ((a!=0) and(b%a==0))
+          a==0 and b==0   or not a==0 and b%a==0
+      </pre>
+      En outre <em>Sage</em>  autorise les tests d'encadrement
+      et d'&#xe9;galit&#xe9;s multiples de la m&#xea;me fa&#xe7;on qu'ils sont &#xe9;crits en math&#xe9;matiques :
+      <me>
+        \begin{array}{rcl}
+        x \le y \lt  z \le t \amp \text{ cod\'e par } \amp  \texttt{x \lt = y \lt  z \lt = t} \\
+        x = y = z \neq t  \amp                \amp  \texttt{x == y == z != t}
+        \end{array}
+      </me>
+      Ces tests sont g&#xe9;n&#xe9;ralement effectu&#xe9;s directement, sauf pour
+      les &#xe9;quations, dans ce cas la commande <c>bool</c> est n&#xe9;cessaire :
+
+      <sage>
+        <input>
+          var('x y'); bool((x-y)*(x+y)==x^2-y^2)  # est True
+        </input>
+      </sage>
+
+      Enfin les op&#xe9;rateurs et, ou et ou-exclusif
+      op&#xe9;rant bit &#xe0; bit sur les entiers sont
+      not&#xe9;s <c>|</c>, <c>&amp;</c> et <c>^^</c>, et
+      les op&#xe9;rateurs <c>&lt;&lt;</c> et <c>>></c> correspondent au
+      d&#xe9;calage &#xe0; gauche ou &#xe0; droite des bits.
+    </p>
+  </li>
+
+  <li>
+    <title>invalidlabel</title>
+    <p>
+      <em>Classes issues de l'arithm&#xe9;tique</em>
+
+          Les autres constantes formant une classe &#xe9;l&#xe9;mentaire munie d'une forme
+      normale sont les r&#xe9;sidus modulo <m>p</m>, avec pour fonction de r&#xe9;duction \og <c>%</c> , et les
+      nombres <m>p</m>-adiques.
+    </p>
+  </li>
+  </ul>
+  <p>
+    La classe d'un nombre peut &#xea;tre explicitement d&#xe9;clar&#xe9;e en m&#xea;me temps que
+    ce nombre, ainsi <c>ZZ(1)</c>, <c>QQ(1)</c>, <c>RR(1)</c> et <c>CC(1)</c>
+    d&#xe9;finissent respectivement l'entier <m>1\in\Z</m>, le nombre rationnel <m>1\in\Q</m>,
+    et les approximations flottantes <m>1.0\in\R</m> et <m>1.0+0.0{i} \in \C</m>.
+    R&#xe9;ciproquement la fonction <c>parent</c> renvoie la classe d'un &#xe9;l&#xe9;ment,
+    et <c>isinstance(x,E)</c> teste si l'objet <c>x</c> est dans
+    la classe<nbsp /><c>E</c> ; les r&#xe9;sultats de ces tests sont <c>True</c> :
+  </p>
+
+  <sage>
+    <input>
+      isinstance(ZZ(5), Integer) ; isinstance(QQ(5), Rational)
+    </input>
+  </sage>
+
+  <p>
+    De m&#xea;me la d&#xe9;claration d'un entier modulaire <m>m</m>
+    de l'anneau <m>\Z/n\Z</m> ou du corps
+    <m>\Z/p\Z</m> lorsque l'entier <m>p</m> est premier s'obtient respectivement
+    par <c>IntegerModRing(n)(m)</c> et <c>GF(p)(m)</c>.
+  </p>
+
+  <p>
+    On dispose des fonctions suivantes sur les objets des quatre premi&#xe8;res classes (entiers, rationnels,
+    flottants, complexes) :
+    <md>
+      \vbox{
+
+      \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+      \noalign{\hrule}
+      \tvp\cr
+      \noalign{\hrule}
+      \tvi \amp {Fonction}   \amp  Syntaxe \amp   \cr
+      \noalign{\hrule}
+      \tvp\cr
+      \tvi\amp  les quatre op\'erations arithm\'etiques de base \amp   a+b, a-b, a/b, a*b\cr
+      \tvi\amp  la fonction puissance \amp   a\^{}b\cr
+      \tvi\amp  la division enti\`ere \amp   a//b\cr
+      \tvi\amp  la partie enti\`ere \amp   floor(a)\cr
+      \tvi\amp  la valeur absolue, le module \amp   abs(a)\cr
+      \tvi\amp  la racine carr\'ee \amp   sqrt(a)\cr
+      \tvi\amp  la racine <m>n</m>-i\`eme \amp   a\^{}(1/n)\cr
+      \tvi\amp  les fonctions usuelles \amp   sin cos tan cot arcsin\cr
+      \tvi\amp                         \amp  sinh tanh log exp ...\cr
+      \tvp\cr
+      \noalign{\hrule}
+      \tvp\cr
+      \noalign{\hrule}
+      }}
+    </md>
+  </p>
+</section>
+

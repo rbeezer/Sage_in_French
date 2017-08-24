@@ -1,0 +1,152 @@
+
+
+<section>
+  <title>Int&#xe9;gration num&#xe9;rique</title>
+  <p>
+    \begin{correction}{exo:integration:newton_cotes} (<em>Calcul des coefficients de Newton-Cotes</em>)
+    <ol>
+      <li>
+        <p>
+          En remarquant que <m>P_i</m> est de degr&#xe9; <m>n-1</m> (donc la formule
+              <xref ref="intnum_interpol" /> s'applique) et que <m>P_i(j)=0</m> pour <m>j\in
+              \{0, \ldots, n-1\}</m> et <m>j\neq{}i</m>, on en d&#xe9;duit
+          <me>
+            \int_0^{n-1}P_i(x)\dd{x} = w_iP_i(i)
+          </me>
+          soit
+          <me>
+            w_i = \frac{\int_0^{n-1}P_i(x)\dd{x}}{P_i(i)}.
+          </me>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          Le calcul des poids s'en d&#xe9;duit simplement:
+          <pre>
+            def NCRule(n):
+                P = prod([x - j for j in xrange(n)])
+                return [integrate(P / (x-i), x, 0, n-1) \
+                  / (P/(x-i)).subs(x=i) for i in xrange(n)]
+          </pre>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          Par un simple changement de variable:
+          <me>
+            \int_a^bf(x)\dd{x} = \frac{b-a}{n-1}\int_0^{n-1}f\left(a+\frac{b-a}{n-1}u\right)\dd{u}.
+          </me>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          En appliquant la formule pr&#xe9;c&#xe9;dente, on trouve le programme suivant:
+          <pre>
+            def QuadNC(f, a, b, n):
+                W = NCRule(n)
+                ret = 0
+                for i in xrange(n):
+                    ret += f(a + (b-a)/(n-1)*i) * W[i]
+                return (b-a)/(n-1)*ret
+          </pre>
+          Avant de comparer la pr&#xe9;cision de cette m&#xe9;thode avec d'autres, nous pouvons
+          d&#xe9;j&#xe0; v&#xe9;rifier qu'elle ne renvoie pas de r&#xe9;sultats incoh&#xe9;rents:
+
+          <sage>
+            <input>
+              QuadNC(lambda u: 1, 0, 1, 12)
+            </input>
+            <output>
+              1
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              N(QuadNC(sin, 0, pi, 10))
+            </input>
+            <output>
+              1.99999989482634
+            </output>
+          </sage>
+
+          Comparons succinctement la m&#xe9;thode obtenue avec les fonctions de <em>GSL</em>  sur les int&#xe9;grales
+          <m>I_2</m> et <m>I_3</m>:
+
+          <sage>
+            <input>
+              numerical_integral(x * log(1+x), 0, 1)
+            </input>
+            <output>
+              (0.25, 2.7755575615628914e-15)
+              N(QuadNC(lambda x: x * log(1+x), 0, 1, 19)
+              0.250000000000000
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              numerical_integral(sqrt(1-x^2), 0, 1)
+            </input>
+            <output>
+              (0.78539816772648219, 9.0427252245671193e-07)
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              N(pi/4)
+            </input>
+            <output>
+              0.785398163397448
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              N(QuadNC(lambda x: sqrt(1-x^2), 0, 1, 20))
+            </input>
+            <output>
+              0.784586419900198
+            </output>
+          </sage>
+
+          Remarquons que la qualit&#xe9; du r&#xe9;sultat d&#xe9;pend du nombre de points utilis&#xe9;s:
+
+          <sage>
+            <input>
+              [N(QuadNC(lambda x: x * log(1+x), 0, 1, n) - 1/4)
+            </input>
+            <output>
+              for n in [2, 8, 16]]
+              [0.0965735902799726, 1.17408932943930e-7, 2.13546194616221e-13]
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              [N(QuadNC(lambda x: sqrt(1-x^2), 0, 1, n) - pi/4)
+            </input>
+            <output>
+              for n in [2, 8, 16]]
+              [-0.285398163397448, -0.00524656673640445, -0.00125482109302663]
+            </output>
+          </sage>
+
+          Une comparaison plus int&#xe9;ressante entre les diff&#xe9;rentes fonctions
+          d'int&#xe9;gration de <em>Sage</em>  et notre m&#xe9;thode <c>QuadNC</c> demanderait de
+          la convertir en une m&#xe9;thode adaptative qui subdivise automatiquement
+          l'intervalle consid&#xe9;r&#xe9; comme le fait <c>numerical_integral</c>.
+        </p>
+      </li>
+    </ol>
+  </p>
+
+  <p>
+    \end{correction}
+  </p>
+</section>
+

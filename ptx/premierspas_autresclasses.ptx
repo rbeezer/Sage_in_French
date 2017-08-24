@@ -1,0 +1,192 @@
+
+
+<section xml:id="premierspas_autresclasses">
+  <title>Autres classes &#xe0; forme normale</title>
+  <p>
+    &#xc0; partir de constantes bien d&#xe9;finies, des classes d'objets symboliques faisant
+    intervenir des variables et admettant une forme normale peuvent &#xea;tre
+    construites. Les plus importantes sont les matrices, les polyn&#xf4;mes et fractions
+    rationnelles, les d&#xe9;veloppements limit&#xe9;s et les nombres alg&#xe9;briques. Pour
+    chacune de ces classes, nous indiquons les principales fonctions de r&#xe9;&#xe9;criture.
+    <ul>
+      <li>
+        <title>invalidlabel</title>
+        <p>
+          <em>Matrices</em>
+
+              La forme normale d'une matrice est obtenue lorsque tous ses coefficients
+          sont eux-m&#xea;mes sous forme normale.
+          <em>Sage</em>  effectue automatiquement cette mise sous forme normale des coefficients,
+          comme le montre l'exemple suivant :
+
+          <sage>
+            <input>
+              a = matrix(QQ, [[1,2,3],[2,4,8],[3,9,27]])
+              I = identity_matrix(QQ, 3)
+              (a^2 + I) * a^(-1)
+            </input>
+            <output>
+              [  -5 13/2  7/3]
+              [   7    1 25/3]
+              [   2 19/2   27]
+            </output>
+          </sage>
+
+          Dans cet exemple, on pr&#xe9;cise le corps dans lequel il faut effectuer les
+          calculs, &#xe0; savoir le corps <c>QQ</c><m>=\Q</m>.
+        </p>
+      </li>
+
+      <li>
+        <title>invalidlabel</title>
+        <p>
+          <em>Polyn&#xf4;mes et fractions rationnelles</em>
+
+               Les calculs sur les polyn&#xf4;mes et les fractions rationnelles &#xe0; une ou plusieurs
+          ind&#xe9;termin&#xe9;es sont des op&#xe9;rations de base d'un syst&#xe8;me de calcul formel.
+          Contrairement aux classes pr&#xe9;sent&#xe9;es jusqu'ici, il n'y a pas une bonne repr&#xe9;sentation
+          des polyn&#xf4;mes.
+
+          Les fonctions qui permettent de r&#xe9;&#xe9;crire un polyn&#xf4;me sous diverses formes sont
+          r&#xe9;sum&#xe9;es dans le tableau ci-dessous :
+          <md>
+            \vbox{
+
+            \offinterlineskip\halign{#\amp {\ttfamily #}\hfil\amp {<m>\scr #</m>}\hfil \amp #\cr
+            \noalign{\hrule}
+            \tvp\cr
+            \noalign{\hrule}
+            \tvi \amp \textrm{Polyn\^ome}  p \amp  zx^2+x^2-(x^2+y^2)(ax-2by)+zy^2+y^2 \amp  \cr
+            \noalign{\hrule}
+            \tvp\cr
+            \tvi \amp p.expand().collect(x) \amp 
+            -a x^{3} - a x y^{2} + 2 \, b y^{3} + {\left(2 \, b y + z + 1\right)} x^{2} +
+            y^{2} z + y^{2} \cr
+            \tvi \amp p.collect(x).collect(y) \amp 
+            2 \, b x^{2} y + 2 \, b y^{3} - {\left(a x - z - 1\right)} x^{2} - {\left(a x -
+            z - 1\right)} y^{2}  \cr
+            \tvi \amp p.expand()   \amp 
+            -a x^{3} - a x y^{2} + 2 \, b x^{2} y + 2 \, b y^{3} + x^{2} z + y^{2} z + x^{2}
+            + y^{2}  \cr
+            \tvi \amp p.factor() \amp 
+            -{\left(x^{2} + y^{2}\right)} {\left(a x - 2 \, b y - z - 1\right)}  \cr
+            \tvi \amp p.factor\_list()\amp 
+            \left[\left(x^{2} + y^{2}, 1\right), \left(a x - 2 \, b y - z - 1, 1\right),
+            \left(-1, 1\right)\right]\cr
+            \tvp\cr
+            \noalign{\hrule}
+            \tvp\cr
+            \noalign{\hrule}
+            }}
+          </md>
+          Pour transformer des fractions rationnelles, on dispose des fonctions r&#xe9;sum&#xe9;es
+          dans le tableau suivant.
+          La fonction <c>combine</c> permet de regrouper les termes qui ont m&#xea;me
+          d&#xe9;nominateur. Quant &#xe0; la fonction <c>partial_fraction</c>, elle
+          effectue la d&#xe9;composition en &#xe9;l&#xe9;ments simples dans <m>\Q</m>.
+          Pour pr&#xe9;ciser le corps dans lequel il faut effectuer la d&#xe9;composition en
+          &#xe9;l&#xe9;ments simples, on se reportera au <xref ref="sec_polynomes_ratpoly">chapitre</xref>.
+          <md>
+            \vbox{
+
+            \offinterlineskip\halign{#\amp {\ttfamily #}\hfil \amp <m>#</m>\hfil\amp #\cr
+            \noalign{\hrule}
+            \tvp\cr
+            \noalign{\hrule}
+            \tvi \amp \textrm{Fraction rationnelle}  r  \amp 
+            \frac{{x^{3} + x^{2} y + 3 \, x^{2} + 3 \, x y + 2 \, x + 2 \,
+            y}}{{x^{3} + 2 \, x^{2} + x y + 2 \, y}} \amp   \cr
+            \noalign{\hrule}
+            \tvi\amp r.simplify\_rational() \amp 
+            \frac{{{\left(x + 1\right)} y + x^{2} + x}}{{x^{2} + y}}  \cr
+            \tvi\amp r.factor() \amp 
+            \frac{{\left(x + 1\right)} {\left(x + y\right)}}{{x^{2} + y}}  \cr
+            \tvi\amp  r.factor().expand() \amp 
+            \frac{x^{2}}{{x^{2} + y}} + \frac{x y}{{x^{2} + y}} +
+            \frac{x}{{x^{2} + y}} + \frac{y}{{x^{2} + y}}  \cr
+            \tvp\cr
+            \noalign{\hrule}
+            \tvp\cr
+            \noalign{\hrule}
+            \tvi\amp \textrm{Fraction rationnelle}  r  \amp 
+            \frac{{\left(x - 1\right)} x}{{x^{2} - 7}} +
+            \frac{y^{2}}{{x^{2} - 7}} + \frac{b}{a} + \frac{c}{a} +
+            \frac{1}{{x + 1}} \cr
+            \noalign{\hrule}
+            \tvi\amp r.combine()\amp 
+            \frac{{{\left(x - 1\right)} x + y^{2}}}{{x^{2} - 7}} +
+            \frac{{b + c}}{a} + \frac{1}{{x + 1}} \cr
+            \tvp\cr
+            \noalign{\hrule}
+            \tvp\cr
+            \noalign{\hrule}
+            \tvi\amp \textrm{Fraction rationnelle}  r  \amp 
+            \frac{1}{{\left(x^{3} + 1\right)} y^{2}}\cr
+            \noalign{\hrule}
+            \tvi\amp r.partial\_fraction(x) \amp 
+            \frac{-{\left(x - 2\right)}}{3 \, {\left(x^{2} - x + 1\right)} y^{2}} + \frac{1}{3 \, {\left(x + 1\right)} y^{2}} \cr
+            \tvp\cr
+            \noalign{\hrule}
+            \tvp\cr
+            \noalign{\hrule}
+            }}
+          </md>
+        </p>
+      </li>
+
+      <li>
+        <title>invalidlabel</title>
+        <p>
+          <em>D&#xe9;veloppements limit&#xe9;s</em>
+
+          Comme les matrices et les flottants, les d&#xe9;veloppements limit&#xe9;s ont une forme
+          normale, mais celle-ci n'est pas produite automatiquement. La commande de
+          r&#xe9;duction est <c>series</c>.
+
+          <sage>
+            <input>
+              f = cos(x).series(x == 0, 6); 1 / f
+            </input>
+          </sage>
+
+          <m>\frac{1}{1 + {(-\frac{1}{2})} x^{2} + \frac{1}{24} x^{4} +
+          \mathcal{O}\left(x^{6}\right)}</m>
+
+          <sage>
+            <input>
+              (1 / f).series(x == 0, 6)
+            </input>
+          </sage>
+
+          <m>1 + \frac{1}{2} x^{2} + \frac{5}{24} x^{4} +
+          \mathcal{O}\left(x^{6}\right)</m>
+        </p>
+      </li>
+
+      <li>
+        <title>invalidlabel</title>
+        <p>
+          <em>Nombres alg&#xe9;briques</em>
+
+          Un nombre alg&#xe9;brique est d&#xe9;fini comme racine d'un polyn&#xf4;me. Lorsque
+          le degr&#xe9; du polyn&#xf4;me est plus grand que 4, il n'est pas possible de le r&#xe9;soudre
+          explicitement en g&#xe9;n&#xe9;ral. Cependant, de nombreux calculs sur ses racines
+          peuvent &#xea;tre men&#xe9;s &#xe0; bien sans autre information que le polyn&#xf4;me lui-m&#xea;me.
+          Ces calculs sont d&#xe9;taill&#xe9;s au <xref ref="numbertheory">chapitre</xref>.
+
+          <sage>
+            <input>
+              k.&lt;a> = NumberField(x^3 + x + 1); a^3; a^4+3*a
+            </input>
+            <output>
+              -a - 1
+              -a^2 + 2*a
+            </output>
+          </sage>
+
+        </p>
+      </li>
+    </ul>
+  </p>
+</section>
+

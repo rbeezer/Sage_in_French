@@ -1,0 +1,531 @@
+
+
+<section xml:id="sec_equat-algebr">
+  <title>&#xc9;quations alg&#xe9;briques</title>
+  <introduction>
+    <p>
+      Par &#xe9;quation alg&#xe9;brique on entend une &#xe9;quation de la forme <m>p(x)=0</m>
+      o&#xf9; <m>p</m> d&#xe9;signe un polyn&#xf4;me &#xe0; une ind&#xe9;termin&#xe9;e dont les coefficients
+      appartiennent &#xe0; un anneau int&#xe8;gre <m>A</m>. On dit qu'un &#xe9;l&#xe9;ment <m>\alpha\in
+      A</m> est une <em>racine</em> du polyn&#xf4;me <m>p</m> si <m>p(\alpha)=0</m>.
+    </p>
+
+    <p>
+      Soit <m>\alpha</m> un &#xe9;l&#xe9;ment de <m>A</m>. La division euclidienne de <m>p</m> par
+      <m>x-\alpha</m> assure l'existence d'un polyn&#xf4;me constant <m>r</m> tel que :
+      <me>
+        p=(x-\alpha)q+r.
+      </me>
+    </p>
+
+    <p>
+      En &#xe9;valuant cette &#xe9;quation en <m>\alpha</m>, on obtient <m>r=p(\alpha)</m>. Donc
+      le polyn&#xf4;me <m>x-\alpha</m> divise <m>p</m> si, et seulement si, <m>\alpha</m> est
+      une racine de <m>p</m>. Ce point de vue permet d'introduire la notion de
+      <em>multiplicit&#xe9;</em> d'une racine <m>\alpha</m> du polyn&#xf4;me <m>p</m> : il s'agit
+      du plus grand entier <m>m</m> tel que <m>(x-\alpha)^m</m> divise <m>p</m>. On observe
+      que la somme des multiplicit&#xe9;s des racines de <m>p</m> est inf&#xe9;rieur ou
+      &#xe9;gal &#xe0; <m>n</m> si <m>p</m> est de degr&#xe9; <m>n</m>.
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec_meth-Poly-roots">
+    <title>M&#xe9;thode <c>Polynomial.roots()</c></title>
+    <p>
+      R&#xe9;soudre l'&#xe9;quation alg&#xe9;brique <m>p(x)=0</m> consiste &#xe0; identifier les
+      racines du polyn&#xf4;me <m>p</m> avec leurs multiplicit&#xe9;s. La m&#xe9;thode
+      <c>Polynomial.roots()</c> donne les racines d'un polyn&#xf4;me. Elle
+      prend jusqu'&#xe0; trois param&#xe8;tres, tous optionnels. Le param&#xe8;tre
+      <c>ring</c> permet de pr&#xe9;ciser l'anneau o&#xf9; chercher les racines. Si
+      on ne pr&#xe9;cise pas de valeur pour ce param&#xe8;tre, il s'agira de l'anneau
+      des coefficients du polyn&#xf4;me. Le bool&#xe9;en <c>multiplicities</c>
+      indique la nature des informations renvoy&#xe9;es par
+      <c>Polynomial.roots()</c> : chaque racine peut &#xea;tre accompagn&#xe9;e de
+      sa multiplicit&#xe9;. Le param&#xe8;tre <c>algorithm</c> sert &#xe0; pr&#xe9;ciser quel
+      algorithme utiliser.
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PolynomialRing(RealField(prec=10))
+        p = 2*x^7 - 21*x^6 + 64*x^5 - 67*x^4 + 90*x^3 + 265*x^2 \
+        - 900*x + 375
+        p.roots()
+      </input>
+      <output>
+        [(-1.7, 1), (0.50, 1), (1.7, 1), (5.0, 2)]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.roots(ring=ComplexField(10), multiplicities=False)
+      </input>
+      <output>
+        [-1.7, 0.50, 1.7, 5.0, -2.2*I, 2.2*I]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.roots(ring=RationalField())
+      </input>
+      <output>
+        [(1/2, 1), (5, 2)]
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_anneaux-usuels">
+    <title>Repr&#xe9;sentation des nombres</title>
+    <p>
+      Rappelons comment d&#xe9;signer les anneaux usuels avec <em>Sage</em> . Les entiers
+      relatifs sont repr&#xe9;sent&#xe9;s par des objets de la classe <c>Integer</c>
+      et, pour effectuer des conversions, on utilise le <em>parent</em>
+      <c>ZZ</c> ou la fonction <c>IntegerRing()</c> qui renvoie l'objet
+      <c>ZZ</c>. De la m&#xea;me fa&#xe7;on, les nombres rationnels sont repr&#xe9;sent&#xe9;s
+      par des objets de la classe <c>Rational</c> ; le parent commun &#xe0; ces
+      objets est l'objet <c>QQ</c> que renvoit la fonction
+      <c>RationalField()</c>. Dans les deux cas <em>Sage</em>  utilise la
+      biblioth&#xe8;que de calcul en pr&#xe9;cision arbitraire <em>GMP</em> . Sans rentrer dans
+      le d&#xe9;tail de la r&#xe9;alisation de cette biblioth&#xe8;que, les entiers
+      manipul&#xe9;s avec <em>Sage</em>  sont de taille arbitraire, la seule limitation
+      provenant de la quantit&#xe9; de m&#xe9;moire disponible sur la machine
+      sur laquelle est ex&#xe9;cut&#xe9; le logiciel.
+    </p>
+
+    <p>
+      Plusieurs repr&#xe9;sentations approch&#xe9;es des nombres r&#xe9;els sont
+      disponibles. Il y a <c>RealField()</c> pour la repr&#xe9;sentation
+      utilisant les nombres &#xe0; virgule flottante avec une pr&#xe9;cision donn&#xe9;e
+      et, en particulier, <c>RR</c> pour une pr&#xe9;cision de 53 bits. Mais il
+      y a aussi <c>RDF</c> et la fonction <c>RealDoubleField()</c> pour
+      les nombres machine double pr&#xe9;cision. Et encore <c>RIF</c> et
+      <c>RealIntervalField()</c> avec lesquelles un nombre r&#xe9;el est
+      repr&#xe9;sent&#xe9; par un intervalle le contenant, les extr&#xe9;mit&#xe9;s de cet
+      intervalle &#xe9;tant des nombres &#xe0; virgule flottante.
+    </p>
+
+    <p>
+      Les repr&#xe9;sentations analogues pour les nombres complexes se nomment :
+      <c>CC</c>, <c>CDF</c> et <c>CIF</c>. L&#xe0; aussi, &#xe0; chaque objet
+      est associ&#xe9; une fonction ; ce sont <c>ComplexField()</c>,
+      <c>ComplexIntervalField()</c> et <c>ComplexDoubleField()</c>.
+    </p>
+
+    <p>
+      Les calculs effectu&#xe9;s par <c>Polynomial.roots()</c> sont exacts ou
+      approch&#xe9;s selon le type de repr&#xe9;sentation des coefficients du polyn&#xf4;me
+      et une &#xe9;ventuelle valeur du param&#xe8;tre <c>ring</c> : par exemple avec
+      <c>ZZ</c> ou <c>QQ</c>, les calculs sont exacts ; avec <c>RR</c>
+      les calculs sont approch&#xe9;s. Dans la seconde partie de ce chapitre on
+      pr&#xe9;cisera l'algorithme utilis&#xe9; pour le calcul des racines et le r&#xf4;le
+      des param&#xe8;tres <c>ring</c> et <c>algorithm</c>
+      (cf.<nbsp /><xref ref="sec_resolution-numerique">&#xa7;</xref>).
+    </p>
+
+    <p>
+      La r&#xe9;solution des &#xe9;quations alg&#xe9;briques est intimement li&#xe9;e &#xe0; la
+      notion de nombre. Le <em>corps de d&#xe9;composition</em> du polyn&#xf4;me <m>p</m>
+      (suppos&#xe9; non constant) est la plus petite extension du corps des
+      coefficients de <m>p</m> dans laquelle <m>p</m> est un produit de polyn&#xf4;mes de
+      degr&#xe9;<nbsp />1 ; on montre qu'une telle extension existe toujours. Avec
+      <em>Sage</em> , on construit cette extension avec la m&#xe9;thode
+      <c>Polynomial.root_field()</c>. On peut alors calculer avec les
+      racines <em>implicites</em> contenues dans le corps de d&#xe9;composition.
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PolynomialRing(QQ, 'x')
+        p = x^4 + x^3 + x^2 + x + 1
+        K.&lt;alpha> = p.root_field()
+        p.roots(ring=K, multiplicities=None)
+      </input>
+      <output>
+        [alpha, alpha^2, alpha^3, -alpha^3 - alpha^2 - alpha - 1]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        alpha^5
+      </input>
+      <output>
+        1
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_theor-de-dalemb">
+    <title>Th&#xe9;or&#xe8;me de d'Alembert</title>
+    <p>
+      Le corps de d&#xe9;composition du polyn&#xf4;me &#xe0; coefficients r&#xe9;els <m>x^2+1</m>
+      n'est autre que le corps des nombres complexes. Il est remarquable que
+      tout polyn&#xf4;me non constant &#xe0; coefficients complexes poss&#xe8;de au moins
+      une racine complexe : c'est ce qu'affirme le <em>th&#xe9;or&#xe8;me de
+      d'Alembert</em>. En cons&#xe9;quence tout polyn&#xf4;me complexe non constant est
+      un produit de polyn&#xf4;mes de degr&#xe9; 1.
+    </p>
+
+    <p>
+      Voyons comment la m&#xe9;thode <c>Polynomial.roots()</c> permet
+      d'illustrer ce th&#xe9;or&#xe8;me. Dans l'exemple qui suit, on construit
+      l'anneau des polyn&#xf4;mes &#xe0; coefficients r&#xe9;els (on se contente d'une
+      repr&#xe9;sentation utilisant les nombres &#xe0; virgule flottante avec une
+      pr&#xe9;cision de 53 bits). Puis un polyn&#xf4;me de degr&#xe9; inf&#xe9;rieur ou &#xe9;gal &#xe0;
+      15 est choisi al&#xe9;atoirement dans cet anneau. Enfin on additionne les
+      multiplicit&#xe9;s des racines complexes calcul&#xe9;es avec la m&#xe9;thode
+      <c>Polynomial.roots()</c> et on compare cette somme au degr&#xe9; du
+      polyn&#xf4;me.
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PolynomialRing(RR, 'x')
+        d = ZZ.random_element(1, 15)
+        p = R.random_element(d)
+        p.degree() == sum(r[1] for r in p.roots(CC))
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_distr-des-racin">
+    <title>Distribution des racines</title>
+    <p>
+      On poursuit avec une curieuse illustration de la puissance de la
+      m&#xe9;thode <c>Polynomial.roots()</c> : on trace tous les points du plan
+      complexe dont l'affixe est une racine d'un polyn&#xf4;me de degr&#xe9; 12 et &#xe0;
+      coefficients &#xe9;gaux &#xe0; 1 ou -1. Le choix du degr&#xe9; est un compromis plus
+      ou moins arbitraire ; il permet d'obtenir un trac&#xe9; pr&#xe9;cis en peu de
+      temps. L'utilisation de valeurs approch&#xe9;es pour les nombres complexes
+      s'est &#xe9;galement impos&#xe9;e pour des raisons de performance
+      (cf.<nbsp /><xref ref="linsolve">&#xa7;</xref>).
+    </p>
+
+    <sage>
+      <input>
+        def build_complex_roots(degree):
+        R.&lt;x> = PolynomialRing(CDF, 'x')
+        v = []
+        coeffs = [[-1, 1]] * (degree + 1)
+        iter = cartesian_product_iterator(coeffs)
+        for c in iter:
+        v.extend(R(list(c)).roots(multiplicities=False))
+        return v
+
+        data = build_complex_roots(12)
+        g = plot(points(data, pointsize=1), aspect_ratio=1)
+      </input>
+    </sage>
+
+    <figure xml:id="fig_dist-raci" >
+      <caption>Distribution des racines.</caption>
+      <image width="73%" source="images/nonlinear-graph-of-roots.png" />
+    </figure>
+  </subsection>
+
+  <subsection xml:id="sec_resol-par-radic">
+    <title>R&#xe9;solution par radicaux</title>
+    <introduction>
+      <p>
+        On a mentionn&#xe9; la possibilit&#xe9; dans certains cas de calculer les
+        valeurs exactes des racines d'un polyn&#xf4;me. C'est par exemple possible
+        lorsqu'on sait exprimer les racines en fonction des coefficients du
+        polyn&#xf4;me et au moyen de radicaux (carr&#xe9;s, cubiques, etc). Dans ce cas
+        on parle de <em>r&#xe9;solution par radicaux</em>.
+      </p>
+
+      <p>
+        Pour effectuer ce type de r&#xe9;solution avec <em>Sage</em> , il faut travailler
+        avec les objets de la classe <c>Expression</c> qui repr&#xe9;sentent les
+        expressions symboliques. On a vu que les entiers repr&#xe9;sent&#xe9;s par des
+        objets de la classe <c>Integer</c> ont un m&#xea;me <em>parent</em>,
+        l'objet <c>ZZ</c>. De la m&#xea;me fa&#xe7;on, les objets de la classe
+        <c>Expression</c> ont un m&#xea;me parent : il s'agit de l'objet
+        <c>SR</c> (acronyme de <em>Symbolic Ring</em>) ; il offre notamment
+        des possibilit&#xe9;s de conversion vers la classe <c>Expression</c>.
+      </p>
+    </introduction>
+    <subsubsection xml:id="sec_equat-quadr">
+    <title>&#xc9;quations quadratiques</title>
+    <sage>
+      <input>
+        a, b, c, x = var('a b c x')
+        p = a * x^2 + b * x + c
+        type(p)
+      </input>
+      <output>
+        &lt;type 'sage.symbolic.expression.Expression'>
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.parent()
+      </input>
+      <output>
+        Symbolic Ring
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.roots(x)
+      </input>
+      <output>
+        [(-1/2*(b + sqrt(-4*a*c + b^2))/a, 1),
+         (-1/2*(b - sqrt(-4*a*c + b^2))/a, 1)]
+      </output>
+    </sage>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_equations-de-degre">
+    <title>Degr&#xe9;s strictement sup&#xe9;rieurs &#xe0; 2</title>
+    <p>
+      Il est possible de r&#xe9;soudre par radicaux les &#xe9;quations alg&#xe9;briques
+      complexes de degr&#xe9; 3 et 4. En revanche il est impossible de r&#xe9;soudre
+      par radicaux toutes les &#xe9;quations polynomiales de degr&#xe9; sup&#xe9;rieur ou
+      &#xe9;gal &#xe0; <m>5</m>. Cette impossibilit&#xe9; nous conduit &#xe0; envisager des m&#xe9;thodes
+      de r&#xe9;solution num&#xe9;rique
+      (cf.<nbsp /><xref ref="sec_resolution-numerique">&#xa7;</xref>).
+    </p>
+
+    <sage>
+      <input>
+        a, b, c, d, e, f, x = var('a b c d e f x')
+        solve([a*x^5+b*x^4+c*x^3+d*x^2+e*x+f==0], x)
+      </input>
+      <output>
+        [0 == a*x^5 + b*x^4 + c*x^3 + d*x^2 + x*e + f]
+      </output>
+    </sage>
+
+    <p>
+      Illustrons avec <em>Sage</em>  une m&#xe9;thode de r&#xe9;solution des &#xe9;quations de degr&#xe9;
+      3. Pour commencer on montre que l'&#xe9;quation g&#xe9;n&#xe9;rale du troisi&#xe8;me degr&#xe9;
+      se ram&#xe8;ne &#xe0; la forme <m>x^3+p x+q=0</m>.
+    </p>
+
+    <sage>
+      <input>
+        x, a, b, c, d = var('x a b c d')
+        P = a * x^3 + b * x^2 + c * x + d
+        alpha = var('alpha')
+        P.subs(x=x + alpha).expand().coeff(x, 2)
+      </input>
+      <output>
+        3*a*alpha + b
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        P.subs(x = x - b / (3 * a)).expand().collect(x)
+      </input>
+      <output>
+        a*x^3 - 1/3*b^2*x/a + c*x - 1/3*b*c/a + 2/27*b^3/a^2 + d
+      </output>
+    </sage>
+
+    <p>
+      Pour obtenir les racines d'une &#xe9;quation de la forme <m>x^3+p x+q=0</m> on
+      pose <m>x = u + v</m>.
+    </p>
+
+    <sage>
+      <input>
+        p, q, u, v = var('p q u v') 
+        P = x^3 + p * x + q
+        P.subs(x = u + v).expand()
+      </input>
+      <output>
+        u^3 + 3*u^2*v + 3*u*v^2 + v^3 + p*u + p*v + q
+      </output>
+    </sage>
+
+    <p>
+      On remarque que <m>u^3 + v^3 + q = 0</m> implique <m>3uv + p = 0</m>, si bien
+      que <m>u^3</m> et <m>v^3</m> sont les racines d'une &#xe9;quation du second degr&#xe9;.
+    </p>
+
+    <sage>
+      <input>
+        P.subs({x: u + v, q: -u^3 - v^3}).factor()
+      </input>
+      <output>
+        (u + v)*(3*u*v + p)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        P.subs({x: u + v, q: -u^3 - v^3, p: -3 * u * v})
+      </input>
+      <output>
+        0
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        X = var('X')
+        solve([X^2 + q * X - p^3/27 == 0], X, solution_dict=True)
+      </input>
+      <output>
+        [{X: -1/18*sqrt(4*p^3 + 27*q^2)*sqrt(3) - 1/2*q},
+         {X: 1/18*sqrt(4*p^3 + 27*q^2)*sqrt(3) - 1/2*q}]
+      </output>
+    </sage>
+
+    <p>
+      Les solutions de l'&#xe9;quation <m>x^3+p x+q=0</m> sont donc les sommes <m>u+v</m>
+      o&#xf9; <m>u</m> et <m>v</m> sont des racines cubiques de
+      <m>-1/18\sqrt{4p^3+27q^2}\sqrt{3}-1/2q</m> et
+      <m>1/18\sqrt{4p^3+27q^2}\sqrt{3}-1/2 q</m> v&#xe9;rifiant <m>3uv+p=0</m>. Bien
+      entendu pour poursuivre, il faut discuter le signe de <m>\sqrt{4 p^3 +
+        27 q^2}</m>.
+    </p>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection>
+    <title>M&#xe9;thode <c>Expression.roots()</c></title>
+    <introduction>
+      <p>
+        Les exemples pr&#xe9;c&#xe9;dents utilisent la m&#xe9;thode
+        <c>Expression.roots()</c>. Cette m&#xe9;thode renvoie une liste de
+        racines. Parmi les param&#xe8;tres optionnels de cette m&#xe9;thode, on retrouve
+        les param&#xe8;tres <c>ring</c> et <c>multiplicities</c> d&#xe9;j&#xe0;
+        rencontr&#xe9;s avec la m&#xe9;thode <c>Polynomial.roots()</c>. Il est
+        toutefois important de se rappeler que la m&#xe9;thode
+        <c>Expression.roots()</c> ne s'applique pas uniquement &#xe0; des
+        expressions polynomiales.
+      </p>
+
+      <p>
+        Lorsque le param&#xe8;tre <c>ring</c> n'est pas d&#xe9;fini, la m&#xe9;thode
+        <c>roots()</c> de la classe <c>Expression</c> d&#xe9;l&#xe8;gue le calcul
+        des racines au programme <em>Maxima</em>  qui tente de factoriser l'expression
+        puis effectue une r&#xe9;solution par radicaux sur chaque facteur de degr&#xe9;
+        strictement inf&#xe9;rieur &#xe0; <m>5</m>. Lorsque le param&#xe8;tre <c>ring</c> est
+        d&#xe9;fini, l'expression est convertie en objet de la classe
+        <c>Polynomial</c> dont les coefficients ont pour parent l'objet
+        identifi&#xe9; par le param&#xe8;tre <c>ring</c> ; ensuite le r&#xe9;sultat de la
+        m&#xe9;thode <c>Polynomial.roots()</c> est renvoy&#xe9;. On d&#xe9;crit plus loin
+        l'algorithme utilis&#xe9; dans ce cas
+        (cf.<nbsp /><xref ref="sec_retour-aux-polynomes">&#xa7;</xref>).
+      </p>
+
+      <p>
+        On verra plus loin des exemples de calculs avec des racines
+        implicites, repr&#xe9;sent&#xe9;es notamment avec les objets <c>QQbar</c> et
+        <c>AA</c> qui repr&#xe9;sentent des corps de nombres alg&#xe9;briques
+        (cf.<nbsp /><xref ref="sec_polynomes_racines">&#xa7;</xref>).
+      </p>
+    </introduction>
+    <subsubsection xml:id="sec_elim-des-racin">
+    <title>&#xc9;limination des racines multiples</title>
+    <p>
+      &#xc9;tant donn&#xe9; un polyn&#xf4;me <m>p</m> ayant des racines multiples, il est
+      possible de construire un polyn&#xf4;me &#xe0; racines simples, identiques &#xe0;
+      celles de <m>p</m>. Donc, lorsqu'on calcule les racines d'un polyn&#xf4;me, on
+      peut toujours supposer que ces racines sont simples. Justifions
+      l'existence du polyn&#xf4;me &#xe0; racines simples et voyons comment construire
+      ce polyn&#xf4;me. Ceci nous permettra de donner une nouvelle illustration
+      de la m&#xe9;thode <c>Expression.roots()</c>.
+    </p>
+
+    <p>
+      Soit <m>\alpha</m> une racine du polyn&#xf4;me <m>p</m> dont la multiplicit&#xe9; est un
+      entier <m>m</m> strictement sup&#xe9;rieur &#xe0; 1. C'est une racine du polyn&#xf4;me
+      d&#xe9;riv&#xe9; <m>p'</m> avec multiplicit&#xe9; <m>m-1</m>. En effet, si
+      <m>p=(x-\alpha)^{m}\tilde{p}</m> alors on a <m>p'=(x-\alpha)^{m-1}(m\tilde{p}
+      + (x-\alpha){\tilde{p}}')</m>.
+    </p>
+
+    <sage>
+      <input>
+        alpha, m, x = var('alpha m x')
+        p = function('p', x)
+        q = function('q', x)
+        p = (x - alpha)^m * q
+        p.derivative(x)
+      </input>
+      <output>
+        m*(-alpha + x)^(m - 1)*q(x) + (-alpha + x)^m*D[0](q)(x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        simplify(p.derivative(x)(x=alpha))
+      </input>
+      <output>
+        0
+      </output>
+    </sage>
+
+    <p>
+      En cons&#xe9;quence le pgcd de <m>p</m> et <m>p'</m> est le produit
+      <m>\prod_{\alpha\in\Gamma} (x-\alpha)^{m_{\alpha}-1}</m> avec <m>\Gamma</m>
+      l'ensemble des racines de <m>p</m> de multiplicit&#xe9; strictement sup&#xe9;rieure &#xe0;
+      1 et <m>m_{\alpha}</m> la multiplicit&#xe9; de la racine <m>\alpha</m>. Si <m>q</m>
+      d&#xe9;signe ce pgcd, alors le quotient de <m>p</m> par <m>q</m> a bien les
+      propri&#xe9;t&#xe9;s attendues.
+    </p>
+
+    <p>
+      Notons que le degr&#xe9; du quotient de <m>p</m> par <m>q</m> est strictement
+      inf&#xe9;rieur au degr&#xe9; de <m>p</m>. En particulier, si ce degr&#xe9; est strictement
+      inf&#xe9;rieur &#xe0; <m>5</m>, il est possible d'exprimer les racines au moyen de
+      radicaux. L'exemple qui suit en donne une illustration pour un
+      polyn&#xf4;me &#xe0; coefficients rationnels de degr&#xe9; <m>13</m>.
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PolynomialRing(QQ, 'x')
+        p = 128*x^13 - 1344*x^12 + 6048*x^11 - 15632*x^10 \
+        + 28056*x^9 - 44604*x^8 + 71198*x^7 - 98283*x^6 \
+        + 105840*x^5 - 101304*x^4 + 99468*x^3 - 81648*x^2 \
+        + 40824*x - 8748
+        q = gcd(p, p.derivative())
+        (p // q).degree()
+      </input>
+      <output>
+        4
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        roots = SR(p // q).roots(multiplicities=False)
+        roots
+      </input>
+      <output>
+        [1/2*I*2^(1/3)*sqrt(3) - 1/2*2^(1/3), 
+         -1/2*I*2^(1/3)*sqrt(3) - 1/2*2^(1/3), 
+         2^(1/3), 3/2]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        [QQbar(p(alpha)).is_zero() for alpha in roots]
+      </input>
+      <output>
+        [True, True, True, True]
+      </output>
+    </sage>
+
+    </subsubsection>
+  </subsection>
+</section>
+

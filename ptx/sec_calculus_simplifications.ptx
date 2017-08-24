@@ -1,0 +1,419 @@
+
+
+<section xml:id="sec_calculus_simplifications">
+  <title>Simplification d'expressions symboliques</title>
+  <subsection>
+    <title>Expressions symboliques et fonctions symboliques</title>
+    <p>
+      Un syst&#xe8;me de calcul formel effectue les calculs d'analyse &#xe0; partir
+      d'expressions symboliques combinant des nombres,
+      des variables symboliques,
+      les quatre op&#xe9;rations,
+      et des fonctions usuelles comme <c>sqrt</c>, <c>exp</c>, <c>log</c>,
+      <c>sin</c>, <c>cos</c>, etc.
+      L'op&#xe9;ration la plus commune consiste &#xe0; &#xe9;valuer une expression
+      pour une valeur d'un ou plusieurs param&#xe8;tres. Avec <em>Sage</em> , la m&#xe9;thode
+      <c>subs</c> <mdash /> qui peut &#xea;tre sous-entendue <mdash /> effectue ces manipulations :
+    </p>
+
+    <sage>
+      <input>
+        var ('a,x')  ; y = cos(x+a)*(x+1)    ; y
+        y.subs(a=-x) ; y.subs(x=pi/2,a=pi/3) ; y.subs(x=0.5,a=2.3)
+        y(a=-x)      ; y(x=pi/2,a=pi/3)      ;      y(x=0.5,a=2.3)
+      </input>
+    </sage>
+
+    <p>
+      Par rapport &#xe0; la notation math&#xe9;matique usuelle <m>x \mapsto f(x)</m>,
+      le nom de la variable substitu&#xe9;e doit &#xea;tre indiqu&#xe9;. La substitution
+      avec plusieurs param&#xe8;tres est faite de fa&#xe7;on parall&#xe8;le,
+      alors que plusieurs substitutions effectuent des r&#xe9;&#xe9;critures s&#xe9;quentielles,
+      comme le montrent les deux tests ci-dessous :
+    </p>
+
+    <sage>
+      <input>
+        var('x,y,z') ; q = x*y+y*z+z*x
+        bool (q(x=y,y=z,z=x)==q), bool(q(z=y)(y=x) == 3*x^2)
+      </input>
+    </sage>
+
+    <p>
+      Notons que pour substituer une expression &#xe0; une autre, on
+      dispose de la fonction <c>subs_expr</c> :
+    </p>
+
+    <sage>
+      <input>
+        var('y z'); f = x^3+y^2+z; f.subs_expr(x^3==y^2, z==1)
+      </input>
+      <output>
+        2*y^2 + 1
+      </output>
+    </sage>
+
+    <p>
+      Par ailleurs <em>Sage</em>  permet de d&#xe9;finir des fonctions symboliques
+      pour la manipulation d'expressions :
+    </p>
+
+    <sage>
+      <input>
+        f(x)=(2*x+1)^3 ; f(-3)
+      </input>
+      <output>
+        -125
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        f(x).expand()
+      </input>
+      <output>
+        8*x^3 + 12*x^2 + 6*x + 1
+      </output>
+    </sage>
+
+    <p>
+      &#xc0; noter que ces fonctions symboliques n'ont pas le m&#xea;me r&#xf4;le que les fonctions
+      <em>Python</em>  qui sont d&#xe9;crites dans le <xref ref="programmation">chapitre</xref>.
+      Une fonction symbolique poss&#xe8;de les m&#xea;mes attributs qu'une expression symbolique,
+      ce qui n'est pas le cas d'une fonction <em>Python</em>  ; par exemple, la m&#xe9;thode
+      <c>expand</c> ne s'applique pas &#xe0; ces derni&#xe8;res :
+    </p>
+
+    <sage>
+      <input>
+        def f(x):
+        return (2*x+1)^3
+        f.expand()
+      </input>
+      <output>
+        AttributeError: 'function' object has no attribute 'expand'
+      </output>
+    </sage>
+
+    <p>
+      Ainsi une fonction symbolique n'est autre qu'une expression que l'on peut
+      appeler et o&#xf9; l'ordre des variables est fix&#xe9;. Pour convertir
+      une expression symbolique en fonction symbolique, on utilise soit la m&#xe9;thode
+      <c>function</c>, soit la syntaxe d&#xe9;j&#xe0; mentionn&#xe9;e :
+    </p>
+
+    <sage>
+      <input>
+        var('y'); u = sin(x) + x*cos(y)
+        v = u.function(x, y); v
+      </input>
+      <output>
+        (x, y) |--> x*cos(y) + sin(x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        w(x, y) = u; w
+      </input>
+      <output>
+        (x, y) |--> x*cos(y) + sin(x)
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="calculus_simplify">
+    <title>Expressions complexes et simplification</title>
+    <introduction>
+      <p>
+        Les classes d'expressions pr&#xe9;sent&#xe9;es aux
+        <xref ref="premierspas_classeselementaires">paragraphes</xref> <xref ref="premierspas_autresclasses">et</xref>
+        partagent la propri&#xe9;t&#xe9; d'avoir une proc&#xe9;dure de d&#xe9;cision pour la nullit&#xe9;.
+        C'est-&#xe0;-dire que pour toutes ces classes un programme peut d&#xe9;terminer si une
+        expression donn&#xe9;e est nulle ou non. Dans de nombreux cas, cette d&#xe9;cision se
+        fait par r&#xe9;duction &#xe0; la forme normale : l'expression est nulle si et seulement
+        si sa forme normale est le symbole 0.
+      </p>
+
+      <p>
+        Malheureusement, toutes les classes d'expressions n'admettent pas une forme
+        normale. Pire encore, pour certaines classes il est impossible de prouver la
+        nullit&#xe9; d'une expression en temps fini. Un exemple d'une telle classe est fourni
+        par les expressions compos&#xe9;es &#xe0; partir des rationnels, des nombres <m>\pi</m> et
+        <m>\log 2</m> et d'une variable, par utilisation r&#xe9;p&#xe9;t&#xe9;e de l'addition, de la
+        soustraction, du produit, de l'exponentielle et du sinus. Bien s&#xfb;r, une
+        utilisation r&#xe9;p&#xe9;t&#xe9;e de <c>numerical_approx</c> en augmentant la pr&#xe9;cision permet
+        souvent de conjecturer si une expression particuli&#xe8;re est nulle ou non ; mais
+        Richardson a montr&#xe9; qu'il est impossible d'&#xe9;crire un programme prenant en
+        argument une expression de cette classe et donnant au bout d'un temps fini le
+        r&#xe9;sultat vrai si celle-ci est nulle, et faux sinon.
+      </p>
+
+      <p>
+        C'est dans ces classes que se pose avec le plus d'acuit&#xe9; le probl&#xe8;me de la
+        simplification. Sans forme normale, les syst&#xe8;mes ne peuvent que donner un
+        certain nombre de fonctions de r&#xe9;&#xe9;criture avec lesquelles l'utilisateur doit
+        jongler pour parvenir &#xe0; un r&#xe9;sultat. Pour y voir plus clair dans cette jungle,
+        il faut l&#xe0; encore distinguer plusieurs sous-classes, savoir quelles fonctions
+        s'appliquent et quelles transformations sont effectu&#xe9;es.
+      </p>
+    </introduction>
+    <subsubsection xml:id="sec_calculus_constantes">
+    <title>Constantes</title>
+    <p>
+      Comme dit pr&#xe9;c&#xe9;demment, les calculs se font avec des nombres entiers ou
+      rationnels exacts et avec des constantes symboliques (qui ne sont pas
+      des approximations flottantes).
+    </p>
+
+    <p>
+      Les constantes les plus simples sont les rationnels, le nombre <m>\pi</m> not&#xe9;
+      <c>pi</c>, la base <m>e</m> des logarithmes n&#xe9;p&#xe9;riens not&#xe9;e <m><c>e</c></m>, le nombre
+      imaginaire <m>i</m> not&#xe9; <c>I</c> ou <c>i</c>, la constante d'Euler <m>\gamma</m> not&#xe9;e
+      <c>euler_gamma</c> et le nombre d'or <m>\phi</m> not&#xe9; <c>golden_ratio</c>.
+    </p>
+
+    <p>
+      Ces constantes sont relativement bien connues du syst&#xe8;me. Pour la classe simple
+      des polyn&#xf4;mes en <m>\pi</m> et <m>e</m>, aucun algorithme de forme normale n'est connu : &#xe0;
+      ce jour on ignore s'il existe un tel polyn&#xf4;me non trivial qui vaille z&#xe9;ro.
+    </p>
+
+    <p>
+      En utilisation interactive, une bonne fa&#xe7;on de traiter ces constantes dans
+      des simplifications compliqu&#xe9;es est de les remplacer toutes sauf <m>i</m> par des
+      variables et d'utiliser les proc&#xe9;dures de forme normale des fractions
+      rationnelles.
+    </p>
+
+    <p>
+      Ceci revient &#xe0; faire l'hypoth&#xe8;se que toutes ces constantes sont alg&#xe9;briquement
+      ind&#xe9;pendantes. Cette remarque se g&#xe9;n&#xe9;ralise &#xe0; des constantes plus complexes
+      comme <m>\log 2</m>, <m>\exp(\pi + \log 3)</m>,... mais il faut alors &#xea;tre s&#xfb;r que celles-ci ne sont
+      pas trivialement d&#xe9;pendantes.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_calculus_fusuelles">
+    <title>Fonctions math&#xe9;matiques usuelles</title>
+    <p>
+      La plupart des fonctions math&#xe9;matiques se retrouvent en <em>Sage</em> , en particulier les
+      fonctions trigonom&#xe9;triques, le logarithme et l'exponentielle.
+      <md>
+        \vbox{
+
+        \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        \tvi \amp {Fonction}   \amp  \textrm{Syntaxe}  \amp   \cr
+        \noalign{\hrule}
+        \tvp\cr
+        \tvi\amp  Fontions exponentielle et logarithme   \amp  exp, log\cr
+        \tvi\amp  Fontion logarithme de base <m>a</m>         \amp  log(x, a)\cr
+        \tvi\amp  Fonctions trigonom\'etriques             \amp  sin, cos, tan \cr
+        \tvi\amp  Fonctions trigonom\'etriques r\'eciproques \amp  arcsin, arccos, arctan \cr
+        \tvi\amp  Fonctions hyperboliques                \amp  sinh, cosh, tanh \cr
+        \tvi\amp  Fonctions hyperboliques r\'eciproques    \amp  arcsinh, arccosh, arctanh \cr
+        \tvi\amp  Partie enti\`ere, ...                    \amp  floor, ceil, trunc, round\cr
+        \tvi\amp  Racine carr\'ee et <m>n</m>-i\`eme              \amp  sqrt, nth\_root\cr
+        \tvp\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        }}
+      </md>
+    </p>
+
+    <p>
+      La simplification de telles fonctions est cruciale.
+      Pour simplifier une expression ou une fonction symbolique, on dispose de la
+      commande <c>simplify</c> :
+    </p>
+
+    <sage>
+      <input>
+        (x^x/x).simplify()
+      </input>
+      <output>
+        x^(x - 1)
+      </output>
+    </sage>
+
+    <p>
+      Cependant, pour des simplifications plus subtiles, on doit pr&#xe9;ciser le type de simplification attendue<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        f = (e^x-1)/(1+e^(x/2)); f.simplify_exp()
+      </input>
+      <output>
+        e^(1/2*x) - 1
+      </output>
+    </sage>
+
+    <p>
+      Pour simplifier des expressions trigonom&#xe9;triques, on utilise la commande <c>simplify_trig</c> :
+    </p>
+
+    <sage>
+      <input>
+        f = cos(x)^6 + sin(x)^6 + 3 * sin(x)^2 * cos(x)^2
+        f.simplify_trig()
+      </input>
+      <output>
+        1
+      </output>
+    </sage>
+
+    <p>
+      Pour lin&#xe9;ariser (resp. anti-lin&#xe9;ariser) une expression trigonom&#xe9;trique, on utilise <c>reduce_trig</c>
+      (resp. <c>expand_trig</c>) <nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        f = cos(x)^6; f.reduce_trig()
+      </input>
+    </sage>
+
+    <me>
+      \frac{15}{32} \, \cos\left(2 \, x\right) + \frac{3}{16} \, \cos\left(4 \,
+      x\right) + \frac{1}{32} \, \cos\left(6 \, x\right) + \frac{5}{16}
+    </me>
+
+    <sage>
+      <input>
+        f = sin(5 * x); f.expand_trig()
+      </input>
+    </sage>
+
+    <me>
+      \sin\left(x\right)^{5} - 10 \, \sin\left(x\right)^{3} \cos\left(x\right)^{2} +
+      5 \, \sin\left(x\right) \cos\left(x\right)^{4}
+    </me>
+    <p>
+      Le tableau suivant r&#xe9;sume les fonctions utiles pour simplifier des expressions trigonom&#xe9;triques<nbsp />:
+      <md>
+        \vbox{
+
+        \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        \tvi \amp \textrm{Type de simplification}   \amp  \textrm{Syntaxe}  \amp  \cr
+        \noalign{\hrule}
+        \tvp\cr
+        \tvi \amp  Simplification \amp  simplify\_trig \cr
+        \tvi \amp  Lin\'earisation \amp  reduce\_trig \cr
+        \tvi \amp  Anti-lin\'earisation \amp  expand\_trig \cr
+        \tvp\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        }}
+      </md>
+    </p>
+
+    <p>
+      On peut &#xe9;galement simplifier des expressions faisant intervenir des factorielles :
+    </p>
+
+    <sage>
+      <input>
+        n = var('n'); f = factorial(n+1)/factorial(n)
+        f.simplify_factorial()
+      </input>
+      <output>
+        n + 1
+      </output>
+    </sage>
+
+    <p>
+      La fonction <c>simplify_rational</c>, quant &#xe0; elle, cherche &#xe0; simplifier une
+      fraction rationnelle en d&#xe9;veloppant ses membres.
+      Pour simplifier des racines carr&#xe9;es, des logarithmes ou des exponentielles, on
+      utilise <c>simplify_radical</c> :
+    </p>
+
+    <sage>
+      <input>
+        f = sqrt(x^2); f.simplify_radical()
+      </input>
+      <output>
+        abs(x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        f = log(x*y); f.simplify_radical()
+      </input>
+      <output>
+        log(x) + log(y)
+      </output>
+    </sage>
+
+    <p>
+      La commande <c>simplify_full</c> applique (dans l'ordre) les fonctions
+      suivantes :
+      <c> simplify_factorial</c>, <c>simplify_trig</c>, <c>simplify_rational</c> et
+    </p>
+
+    <p>
+      <c>simplify_radical</c>.
+    </p>
+
+    <p>
+      Tout ce qui concerne le classique tableau de variation de la fonction (calcul
+      des d&#xe9;riv&#xe9;es, des asymptotes, des extrema, recherche des z&#xe9;ros et trac&#xe9; de la
+      courbe) peut &#xea;tre facilement r&#xe9;alis&#xe9; &#xe0; l'aide d'un syst&#xe8;me de calcul formel. Les
+      principales op&#xe9;rations <em>Sage</em>  qui s'appliquent &#xe0; une fonction sont pr&#xe9;sent&#xe9;es dans
+      la <xref ref="sec_calculus_analyse">section</xref>.
+    </p>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_assume">
+    <title>Hypoth&#xe8;ses sur une variable symbolique</title>
+    <p>
+      Les variables non affect&#xe9;es posent probl&#xe8;me lors des calculs. Un cas typique est
+      la simplification de l'expression <m>\sqrt{x^2}</m>. Pour simplifier de telles
+      expressions, la bonne solution consiste &#xe0; utiliser la fonction <c>assume</c> qui
+      permet de pr&#xe9;ciser les propri&#xe9;t&#xe9;s d'une variable. Si on souhaite annuler
+      cette hypoth&#xe8;se, on emploie l'instruction <c>forget</c> :
+    </p>
+
+    <sage>
+      <input>
+        assume(x > 0); bool(sqrt(x^2) == x)
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        forget(x > 0); bool(sqrt(x^2) == x)
+      </input>
+      <output>
+        False
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        var('n'); assume(n, 'integer'); sin(n*pi).simplify()
+      </input>
+      <output>
+        0
+      </output>
+    </sage>
+  </subsection>
+</section>
+

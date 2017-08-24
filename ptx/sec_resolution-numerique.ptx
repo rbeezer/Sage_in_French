@@ -1,0 +1,1239 @@
+
+
+<section xml:id="sec_resolution-numerique">
+  <title>R&#xe9;solution num&#xe9;rique</title>
+  <introduction>
+    <p>
+      En math&#xe9;matiques, on oppose traditionnellement le <em>discret</em> et le
+      <em>continu</em>. L'analyse num&#xe9;rique relativise en quelque sorte cette
+      opposition : un des aspects majeurs de l'analyse num&#xe9;rique consiste en
+      effet &#xe0; aborder des questions portant sur les nombres r&#xe9;els, par
+      essence du domaine du continu, en adoptant un point de vue
+      exp&#xe9;rimental s'appuyant notamment sur l'ordinateur qui, lui, rel&#xe8;ve du
+      discret.
+    </p>
+
+    <p>
+      S'agissant de la r&#xe9;solution d'&#xe9;quations non lin&#xe9;aires, de nombreuses
+      questions se posent naturellement : combien de racines r&#xe9;elles,
+      imaginaires, positives, n&#xe9;gatives poss&#xe8;de une &#xe9;quation donn&#xe9;e ?
+    </p>
+
+    <p>
+      Dans cette partie on commence par donner des &#xe9;l&#xe9;ments de r&#xe9;ponse pour
+      les &#xe9;quations alg&#xe9;briques. Puis on d&#xe9;crit quelques-unes des m&#xe9;thodes
+      d'approximation qui permettent de calculer des valeurs approch&#xe9;es des
+      solutions d'une &#xe9;quation non lin&#xe9;aire.
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec_local-des-solut">
+    <title>Localisation des solutions des &#xe9;quations alg&#xe9;briques</title>
+    <subsubsection xml:id="sec_regle-de-descartes">
+    <title>R&#xe8;gle de Descartes</title>
+    <p>
+      La r&#xe8;gle de Descartes s'&#xe9;nonce de la mani&#xe8;re suivante : le nombre de
+      racines positives d'un polyn&#xf4;me &#xe0; coefficients r&#xe9;els est inf&#xe9;rieur ou
+      &#xe9;gal au nombre de changements de signe de la suite des coefficients du
+      polyn&#xf4;me.
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PolynomialRing(RR, 'x')
+        p = x^7 - 131/3*x^6 + 1070/3*x^5 - 2927/3*x^4 \
+        + 2435/3*x^3 - 806/3*x^2 + 3188/3*x - 680
+        sign_changes = \
+        [p[i] * p[i + 1] &lt; 0 \
+        for i in range(p.degree())].count(True)
+        real_positive_roots = \
+        sum([alpha[1] \
+        if alpha[0] > 0 else 0 for alpha in p.roots()])
+        sign_changes, real_positive_roots
+      </input>
+      <output>
+        (7, 5)
+      </output>
+    </sage>
+
+    <p>
+      En effet, soient <m>p</m> un polyn&#xf4;me &#xe0; coefficients r&#xe9;els de degr&#xe9; <m>d</m> et
+      <m>p'</m> le polyn&#xf4;me d&#xe9;riv&#xe9;. On note <m>u</m> et <m>u'</m> les suites des signes des
+      coefficients des polyn&#xf4;mes <m>p</m> et <m>p'</m> : on a <m>u_{i}=\pm 1</m> selon que
+      le coefficient de degr&#xe9; <m>i</m> de <m>p</m> est positif ou n&#xe9;gatif. La suite
+      <m>u'</m> se d&#xe9;duit de <m>u</m> par simple troncature : on a <m>u'_{i}=u_{i+1}</m>
+      pour <m>0\leq i\lt d</m>. Il en r&#xe9;sulte que le nombre de changements de signe
+      de la suite <m>u</m> est au plus &#xe9;gal au nombre de changements de signe de
+      la suite <m>u'</m> plus 1.
+    </p>
+
+    <p>
+      Par ailleurs, le nombre de racines positives de <m>p</m> est au plus &#xe9;gal
+      au nombre de racines positives de <m>p'</m> plus un : un intervalle dont
+      les extr&#xe9;mit&#xe9;s sont des racines de <m>p</m> contient toujours une racine de
+      <m>p'</m>.
+    </p>
+
+    <p>
+      Comme la r&#xe8;gle de Descartes est vraie pour un polyn&#xf4;me de degr&#xe9; 1, les
+      deux observations pr&#xe9;c&#xe9;dentes montrent qu'elle est encore vraie pour
+      un polyn&#xf4;me de degr&#xe9; 2, etc.
+    </p>
+
+    <p>
+      Il est possible de pr&#xe9;ciser la relation entre le nombre de racines
+      positives et le nombre de changements de signes de la suite des
+      coefficients : la diff&#xe9;rence entre ces nombres est toujours paire.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_isolation-de-racines">
+    <title>Isolation de racines r&#xe9;elles de polyn&#xf4;mes</title>
+    <p>
+      On vient de voir qu'il est possible d'&#xe9;tablir, pour les polyn&#xf4;mes &#xe0;
+      coefficients r&#xe9;els, une majoration de nombre de racines contenues dans
+      l'intervalle <m>[0,+\infty[</m>. Plus g&#xe9;n&#xe9;ralement, il existe des moyens de
+      pr&#xe9;ciser le nombre de racines dans un intervalle donn&#xe9;.
+    </p>
+
+    <p>
+      &#xc9;non&#xe7;ons par exemple le th&#xe9;or&#xe8;me de Sturm. Soient un polyn&#xf4;me <m>p</m> &#xe0;
+      coefficients r&#xe9;els, <m>d</m> son degr&#xe9; et <m>[a,b]</m> un intervalle. On
+      construit une suite de polyn&#xf4;mes par r&#xe9;currence. Pour commencer
+      <m>p_{0}=p</m> et <m>p_{1}=p'</m> ; ensuite, <m>p_{i+2}</m> est l'oppos&#xe9; du reste de
+      la division euclidienne de <m>p_{i}</m> par <m>p_{i+1}</m>. En &#xe9;valuant cette
+      suite de polyn&#xf4;mes aux points <m>a</m> et <m>b</m> on obtient deux suites
+      r&#xe9;elles finies <m>(p_{0}(a),\ldots,p_{d}(a))</m> et
+      <m>(p_{0}(b),\ldots,p_{d}(b))</m>. Le th&#xe9;or&#xe8;me de Sturm s'&#xe9;nonce ainsi : le
+      nombre de racines de <m>p</m> appartenant &#xe0; l'intervalle <m>[a,b]</m> est &#xe9;gal
+      au nombre de changements de signe de la suite
+      <m>(p_{0}(a),\ldots,p_{d}(a))</m> diminu&#xe9; du nombre de changements de
+      signes de la suite <m>(p_{0}(b),\ldots,p_{d}(b))</m> en supposant que les
+      racines de <m>p</m> sont simples, <m>p(a)\not=0</m> et <m>p(b)\not=0</m>.
+    </p>
+
+    <p>
+      Montrons comment impl&#xe9;menter ce th&#xe9;or&#xe8;me avec <em>Sage</em> .
+    </p>
+
+    <p>
+      \begin{sageblock}
+      def count_sign_changes(l):
+      changes = [l[i] * l[i + 1] &lt; 0 for i in range(len(l) - 1)]
+      return changes.count(True)
+    </p>
+
+    <p>
+      def sturm(p, a, b):
+      assert p.degree() > 2
+      assert not (p(a) == 0)
+      assert not (p(b) == 0)
+      if a > b:
+      a, b = b, a
+      remainders = [p, p.derivative()]
+      for i in range(p.degree()):
+      remainders.append(-(remainders[i]
+      evals = [[], []]
+      for q in remainders:
+      evals[0].append(q(a))
+      evals[1].append(q(b))
+      return count_sign_changes(evals[0]) 
+      - count_sign_changes(evals[1])
+      \end{sageblock}
+    </p>
+
+    <p>
+      Voici maintenant une illustration de cette fonction <c>sturm()</c>.
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PolynomialRing(QQ, 'x')
+        p = (x - 34) * (x - 5) * (x - 3) * (x - 2) * (x - 2/3)
+        sturm(p, 1, 4)
+      </input>
+      <output>
+        2
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        sturm(p, 1, 10)
+      </input>
+      <output>
+        3
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        sturm(p, 1, 200)
+      </input>
+      <output>
+        4
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.roots(multiplicities=False)
+      </input>
+      <output>
+        [34, 5, 3, 2, 2/3]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        sturm(p, 1/2, 35)
+      </input>
+      <output>
+        5
+      </output>
+    </sage>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection xml:id="sec_meth-dappr-succ">
+    <title>M&#xe9;thodes d'approximations successives</title>
+    <introduction>
+      \raggedleft
+        <em>Approximation : G&#xe9;n. au sing. Op&#xe9;ration par laquelle on tend
+          &#xe0; se rapprocher de plus en plus de la valeur r&#xe9;elle d'une quantit&#xe9;
+          ou d'une grandeur sans y parvenir rigoureusement.</em> 
+
+        Tr&#xe9;sor de la Langue Fran&#xe7;aise
+
+      <p>
+        Dans cette partie, on illustre diff&#xe9;rentes m&#xe9;thodes d'approximation
+        des solutions d'une &#xe9;quation non lin&#xe9;aire <m>f(x)=0</m>. Il y a
+        essentiellement deux d&#xe9;marches pour calculer ces approximations. Nous
+        verrons que l'algorithme le plus performant m&#xea;le les deux d&#xe9;marches.
+      </p>
+
+      <p>
+        La premi&#xe8;re d&#xe9;marche consiste &#xe0; construire une suite d'intervalles
+        embo&#xee;t&#xe9;s qui contiennent une solution de l'&#xe9;quation. On contr&#xf4;le la
+        pr&#xe9;cision et la convergence est assur&#xe9;e mais la vitesse de convergence
+        n'est pas toujours bonne.
+      </p>
+
+      <p>
+        La seconde d&#xe9;marche suppose connue une valeur approch&#xe9;e d'une solution
+        de l'&#xe9;quation. Si le comportement local de la fonction <m>f</m> est
+        suffisamment r&#xe9;gulier, on pourra calculer une nouvelle valeur
+        approch&#xe9;e plus proche de la solution. Par r&#xe9;currence, on obtient donc
+        une suite de valeurs approch&#xe9;es. Cette d&#xe9;marche suppose donc connue
+        une premi&#xe8;re approximation du nombre cherch&#xe9;. Par ailleurs, son
+        efficacit&#xe9; repose sur le bon comportement local de la fonction <m>f</m> :
+        <em>a priori</em>, on ne ma&#xee;trise pas la pr&#xe9;cision des valeurs
+        approch&#xe9;es ; pire, la convergence de la suite de valeurs approch&#xe9;es
+        n'est pas n&#xe9;cessairement garantie.
+      </p>
+
+      <p>
+        Dans toute cette partie, on consid&#xe8;re une &#xe9;quation non lin&#xe9;aire
+        <m>f(x)=0</m> o&#xf9; <m>f</m> d&#xe9;signe une fonction num&#xe9;rique d&#xe9;finie sur un
+        intervalle <m>[a,b]</m> et continue sur cet intervalle. On suppose que les
+        valeurs de <m>f</m> aux extr&#xe9;mit&#xe9;s de l'intervalle <m>[a,b]</m> sont non nulles
+        et de signes oppos&#xe9;s : autrement dit, le produit <m>f(a)f(b)</m> est
+        strictement n&#xe9;gatif. La continuit&#xe9; de <m>f</m> assure donc l'existence dans
+        l'intervalle <m>[a,b]</m> d'au moins une solution &#xe0; l'&#xe9;quation <m>f(x)=0</m>.
+      </p>
+
+      <p>
+        Pour chaque m&#xe9;thode, on exp&#xe9;rimentera avec la fonction suivante.
+      </p>
+
+      <sage>
+        <input>
+          f(x) = 4 * sin(x) - exp(x) / 2 + 1
+          a, b = RR(-pi), RR(pi)
+          bool(f(a) * f(b) &lt; 0)
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
+
+      <p>
+        Il convient de noter qu'avec cet exemple la commande <c>solve</c>
+        n'est d'aucune utilit&#xe9;.
+      </p>
+
+      <sage>
+        <input>
+          solve(f(x)==0, x)
+        </input>
+        <output>
+          [sin(x) == 1/8*e^x - 1/4]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          try:
+          f.roots()
+          except RuntimeError:
+          print('Root finding algorithm failed')
+        </input>
+        <output>
+          Root finding algorithm failed
+        </output>
+      </sage>
+
+      <p>
+        Les algorithmes de recherche de solutions d'&#xe9;quations non lin&#xe9;aires
+        peuvent &#xea;tre co&#xfb;teux : il convient de prendre quelques pr&#xe9;cautions
+        avant d'en d&#xe9;marrer l'ex&#xe9;cution. On s'assure notamment de l'existence
+        de solutions en &#xe9;tudiant la continuit&#xe9; et la d&#xe9;rivabilit&#xe9; de la
+        fonction &#xe0; annuler ainsi que d'&#xe9;ventuels changements de signe ; &#xe0; cet
+        effet le trac&#xe9; de graphe peut &#xea;tre utile
+        (cf.<nbsp /><xref ref="graphique">&#xa7;</xref>).
+      </p>
+
+      <p>
+        \begin{sagesilent}
+        f(x) = 4 * sin(x) - exp(x) / 2 + 1
+        a, b = RR(-pi), RR(pi)
+        g = plot(f, -pi, pi, rgbcolor='blue')
+        \end{sagesilent}
+      </p>
+
+      <figure xml:id="fig_courb-rep-fonc" >
+        <caption>Courbe repr&#xe9;sentative de la fonction <m>f</m>.</caption>
+        \sageplot{g}
+      </figure>
+    </introduction>
+    <subsubsection xml:id="sec_meth-de-dich">
+    <title>M&#xe9;thode de dichotomie</title>
+    <p>
+      Cette m&#xe9;thode repose sur la premi&#xe8;re d&#xe9;marche : construire une suite
+      d'intervalles embo&#xee;t&#xe9;s qui contiennent tous une solution de l'&#xe9;quation
+      <m>f(x)=0</m>.
+    </p>
+
+    <p>
+      On divise l'intervalle <m>[a,b]</m> en son milieu, not&#xe9; <m>c</m>. Supposons
+      <m>f(c)\not=0</m>. Soit <m>f(a)f(c)</m> est strictement inf&#xe9;rieur &#xe0; z&#xe9;ro et
+      l'intervalle <m>[a,c]</m> contient n&#xe9;cessairement une solution de
+      l'&#xe9;quation ; soit <m>f(c)f(b)</m> est strictement sup&#xe9;rieur &#xe0; z&#xe9;ro et
+      l'intervalle <m>[c,b]</m> contient une solution de l'&#xe9;quation. Ainsi on
+      sait construire un intervalle contenant une solution et dont la
+      longueur est deux fois plus petite que celle de l'intervalle <m>[a,b]</m>.
+      En r&#xe9;p&#xe9;tant cette construction on obtient bien une suite d'intervalles
+      aux propri&#xe9;t&#xe9;s attendues.
+    </p>
+
+    <p>
+      Pour mettre en oeuvre cette d&#xe9;marche on d&#xe9;finit la fonction Python
+      <c>intervalgen</c>.
+      \begin{sageblock}
+      def intervalgen(f, phi, s, t):
+      msg = 'Wrong arguments: f({0}) * f({1}) >= 0)'.format(s, t)
+      assert (f(s) * f(t) &lt; 0), msg
+      yield s
+      yield t
+      while 1:
+      u = phi(s, t)
+      yield u
+      if f(u) * f(s) &lt; 0:
+      t = u
+      else:
+      s = u
+    </p>
+
+    <p>
+      phi(s, t) = (s + t) / 2
+      \end{sageblock}
+    </p>
+
+    <p>
+      La d&#xe9;finition de cette fonction m&#xe9;rite quelques explications. La
+      pr&#xe9;sence du mot cl&#xe9; <c>yield</c> dans la d&#xe9;finition de
+      <c>intervalgen</c> en fait un <em>g&#xe9;n&#xe9;rateur</em>
+      (voir <xref ref="sec_combinatoire_briques_iterateurs">&#xa7;</xref>).
+      Lors d'un appel &#xe0;
+      la m&#xe9;thode <c>next()</c> d'un g&#xe9;n&#xe9;rateur, si l'interpr&#xe9;teur
+      rencontre le mot cl&#xe9; <c>yield</c>, toutes les donn&#xe9;es locales sont
+      sauvegard&#xe9;es, l'ex&#xe9;cution est interrompue et l'expression
+      imm&#xe9;diatement &#xe0; droite du mot cl&#xe9; rencontr&#xe9; est renvoy&#xe9;e. L'appel
+      suivant &#xe0; la m&#xe9;thode <c>next()</c> d&#xe9;marrera &#xe0; l'instruction suivant
+      le mot cl&#xe9; <c>yield</c> avec les donn&#xe9;es locales sauvegard&#xe9;es avant
+      l'interruption. Utilis&#xe9; dans une boucle infinie (<c>while True:</c>)
+      le mot cl&#xe9; <c>yield</c> permet donc de programmer une suite
+      r&#xe9;currente avec une syntaxe proche de sa description math&#xe9;matique. Il
+      est possible de stopper d&#xe9;finitivement l'ex&#xe9;cution en utilisant
+      l'habituel mot cl&#xe9; <c>return</c>.
+    </p>
+
+    <p>
+      Le param&#xe8;tre <c>phi</c> repr&#xe9;sente une fonction ; elle caract&#xe9;rise
+      la m&#xe9;thode d'approximation. Pour la m&#xe9;thode de la dichotomie, cette
+      fonction calcule le milieu d'un intervalle. Pour tester une autre
+      m&#xe9;thode d'approximations successives reposant &#xe9;galement sur la
+      construction d'intervalles embo&#xee;t&#xe9;s, on donnera une nouvelle
+      d&#xe9;finition de la fonction <c>phi</c> et on utilisera &#xe0; nouveau la
+      fonction <c>intervalgen</c> pour construire le g&#xe9;n&#xe9;rateur
+      correspondant.
+    </p>
+
+    <p>
+      Les param&#xe8;tres <c>s</c> et <c>t</c> de la fonction repr&#xe9;sentent
+      les extr&#xe9;mit&#xe9;s du premier intervalle. Un appel &#xe0; <c>assert</c>
+      permet de v&#xe9;rifier que la fonction <m>f</m> change de signe entre les
+      extr&#xe9;mit&#xe9;s de cet intervalle ; on a vu que cela garantit l'existence
+      d'une solution.
+    </p>
+
+    <p>
+      Les deux premi&#xe8;res valeurs du g&#xe9;n&#xe9;rateur correspondent aux param&#xe8;tres
+      <c>s</c> et <c>t</c>. La troisi&#xe8;me valeur est le milieu de
+      l'intervalle correspondant. Les param&#xe8;tres <c>s</c> et <c>t</c>
+      repr&#xe9;sentent ensuite les extr&#xe9;mit&#xe9;s du dernier intervalle calcul&#xe9;.
+      Apr&#xe8;s &#xe9;valuation de <m>f</m> au milieu de cet intervalle, on change une des
+      extr&#xe9;mit&#xe9;s de l'intervalle en sorte que le nouvel intervalle contienne
+      encore une solution. On convient de prendre pour valeur approch&#xe9;e de
+      la solution cherch&#xe9;e le milieu du dernier intervalle calcul&#xe9;.
+    </p>
+
+    <p>
+      Exp&#xe9;rimentons avec l'exemple choisi : suivent les trois approximations
+      obtenues par la m&#xe9;thode de dichotomie appliqu&#xe9;e sur l'intervalle
+      <m>[-\pi,\pi]</m>.
+    </p>
+
+    <sage>
+      <input>
+        a, b
+      </input>
+      <output>
+        -3.14159265358979 3.14159265358979
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        bisection = intervalgen(f, phi, a, b)
+        bisection.next()
+      </input>
+      <output>
+        -3.14159265358979
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        bisection.next()
+      </input>
+      <output>
+        3.14159265358979
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        bisection.next()
+      </input>
+      <output>
+        0.00000000000000
+      </output>
+    </sage>
+
+    <p>
+      Puisque nous nous appr&#xea;tons &#xe0; comparer diff&#xe9;rentes m&#xe9;thodes
+      d'approximation, il sera commode de disposer d'un m&#xe9;canisme
+      automatisant le calcul de la valeur approch&#xe9;e d'une solution de
+      l'&#xe9;quation <m>f(x)=0</m> &#xe0; partir des g&#xe9;n&#xe9;rateurs que nous d&#xe9;finirons avec
+      <em>Sage</em>  pour chacune de ces m&#xe9;thodes. Ce m&#xe9;canisme doit nous permettre de
+      contr&#xf4;ler la pr&#xe9;cision du calcul et le nombre maximum d'it&#xe9;rations.
+      C'est le r&#xf4;le de la fonction <c>iterate</c> dont la d&#xe9;finition suit.
+    </p>
+
+    <p>
+      \begin{sageblock}
+      from types import GeneratorType, FunctionType
+    </p>
+
+    <p>
+      def checklength(u, v, w, prec):
+      return abs(v - u) &lt; 2 * prec
+    </p>
+
+    <p>
+      def iterate(series, check=checklength, prec=10^-5, maxiter=100):
+      assert isinstance(series, GeneratorType)
+      assert isinstance(check, FunctionType)
+      niter = 2
+      v, w = series.next(), series.next()
+      while (niter <lt/>= maxiter):
+      niter += 1
+      u, v, w = v, w, series.next()
+      if check(u, v, w, prec):
+      return 'After {0} iterations: {1}'.format(niter, w)
+      msg = 'Failed after {0} iterations'.format(maxiter)
+      raise RuntimeError, msg
+      \end{sageblock}
+    </p>
+
+    <p>
+      Le param&#xe8;tre <c>series</c> doit &#xea;tre un g&#xe9;n&#xe9;rateur. On conserve les
+      trois derni&#xe8;res valeurs de ce g&#xe9;n&#xe9;rateur pour pouvoir effectuer un
+      test de convergence. C'est le r&#xf4;le du param&#xe8;tre <c>check</c> : une
+      fonction qui stoppera ou non les it&#xe9;rations. Par d&#xe9;faut la fonction
+      <c>iterate</c> utilise la fonction <c>checklength</c> qui stoppe
+      les it&#xe9;rations si le dernier intervalle calcul&#xe9; est de longueur
+      strictement inf&#xe9;rieure au double du param&#xe8;tre <c>prec</c> ; cela
+      garantit que la valeur calcul&#xe9;e par la m&#xe9;thode de dichotomie est une
+      valeur approch&#xe9;e avec une erreur strictement inf&#xe9;rieure &#xe0;
+      <c>prec</c>.
+    </p>
+
+    <p>
+      Une exception est d&#xe9;clench&#xe9;e d&#xe8;s que le nombre d'it&#xe9;rations d&#xe9;passe le
+      param&#xe8;tre <c>maxiter</c>.
+    </p>
+
+    <sage>
+      <input>
+        bisection = intervalgen(f, phi, a, b)
+        iterate(bisection)
+      </input>
+      <output>
+        After 20 iterations: 2.15847275559132
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_intervalgen">
+      <title>Exercice</title>
+      <p>
+        Modifier la fonction <c>intervalgen</c> pour que le
+        g&#xe9;n&#xe9;rateur stoppe si une des extr&#xe9;mit&#xe9;s de l'intervalle est une
+        solution.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_random">
+      <title>Exercice</title>
+      <p>
+        Utiliser les fonctions <c>intervalgen</c> et
+        <c>iterate</c> pour programmer le calcul d'une valeur approch&#xe9;e
+        d'une solution de l'&#xe9;quation <m>f(x)=0</m> &#xe0; partir d'une suite
+        d'intervalles embo&#xee;t&#xe9;s, chaque intervalle &#xe9;tant obtenu en divisant
+        al&#xe9;atoirement le pr&#xe9;c&#xe9;dent.
+      </p>
+    </paragraphs>
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_methode-de-la">
+    <title>M&#xe9;thode de la fausse position</title>
+    <p>
+      Cette m&#xe9;thode repose encore sur la premi&#xe8;re d&#xe9;marche : construire une
+      suite d'intervalles embo&#xee;t&#xe9;s qui contiennent tous une solution de
+      l'&#xe9;quation <m>f(x)=0</m>. Mais cette fois ci on utilise une interpolation
+      lin&#xe9;aire de la fonction <m>f</m> pour diviser chaque intervalle.
+    </p>
+
+    <p>
+      Pr&#xe9;cis&#xe9;ment, pour diviser l'intervalle <m>[a,b]</m>, on consid&#xe8;re le
+      segment joignant les deux points de la courbe repr&#xe9;sentative de <m>f</m>
+      d'abscisses <m>a</m> et <m>b</m>. Comme <m>f(a)</m> et <m>f(b)</m> sont de signes oppos&#xe9;s,
+      ce segment coupe l'axe des abscisses : il divise donc l'intervalle
+      <m>[a,b]</m> en deux intervalles. Comme pour la m&#xe9;thode de dichotomie, on
+      identifie un intervalle contenant une solution en calculant la valeur
+      que prend la fonction <m>f</m> au point commun &#xe0; ces deux intervalles.
+    </p>
+
+    <p>
+      La droite passant par des points de coordonn&#xe9;es <m>(a, f(a))</m> et <m>(b,
+      f(b))</m> a pour &#xe9;quation :
+      <men>
+        y = \frac{f(b)-f(a)}{b-a}(x-a)+f(a).
+      </men>
+    </p>
+
+    <p>
+      Puisque <m>f(b)\not=f(a)</m>, cette droite coupe l'axe des abscisses au
+      point d'abscisse :
+      <men>
+        \nonumber
+          a-f(a)\frac{b-a}{f(b)-f(a)}.
+      </men>
+    </p>
+
+    <p>
+      On peut donc tester cette m&#xe9;thode de la mani&#xe8;re suivante.
+    </p>
+
+    <sage>
+      <input>
+        phi(s, t) = t - f(t) * (s - t) / (f(s) - f(t))
+        falsepos = intervalgen(f, phi, a, b)
+        iterate(falsepos)
+      </input>
+      <output>
+        After 8 iterations: -2.89603757331027
+      </output>
+    </sage>
+
+    <p>
+      \begin{sagesilent}
+      a, b = RR(-pi), RR(pi)
+      g = plot(f, a, b, rgbcolor='blue')
+      phi(s, t) = t - f(t) * (s - t) / (f(s) - f(t))
+      falsepos = intervalgen(f, phi, a, b)
+      u, v, w = falsepos.next(), falsepos.next(), falsepos.next()
+      niter = 3
+      while niter &lt; 9:
+      g += line([(u, 0), (u, f(u))], rgbcolor='red', linestyle=':')
+      g += line([(u, f(u)), (v, f(v))], rgbcolor='red')
+      g += line([(v, 0), (v, f(v))], rgbcolor='red', linestyle=':')
+      g += point((w, 0), rgbcolor='red')
+      if (f(u) * f(w)) &lt; 0:
+      u, v = u, w
+      else:
+      u, v = w, v
+      w = falsepos.next()
+      niter += 1
+      \end{sagesilent}
+    </p>
+
+    <figure xml:id="fig_meth-faus-pos" >
+      <caption>M&#xe9;thode de la fausse position sur <m>[-\pi,\pi]</m>.</caption>
+      \sageplot{g}
+    </figure>
+
+    <p>
+      Il est important de remarquer que les suites construites avec les
+      m&#xe9;thodes de dichotomie et de la fausse position ne convergent pas
+      n&#xe9;cessairement vers les m&#xea;mes solutions. En r&#xe9;duisant l'intervalle
+      d'&#xe9;tude on retrouve la solution positive obtenue avec la m&#xe9;thode de
+      dichotomie.
+    </p>
+
+    <sage>
+      <input>
+        a, b = RR(pi/2), RR(pi)
+        phi(s, t) = t - f(t) * (s - t) / (f(s) - f(t))
+        falsepos = intervalgen(f, phi, a, b)
+        phi(s, t) = (s + t) / 2
+        bisection = intervalgen(f, phi, a, b)
+        iterate(falsepos)
+      </input>
+      <output>
+        After 15 iterations: 2.15846441170219
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        iterate(bisection)
+      </input>
+      <output>
+        After 20 iterations: 2.15847275559132
+      </output>
+    </sage>
+
+    <p>
+      \begin{sagesilent}
+      a, b = RR(pi/2), RR(pi)
+      g = plot(f, a, b, rgbcolor='blue')
+      phi(s, t) = t - f(t) * (s - t) / (f(s) - f(t))
+      falsepos = intervalgen(f, phi, a, b)
+      u, v, w = falsepos.next(), falsepos.next(), falsepos.next()
+      niter = 3
+      while niter &lt; 7:
+      g += line([(u, 0), (u, f(u))], rgbcolor='red', linestyle=':')
+      g += line([(u, f(u)), (v, f(v))], rgbcolor='red')
+      g += line([(v, 0), (v, f(v))], rgbcolor='red', linestyle=':')
+      g += point((w, 0), rgbcolor='red')
+      if (f(u) * f(w)) &lt; 0:
+      u, v = u, w
+      else:
+      u, v = w, v
+      w = falsepos.next()
+      niter += 1
+      \end{sagesilent}
+    </p>
+
+    <figure xml:id="fig_meth-faus-pos-1" >
+      <caption>M&#xe9;thode de la fausse position sur <m>[-\pi/2,\pi]</m>.</caption>
+      \sageplot{g}
+    </figure>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_methode-de-newton">
+    <title>M&#xe9;thode de Newton</title>
+    <p>
+      Comme la m&#xe9;thode de la fausse position, la m&#xe9;thode de Newton utilise
+      une approximation lin&#xe9;aire de la fonction <m>f</m>. Du point de vue
+      graphique, il s'agit de consid&#xe9;rer une tangente &#xe0; la courbe
+      repr&#xe9;sentative de <m>f</m> comme approximation de cette courbe.
+    </p>
+
+    <p>
+      On suppose donc maintenant <m>f</m> d&#xe9;rivable et la fonction d&#xe9;riv&#xe9;e <m>f'</m>
+      de signe constant dans l'intervalle <m>[a,b]</m> ; ainsi <m>f</m> est monotone.
+      On suppose aussi que <m>f</m> change de signe dans l'intervalle <m>[a,b]</m>.
+      L'&#xe9;quation <m>f(x)=0</m> a donc une unique solution dans cet intervalle ;
+      on note <m>\alpha</m> ce nombre.
+    </p>
+
+    <p>
+      Soit <m>u_{0}\in[a,b]</m>. La tangente &#xe0; la courbe repr&#xe9;sentative de <m>f</m> au
+      point d'abscisse <m>u_{0}</m> a pour &#xe9;quation :
+      <men>
+        y = f'(u_{0})(x-u_{0})+f(u_{0}).
+      </men>
+    </p>
+
+    <p>
+      L'abscisse du point d'intersection de cette droite avec l'axe des
+      abscisses est donc :
+      <men>
+        \nonumber
+          u_{0}-f(u_{0})/f'(u_{0}).
+      </men>
+    </p>
+
+    <p>
+      On note <m>\phi</m> la fonction <m>x\mapsto x-f(x)/f'(x)</m>. Elle est d&#xe9;finie &#xe0;
+      condition que <m>f'</m> ne s'annule pas dans l'intervalle <m>[a,b]</m>. On
+      s'int&#xe9;resse &#xe0; la suite r&#xe9;currente <m>u</m> d&#xe9;finie par
+      <m>u_{n+1}=\phi(u_{n})</m>.
+    </p>
+
+    <p>
+      Si la suite <m>u</m> est convergente<fn>Un th&#xe9;or&#xe8;me de L.<nbsp />Kantorovich
+        donne une condition suffisante pour que la m&#xe9;thode de Newton
+        converge.</fn>, alors sa limite <m>\ell</m> v&#xe9;rifie
+      <m>\ell=\ell-f(\ell)/f'(\ell)</m> dont r&#xe9;sulte <m>f(\ell)=0</m> : la limite est
+      &#xe9;gale &#xe0; <m>\alpha</m>, la solution de l'&#xe9;quation <m>f(x)=0</m>.
+    </p>
+
+    <p>
+      Pour que l'exemple respecte les hypoth&#xe8;ses de monotonie, on est amen&#xe9;
+      &#xe0; r&#xe9;duire l'intervalle d'&#xe9;tude.
+    </p>
+
+    <sage>
+      <input>
+        f.derivative()
+      </input>
+      <output>
+        x |--> -1/2*e^x + 4*cos(x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        a, b = RR(pi/2), RR(pi)
+      </input>
+    </sage>
+
+    <p>
+      On d&#xe9;finit un g&#xe9;n&#xe9;rateur Python <c>newtongen</c> repr&#xe9;sentant la
+      suite r&#xe9;currente que l'on vient de d&#xe9;finir. Ensuite on d&#xe9;finit un
+      nouveau test de convergence <c>checkconv</c> qui stoppe les
+      it&#xe9;rations si les deux derniers termes calcul&#xe9;s sont suffisamment
+      proches ; bien entendu ce test ne garantit pas la convergence de la
+      suite des valeurs approch&#xe9;es.
+    </p>
+
+    <p>
+      \begin{sageblock}
+      def newtongen(f, u):
+      while 1:
+      yield u
+      u -= f(u) / (f.derivative()(u))
+    </p>
+
+    <p>
+      def checkconv(u, v, w, prec):
+      return abs(w - v) / abs(w) <lt/>= prec
+      \end{sageblock}
+    </p>
+
+    <p>
+      On peut maintenant tester la m&#xe9;thode de Newton sur notre exemple.
+    </p>
+
+    <sage>
+      <input>
+        iterate(newtongen(f, a), check=checkconv)
+      </input>
+      <output>
+        After 6 iterations: 2.15846852554764
+      </output>
+    </sage>
+
+    <p>
+      \begin{sagesilent}
+      generator = newtongen(f, a)
+      g = plot(f, a, b, rgbcolor='blue')
+      u, v = generator.next(), generator.next()
+      niter = 2
+      while niter &lt; 6:
+      g += point((u, 0), rgbcolor='red')
+      g += line([(u, 0), (u, f(u))], rgbcolor='red', linestyle=':')
+      g += line([(u, f(u)), (v, 0)], rgbcolor='red')
+      u, v = v, generator.next()
+      niter += 1
+      \end{sagesilent}
+    </p>
+
+    <figure xml:id="fig_meth-de-Newt" >
+      <caption>M&#xe9;thode de Newton.</caption>
+      \sageplot{g}
+    </figure>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_methode-de-la-1">
+    <title>M&#xe9;thode de la s&#xe9;cante<footnote>Note des auteurs:
+    la diff&#xe9;rence entre la m&#xe9;thode de la fausse position et la
+    m&#xe9;thode de la s&#xe9;cante sera mieux expliqu&#xe9;e dans une version
+    ult&#xe9;rieure du livre.</footnote></title>
+    <p>
+      Dans la m&#xe9;thode de Newton le calcul de d&#xe9;riv&#xe9;e peut &#xea;tre co&#xfb;teux. Il
+      est possible de substituer &#xe0; ce calcul de d&#xe9;riv&#xe9;e une interpolation
+      lin&#xe9;aire : si on dispose de deux approximations de la solution, donc
+      de deux points de la courbe repr&#xe9;sentative de <m>f</m>, et si la droite
+      passant par ces deux points rencontre l'axe des abscisses, on
+      consid&#xe8;re l'abscisse du point d'intersection comme une nouvelle
+      approximation. Pour d&#xe9;marrer la construction et lorsque les deux
+      droites sont parall&#xe8;les on convient de calculer une nouvelle
+      approximation de la m&#xea;me fa&#xe7;on que dans la m&#xe9;thode de Newton.
+    </p>
+
+    <p>
+      On reconnait donc le calcul effectu&#xe9; dans la m&#xe9;thode de la fausse
+      position mais on n'identifie pas d'intervalle contenant une racine.
+    </p>
+
+    <p>
+      On d&#xe9;finit un g&#xe9;n&#xe9;rateur Python mettant en oeuvre cette m&#xe9;thode.
+      \begin{sageblock}
+      def secantgen(f, a):
+      yield a
+    </p>
+
+    <p>
+      estimate = f.derivative()(a)
+      b = a - f(a) / estimate
+      yield b
+    </p>
+
+    <p>
+      while 1:
+      fa, fb = f(a), f(b)
+      if fa == fb:
+      estimate = f.derivative()(a)
+      else:
+      estimate = (fb - fa) / (b - a)
+      a = b
+      b -= fb / estimate
+      yield b
+      \end{sageblock}
+    </p>
+
+    <p>
+      On peut maintenant tester la m&#xe9;thode de la s&#xe9;cante sur notre exemple.
+    </p>
+
+    <sage>
+      <input>
+        iterate(secantgen(f, a), check=checkconv)
+      </input>
+      <output>
+        After 8 iterations: 2.15846852557553
+      </output>
+    </sage>
+
+    <p>
+      \begin{sagesilent}
+      g = plot(f, a, b, rgbcolor='blue')
+      sequence = secantgen(f, a)
+      u, v = sequence.next(), sequence.next()
+      niter = 2
+      while niter &lt; 6:
+      g += point((u, 0), rgbcolor='red')
+      g += line([(u, 0), (u, f(u))], rgbcolor='red', linestyle=':')
+      g += line([(u, f(u)), (v, 0)], rgbcolor='red')
+      u, v = v, sequence.next()
+      niter += 1
+      \end{sagesilent}
+    </p>
+
+    <figure xml:id="fig_meth-de-seca" >
+      <caption>M&#xe9;thode de la s&#xe9;cante.</caption>
+      \sageplot{g}
+    </figure>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_methode-de-muller">
+    <title>M&#xe9;thode de M&#xfc;ller</title>
+    <p>
+      Rien ne nous emp&#xea;che d'&#xe9;tendre la m&#xe9;thode de la s&#xe9;cante en substituant
+      &#xe0; <m>f</m> des approximations polynomiales de degr&#xe9; quelconque. Par exemple
+      la m&#xe9;thode de M&#xfc;ller utilise des approximations quadratiques.
+    </p>
+
+    <p>
+      Supposons construites trois approximations <m>r, s</m> et <m>t</m> de la
+      solution de l'&#xe9;quation <m>f(x)=0</m>. On consid&#xe8;re le polyn&#xf4;me
+      d'interpolation de Lagrange d&#xe9;fini par les trois points de la courbe
+      repr&#xe9;sentative de <m>f</m> d'abscisses <m>r</m>, <m>s</m> et <m>t</m>. C'est un polyn&#xf4;me
+      du second degr&#xe9;. On convient de prendre pour nouvelle approximation la
+      racine de ce polyn&#xf4;me qui est la plus proche de <m>t</m>. Par ailleurs, les
+      trois premiers termes de la suite sont fix&#xe9;s de mani&#xe8;re arbitraire :
+      <m>a</m>, <m>b</m> puis <m>(a+b)/2</m>.
+    </p>
+
+    <p>
+      Il convient de remarquer que les racines des polyn&#xf4;mes <mdash /> et donc les
+      approximations calcul&#xe9;es <mdash /> peuvent &#xea;tre des nombres complexes.
+    </p>
+
+    <p>
+      La programmation de cette m&#xe9;thode en <em>Sage</em>  n'est pas difficile ; elle
+      peut se faire sur le m&#xea;me mod&#xe8;le que la m&#xe9;thode de la s&#xe9;cante. Notre
+      r&#xe9;alisation utilise toutefois une structure de donn&#xe9;e mieux adapt&#xe9;e
+      &#xe0; l'&#xe9;num&#xe9;ration des termes d'une suite r&#xe9;currente.
+    </p>
+
+    <p>
+      \begin{sageblock}
+      from collections import deque
+    </p>
+
+    <p>
+      basering = PolynomialRing(CC, 'x')
+    </p>
+
+    <p>
+      def quadraticgen(f, r, s):
+      t = (r + s) / 2
+      yield t
+      points = deque([(r, f(r)), (s, f(s)), (t, f(t))], maxlen=3)
+      while 1:
+      polynomial = basering.lagrange_polynomial(points)
+      roots = polynomial.roots(ring=CC, multiplicities=False)
+      u = min(roots, key=lambda x: abs(x - points[2][0]))
+      points.append((u, f(u)))
+      yield points[2][0]
+      \end{sageblock}
+    </p>
+
+    <p>
+      Le module <c>collections</c> de la biblioth&#xe8;que de r&#xe9;f&#xe9;rence Python
+      impl&#xe9;mente plusieurs structures de donn&#xe9;es. Dans
+      <c>quadraticgen</c>, la classe <c>deque</c> est utilis&#xe9;e pour
+      stocker les derni&#xe8;res approximations calcul&#xe9;es. Un objet
+      <c>deque</c> stocke des donn&#xe9;es dans la limite du nombre
+      <c>maxlen</c> fix&#xe9; lors de sa cr&#xe9;ation ; ici le nombre maximal de
+      donn&#xe9;es stock&#xe9;es est &#xe9;gal &#xe0; l'ordre de r&#xe9;currence de la suite des
+      approximations. Lorsqu'un objet <c>deque</c> a atteint sa capacit&#xe9;
+      maximale de stockage, la m&#xe9;thode <c>deque.append()</c> ajoute les
+      nouvelles donn&#xe9;es sur le principe <q>premier entr&#xe9;, premier sorti</q>.
+    </p>
+
+    <p>
+      Notons que les it&#xe9;rations de cette m&#xe9;thode ne n&#xe9;cessitent pas le
+      calcul de valeurs d&#xe9;riv&#xe9;es. De plus chaque it&#xe9;ration ne n&#xe9;cessite
+      qu'une &#xe9;valuation de la fonction <m>f</m>.
+    </p>
+
+    <sage>
+      <input>
+        generator = quadraticgen(f, a, b)
+        iterate(generator, check=checkconv)
+      </input>
+      <output>
+        After 4 iterations: 2.15846852554764
+      </output>
+    </sage>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_retour-aux-polynomes">
+    <title>Retour aux polyn&#xf4;mes</title>
+    <p>
+      Revenons &#xe0; la situation &#xe9;tudi&#xe9;e au d&#xe9;but de ce chapitre. Il s'agissait
+      de calculer les racines d'un polyn&#xf4;me &#xe0; coefficients r&#xe9;els ; on notera
+      <m>P</m> ce polyn&#xf4;me. Supposons <m>P</m> unitaire :
+      <me>
+        P = a_{0} + a_{1} x +
+          \ldots + a_{d-1} x^{d-1} + x^d.
+      </me>
+    </p>
+
+    <p>
+      Il est facile de v&#xe9;rifier que <m>P</m> est le d&#xe9;terminant de la matrice
+      <em>compagnon</em> :
+      <me>
+        A = 
+          \begin{pmatrix}
+            0 \amp  0 \amp  0 \amp  \cdots \amp  0 \amp  -a_{0} \\
+            1 \amp  0 \amp  0 \amp  \cdots \amp  0 \amp  -a_{1} \\
+            0 \amp  1 \amp  0 \amp  \cdots \amp  0 \amp  -a_{2} \\
+            \cdotsfor{6}                    \\
+            0 \amp  0 \amp  0 \amp  \cdots \amp  1 \amp  -a_{d-1}
+          \end{pmatrix}.
+      </me>
+    </p>
+
+    <p>
+      En cons&#xe9;quence les racines du polyn&#xf4;me <m>P</m> sont les valeurs propres de
+      la matrice<nbsp /><m>A</m>. Les m&#xe9;thodes du <xref ref="linsolve">chapitre</xref> s'appliquent
+      donc.
+    </p>
+
+    <p>
+      On a vu que la m&#xe9;thode <c>Polynomial.roots()</c> prend jusqu'&#xe0; trois
+      param&#xe8;tres, tous optionnels : <c>ring</c>, <c>multiplicities</c>
+      et <c>algorithm</c>. Supposons qu'un objet <em>Sage</em>  de la classe
+      <c>Polynomial</c> est associ&#xe9; au nom <c>p</c> (donc
+      <c>isinstance(p, 'Polynomial')</c> renvoit <c>True</c>). Alors
+      l'algorithme utilis&#xe9; par la commande <c>p.roots()</c> d&#xe9;pend des
+      param&#xe8;tres <c>ring</c> et <c>algorithm</c> ainsi que de l'anneau
+      des coefficients du polyn&#xf4;me, c'est-&#xe0;-dire <c>p.base_ring()</c>.
+    </p>
+
+    <p>
+      L'algorithme teste si <c>ring</c> et <c>p.base_ring()</c>
+      repr&#xe9;sentent des nombres en virgule flottante. Le cas &#xe9;ch&#xe9;ant, des
+      valeurs approch&#xe9;es des racines sont calcul&#xe9;es avec la biblioth&#xe8;que
+      <em>NumPy</em>  si <c>p.base_ring()</c> est <c>RDF</c> ou <c>CDF</c>, ou
+      avec la biblioth&#xe8;que <em>PARI</em>  autrement (le param&#xe8;tre <c>algorithm</c>
+      permet &#xe0; l'utilisateur d'imposer son choix de biblioth&#xe8;que pour ce
+      calcul). En consultant le code source de <em>NumPy</em>  on voit que la m&#xe9;thode
+      d'approximation des racines utilis&#xe9;e par cette biblioth&#xe8;que consiste &#xe0;
+      calculer les valeurs propres de la matrice compagnon.
+    </p>
+
+    <p>
+      La commande qui suit permet d'identifier les objets repr&#xe9;sentant des
+      nombres en virgule flottante.
+    </p>
+
+    <sage>
+      <input>
+        rings = [ZZ, QQ, QQbar, RDF, RIF, RR, AA, CDF, CIF, CC]
+        for ring in rings:
+        print("{0:50} {1}".format(ring, ring.is_exact()))
+      </input>
+      <output>
+        Integer Ring                                       True
+        Rational Field                                     True
+        Algebraic Field                                    True
+        Real Double Field                                  False
+        Real Interval Field with 53 bits of precision      False
+        Real Field with 53 bits of precision               False
+        Algebraic Real Field                               True
+        Complex Double Field                               False
+        Complex Interval Field with 53 bits of precision   False
+        Complex Field with 53 bits of precision            False
+      </output>
+    </sage>
+
+    <p>
+      Lorsque le param&#xe8;tre <c>ring</c> vaut <c>AA</c>, ou <c>RIF</c>,
+      et <c>p.base_ring()</c> vaut <c>ZZ</c>, <c>QQ</c> ou
+      <c>AA</c>, l'algorithme appelle la fonction <c>real_roots()</c>
+      du module <c>sage.rings.polynomial.real_roots</c>. Cette fonction
+      convertit le polyn&#xf4;me dans la base de Bernstein, puis utilise
+      l'algorithme de Casteljau (pour &#xe9;valuer le polyn&#xf4;me exprim&#xe9; dans la
+      base de Bernstein) et la r&#xe8;gle de Descartes
+      (cf.<nbsp /><xref ref="sec_regle-de-descartes">&#xa7;</xref>) pour localiser les
+      racines.
+    </p>
+
+    <p>
+      Lorsque le param&#xe8;tre <c>ring</c> vaut <c>AA</c>, <c>QQbar</c>,
+      ou <c>CIF</c>, et <c>p.base_ring()</c> vaut <c>ZZ</c>,
+      <c>QQ</c>, <c>AA</c> ou repr&#xe9;sente des rationnels Gaussiens,
+      l'algorithme d&#xe9;l&#xe8;gue les calculs &#xe0; <em>NumPy</em>  et <em>PARI</em>  dont les r&#xe9;sultats
+      sont convertis dans les anneaux attendus et avec un filtre pour ne
+      conserver que les racines r&#xe9;elles dans le cas de <c>AA</c>.
+    </p>
+
+    <p>
+      On peut prendre connaissance de toutes les situations couvertes par la
+      m&#xe9;thode <c>Polynomial.roots()</c> en consultant la documentation de
+      cette m&#xe9;thode.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_vitesse-de-conv">
+    <title>Vitesse de convergence</title>
+    <p>
+      Consid&#xe9;rons une suite num&#xe9;rique convergente <m>u</m> et notons <m>\ell</m> sa
+      limite. On dit que la vitesse de convergence de la suite <m>u</m> est
+      <em>lin&#xe9;aire</em> s'il existe <m>K\in]0,1[</m> tel que :
+      <me>
+        \lim_{n\to\infty}\frac{<c>u_{n+1}-\ell</c>}{<c>u_{n}-\ell</c>}=K.
+      </me>
+    </p>
+
+    <p>
+      La vitesse de convergence de la suite <m>u</m> est dite <em>quadratique</em>
+      s'il existe <m>K>0</m> tel que :
+      <me>
+        \lim_{n\to\infty}\frac{<c>u_{n+1}-\ell</c>}{{<c>u_{n}-\ell</c>}^{2}}=K.
+      </me>
+    </p>
+
+    <p>
+      Revenons &#xe0; la m&#xe9;thode de Newton. On a construit une suite r&#xe9;currente
+      <m>u</m> d&#xe9;finie par <m>u_{n+1}=\phi(u_{n})</m> avec <m>\phi</m> la fonction
+      <m>x\mapsto x-f(x)/f'(x)</m>. Sous l'hypoth&#xe8;se que <m>f</m> est deux fois
+      d&#xe9;rivable, la formule de Taylor pour la fonction <m>\phi</m> et <m>x</m> au
+      voisinage de la racine <m>\alpha</m> s'&#xe9;crit :
+      <me>
+        \phi(x)=
+          \phi(\alpha)
+          +(x-\alpha)\phi'(\alpha)
+          +\frac{(x-\alpha)^{2}}{2}\phi''(\alpha)
+          +\mathcal{O}_{\alpha}((x-\alpha)^{3}).
+      </me>
+    </p>
+
+    <p>
+      Or <m>\phi(\alpha)=\alpha</m>, <m>\phi'(\alpha)=0</m> et
+      <m>\phi''(\alpha)=f''(\alpha)/f'(\alpha)</m>. En substituant dans la
+      formule pr&#xe9;c&#xe9;dente et en revenant &#xe0; la d&#xe9;finition de la suite <m>u</m>, on
+      obtient :
+      <me>
+        u_{n+1}-\alpha=
+          \frac{(u_{n}-\alpha)^{2}}{2}\frac{f''(\alpha)}{f'(\alpha)}
+          +\mathcal{O}_{\infty}((u_{n}-\alpha)^{3}).
+      </me>
+    </p>
+
+    <p>
+      Lorsque la m&#xe9;thode de Newton converge, la vitesse de convergence de la
+      suite construite est donc quadratique.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="sec_fonct-find_root">
+    <title>M&#xe9;thode <c>Expression.find_root()</c></title>
+    <p>
+      On s'int&#xe9;resse maintenant &#xe0; la situation la plus g&#xe9;n&#xe9;rale : le calcul
+      d'une valeur approch&#xe9;e d'une solution d'une &#xe9;quation <m>f(x)=0</m>. Avec
+      <em>Sage</em> , ce calcul se fait avec la m&#xe9;thode
+      <c>Expression.find_root()</c>.
+    </p>
+
+    <p>
+      Les param&#xe8;tres de la m&#xe9;thode <c>Expression.find_root()</c>
+      permettent de d&#xe9;finir un intervalle o&#xf9; chercher une racine, la
+      pr&#xe9;cision du calcul ou le nombre d'it&#xe9;rations. Le param&#xe8;tre
+      <c>full_output</c> permet d'obtenir des informations sur le calcul,
+      notamment le nombre d'it&#xe9;rations et le nombre d'&#xe9;valuations de la
+      fonction.
+    </p>
+
+    <sage>
+      <input>
+        result = (f == 0).find_root(a, b, full_output=True)
+        print(result[0], result[1].iterations)
+      </input>
+      <output>
+        2.1584685255476423, 9
+      </output>
+    </sage>
+
+    <p>
+      En fait, la m&#xe9;thode <c>Expression.find_root()</c> n'impl&#xe9;mente pas
+      r&#xe9;ellement d'algorithme de recherche de solutions d'&#xe9;quations : les
+      calculs sont d&#xe9;l&#xe9;gu&#xe9;s au module <em>SciPy</em> .
+    </p>
+
+    <p>
+      La fonctionnalit&#xe9; de <em>SciPy</em>  utilis&#xe9;e par <em>Sage</em>  pour r&#xe9;soudre une
+      &#xe9;quation impl&#xe9;mente la m&#xe9;thode de Brent qui combine trois des m&#xe9;thodes
+      vues pr&#xe9;c&#xe9;demment : la m&#xe9;thode de dichotomie, la m&#xe9;thode de la s&#xe9;cante
+      et l'interpolation quadratique. Les deux premi&#xe8;res valeurs approch&#xe9;es
+      sont les extr&#xe9;mit&#xe9;s de l'intervalle o&#xf9; est cherch&#xe9;e la solution de
+      l'&#xe9;quation. La valeur approch&#xe9;e suivante est obtenue par interpolation
+      lin&#xe9;aire comme on l'a fait dans la m&#xe9;thode de la s&#xe9;cante. Avec les
+      it&#xe9;rations suivantes la fonction est approch&#xe9;e par une interpolation
+      quadratique et l'abscisse du point d'intersection de la courbe
+      d'interpolation avec l'axe des abscisses est la nouvelle valeur
+      approch&#xe9;e, &#xe0; moins que cette abscisse ne soit pas comprise entre les
+      deux pr&#xe9;c&#xe9;dentes valeurs approch&#xe9;es calcul&#xe9;es auquel cas on poursuit
+      avec la m&#xe9;thode de dichotomie.
+    </p>
+
+    <p>
+      La biblioth&#xe8;que <em>SciPy</em>  ne permet pas de calculer en pr&#xe9;cision
+      arbitraire (&#xe0; moins de se contenter de calculer avec des entiers) ;
+      d'ailleurs le code source de la m&#xe9;thode
+      <c>Expression.find_root()</c> commence par convertir les bornes en
+      nombres machine double pr&#xe9;cision. &#xc0; l'oppos&#xe9;, toutes les illustrations
+      de m&#xe9;thodes de r&#xe9;solution d'&#xe9;quation que nous avons construites dans
+      ce chapitre fonctionnent en pr&#xe9;cision arbitraire et m&#xea;me symbolique.
+    </p>
+
+    <sage>
+      <input>
+        a, b = pi/2, pi
+        generator = newtongen(f, a)
+        generator.next()
+      </input>
+      <output>
+        1/2*pi
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        generator.next()
+      </input>
+      <output>
+        (1/2*pi, 1/2*pi-(e^(1/2*pi)-10)*e^(-1/2*pi))
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_brent">
+      <title>Exercice</title>
+      <p>
+        &#xc9;crire un g&#xe9;n&#xe9;rateur pour la m&#xe9;thode de Brent qui fonctionne en
+        pr&#xe9;cision arbitraire.
+      </p>
+    </paragraphs>
+    <p>
+      \hypersetup{bookmarksopen=true}
+      \part{Alg&#xe8;bre et calcul formel}
+      \hypersetup{bookmarksopen=false}
+      {Calcul math&#xe9;matique avec Sage, &#xa7;\thesection}
+    </p>
+
+    <p>
+      \begin{savequote}
+      <em>Dieu a cr&#xe9;&#xe9; les nombres entiers, tout le reste est
+      fabriqu&#xe9; par l'homme.</em>
+      \qauthor{Leopold Kronecker (1823 - 1891)}
+      \end{savequote}
+    </p>
+
+    </subsubsection>
+  </subsection>
+</section>
+

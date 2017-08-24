@@ -1,0 +1,46 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="combinat">
+  <title>D&#xe9;nombrement et combinatoire</title>
+  <introduction>
+    <p>
+      Ce chapitre aborde principalement le traitement avec <em>Sage</em>  des
+      probl&#xe8;mes combinatoires suivants: le d&#xe9;nombrement (combien y a-t-il
+      d'&#xe9;l&#xe9;ments dans un ensemble <m>S</m>?), l'&#xe9;num&#xe9;ration (calculer tous les
+      &#xe9;l&#xe9;ments de <m>S</m>, ou it&#xe9;rer parmi eux), le tirage al&#xe9;atoire (choisir au
+      hasard un &#xe9;l&#xe9;ment de <m>S</m> selon une loi, par exemple uniforme). Ces
+      questions interviennent naturellement dans les calculs de probabilit&#xe9;s
+      (quelle est la probabilit&#xe9; au poker d'obtenir une suite ou un carr&#xe9;
+      d'as?), en physique statistique, mais aussi en calcul formel (nombre
+      d'&#xe9;l&#xe9;ments dans un corps fini), ou en analyse d'algorithmes. La
+      combinatoire couvre un domaine beaucoup plus vaste (graphes, ordres
+      partiels, th&#xe9;orie des repr&#xe9;sentations, ...) pour lesquels nous nous
+      contentons de donner quelques pointeurs vers les possibilit&#xe9;s
+      offertes par <em>Sage</em> .
+    </p>
+
+    <p>
+      Une caract&#xe9;ristique de la combinatoire effective est la profusion de
+      types d'objets et d'ensembles que l'on veut manipuler. Il serait
+      impossible de les d&#xe9;crire et a fortiori de les implanter tous. Ce
+      chapitre illustre donc la m&#xe9;thodologie sous-jacente: fournir des
+      briques de base pour d&#xe9;crire les ensembles combinatoires
+      usuels <xref ref="sec_combinatoire_briques">&#xa7;</xref>, des outils pour les combiner et
+      construire de nouveaux ensembles <xref ref="sec_combinatoire_constructions">&#xa7;</xref>,
+      et des algorithmes g&#xe9;n&#xe9;riques pour traiter uniform&#xe9;ment de grandes
+      classes de probl&#xe8;mes <xref ref="sec_combinatoire_generique">&#xa7;</xref>.
+    </p>
+
+    <p>
+      C'est un domaine o&#xf9; <em>Sage</em>  a des fonctionnalit&#xe9;s bien plus &#xe9;tendues que
+      la plupart des syst&#xe8;mes de calcul formel et est en pleine expansion;
+      en revanche il reste encore tr&#xe8;s jeune avec de multiples limitations
+      arbitraires et incoh&#xe9;rences.
+    </p>
+  </introduction>
+  <xi:include  href="sec_combinatoire_exemples.ptx" />
+  <xi:include  href="sec_combinatoire_briques.ptx" />
+  <xi:include  href="sec_combinatoire_constructions.ptx" />
+  <xi:include  href="sec_combinatoire_generique.ptx" />
+</chapter>
+

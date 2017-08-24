@@ -1,0 +1,446 @@
+
+
+<section xml:id="sec_combinatoire_generique">
+  <title>Algorithmes g&#xe9;n&#xe9;riques</title>
+  <subsection xml:id="sec_combinatoire_generique_integerlistlex">
+    <title>G&#xe9;n&#xe9;ration lexicographique de listes d'entiers</title>
+    <p>
+      Parmi les ensembles &#xe9;num&#xe9;r&#xe9;s classiques, en particulier en
+      combinatoire alg&#xe9;brique, un certain nombre sont compos&#xe9;s de listes
+      d'entiers de somme fix&#xe9;e comme par exemple les partitions, les
+      compositions ou les vecteurs d'entiers. Ces ensembles peuvent de plus
+      prendre des contraintes suppl&#xe9;mentaires. Voici quelques exemples. Les
+      vecteurs d'entiers de somme <m>10</m> et longueur <m>3</m>, dont les parts sont
+      entre <m>2</m> et <m>5</m>, et born&#xe9;es inf&#xe9;rieurement par <m>[2,4,2]</m>:
+    </p>
+
+    <sage>
+      <input>
+        IntegerVectors(10, 3, min_part = 2, max_part = 5,
+        inner = [2, 4, 2]).list()
+      </input>
+      <output>
+        [[4, 4, 2], [3, 5, 2], [3, 4, 3], [2, 5, 3], [2, 4, 4]]
+      </output>
+    </sage>
+
+    <p>
+      Les compositions de <m>5</m> dont chaque part est au plus <m>3</m>, et dont la
+      longueur est entre <m>2</m> et <m>3</m> inclus:
+    </p>
+
+    <sage>
+      <input>
+        Compositions(5, max_part = 3,
+        min_length = 2, max_length = 3).list()
+      </input>
+      <output>
+        [[1, 1, 3], [1, 2, 2], [1, 3, 1], [2, 1, 2], [2, 2, 1], [2, 3],
+           [3, 1, 1], [3, 2]]
+      </output>
+    </sage>
+
+    <p>
+      Les partitions de <m>5</m> strictement d&#xe9;croissantes:
+    </p>
+
+    <sage>
+      <input>
+        Partitions(5, max_slope = -1).list()
+      </input>
+      <output>
+        [[5], [4, 1], [3, 2]]
+      </output>
+    </sage>
+
+    <p>
+      Ces ensembles partagent la m&#xea;me algorithmique sous-jacente, implant&#xe9;e
+      dans la classe <c>IntegerListLex</c>. Cette derni&#xe8;re permet de
+      mod&#xe9;liser des ensembles de vecteurs <m>\ell_0,\dots,\ell_k</m> d'entiers non
+      n&#xe9;gatifs, avec des contraintes de somme, de longueur et de bornes sur
+      les parts et sur les diff&#xe9;rences entre parts cons&#xe9;cutives. Voici
+      quelques autres exemples:
+    </p>
+
+    <sage>
+      <input>
+        IntegerListsLex(10, length=3,
+        min_part = 2, max_part = 5,
+        floor = [2, 4, 2]).list()
+      </input>
+      <output>
+        [[4, 4, 2], [3, 5, 2], [3, 4, 3], [2, 5, 3], [2, 4, 4]]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        IntegerListsLex(5, min_part = 1, max_part = 3,
+        min_length = 2, max_length = 3).list()
+      </input>
+      <output>
+        [[3, 2], [3, 1, 1], [2, 3], [2, 2, 1], [2, 1, 2],
+           [1, 3, 1], [1, 2, 2], [1, 1, 3]]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        IntegerListsLex(5, min_part = 1, max_slope = -1).list()
+      </input>
+      <output>
+        [[5], [4, 1], [3, 2]]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        Compositions(5)[4]
+      </input>
+      <output>
+        [1, 2, 1, 1]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        IntegerListsLex(5, min_part = 1)[4]
+      </input>
+      <output>
+        [1, 2, 1, 1]
+      </output>
+    </sage>
+
+    <p>
+      L'int&#xe9;r&#xea;t du mod&#xe8;le de <c>IntegerListsLex</c> provient du bon
+      compromis entre g&#xe9;n&#xe9;ralit&#xe9; et efficacit&#xe9; de l'it&#xe9;ration. L'algorithme
+      principal permet en effet d'it&#xe9;rer &#xe0; travers les &#xe9;l&#xe9;ments d'un tel
+      ensemble <m>S</m> dans l'ordre lexicographique inverse, et en complexit&#xe9;
+      constante amortie (CAT), sauf cas d&#xe9;g&#xe9;n&#xe9;r&#xe9;; en gros, le temps
+      n&#xe9;cessaire pour parcourir tous les &#xe9;l&#xe9;ments est proportionnel au
+      nombre de ces &#xe9;l&#xe9;ments, ce qui est optimal. De plus, la m&#xe9;moire
+      utilis&#xe9;e est proportionnelle au plus gros &#xe9;l&#xe9;ment rencontr&#xe9;,
+      c'est-&#xe0;-dire n&#xe9;gligeable en pratique.
+    </p>
+
+    <p>
+      Cet algorithme repose sur un principe tr&#xe8;s g&#xe9;n&#xe9;ral de parcours d'arbre
+      de d&#xe9;cision (ou <em>branch and bound</em>): au plus haut niveau, on
+      parcourt tous les choix possibles pour la premi&#xe8;re part <m>\ell_0</m> du
+      vecteur; pour chaque choix pour <m>\ell_0</m>, on parcourt r&#xe9;cursivement tous
+      les choix pour <m>\ell_1</m>, et ainsi de suite. Math&#xe9;matiquement parlant, on
+      a mis une structure d'arbre pr&#xe9;fixe sur les &#xe9;l&#xe9;ments de <m>S</m>: un n\oeud
+      de l'arbre &#xe0; la profondeur <m>k</m> correspond &#xe0; un pr&#xe9;fixe <m>\ell_0,\dots,\ell_k</m>
+      d'un (ou plusieurs) &#xe9;l&#xe9;ments de <m>S</m> (voir
+      <xref ref="fig_combinatoire_generique_arbre_prefixe">figure</xref>)
+    </p>
+
+    <figure xml:id="fig_combinatoire_generique_arbre_prefixe" >
+      <caption>L'arbre pr&#xe9;fixe des partitions de <m>5</m>.</caption>
+      <image>
+        <latex-image-code>
+          <![CDATA[\begin{tikzpicture}[>=latex,xscale=-.8,yscale =.8]
+              \node (d2tnn1) at (183bp,279bp) [draw,draw=none] {\(\left(\right)\)};
+              \node (4+1) at (275bp,171bp) [draw,draw=none] {\(\left(4, 1\right)\)};
+              \node (1+1+1+1+1) at (28bp,9bp) [draw,draw=none] {\(\left(1, 1, 1, 1, 1\right)\)};
+              \node (3+1+1) at (229bp,117bp) [draw,draw=none] {\(\left(3, 1, 1\right)\)};
+              \node (2+1+1) at (91bp,117bp) [draw,draw=none] {\(\left(2, 1, 1\right)\)};
+              \node (2+1+1+1) at (94bp,63bp) [draw,draw=none] {\(\left(2, 1, 1, 1\right)\)};
+              \node (2+1) at (91bp,171bp) [draw,draw=none] {\(\left(2, 1\right)\)};
+              \node (1+1+1) at (30bp,117bp) [draw,draw=none] {\(\left(1, 1, 1\right)\)};
+              \node (3+1) at (229bp,171bp) [draw,draw=none] {\(\left(3, 1\right)\)};
+              \node (3+2) at (183bp,171bp) [draw,draw=none] {\(\left(3, 2\right)\)};
+              \node (1+1) at (35bp,171bp) [draw,draw=none] {\(\left(1, 1\right)\)};
+              \node (5+) at (255bp,225bp) [draw,draw=none] {\(\left(5\right)\)};
+              \node (4+) at (219bp,225bp) [draw,draw=none] {\(\left(4\right)\)};
+              \node (1+1+1+1) at (28bp,63bp) [draw,draw=none] {\(\left(1, 1, 1, 1\right)\)};
+              \node (3+) at (183bp,225bp) [draw,draw=none] {\(\left(3\right)\)};
+              \node (2+) at (137bp,225bp) [draw,draw=none] {\(\left(2\right)\)};
+              \node (2+2+1) at (147bp,117bp) [draw,draw=none] {\(\left(2, 2, 1\right)\)};
+              \node (1+) at (68bp,225bp) [draw,draw=none] {\(\left(1\right)\)};
+              \node (2+2) at (137bp,171bp) [draw,draw=none] {\(\left(2, 2\right)\)};
+              \draw [->] (1+1+1+1) ..controls (28bp,47bp) and (28bp,37bp)  .. (1+1+1+1+1);
+              \draw [->] (d2tnn1) ..controls (201bp,266bp) and (222bp,250bp)  .. (5+);
+              \draw [->] (3+) ..controls (198bp,208bp) and (207bp,197bp)  .. (3+1);
+              \draw [->] (2+) ..controls (122bp,208bp) and (113bp,197bp)  .. (2+1);
+              \draw [->] (1+1) ..controls (33bp,155bp) and (33bp,145bp)  .. (1+1+1);
+              \draw [->] (d2tnn1) ..controls (158bp,267bp) and (112bp,246bp)  .. (1+);
+              \draw [->] (1+1+1) ..controls (29bp,101bp) and (29bp,91bp)  .. (1+1+1+1);
+              \draw [->] (4+) ..controls (237bp,208bp) and (248bp,196bp)  .. (4+1);
+              \draw [->] (d2tnn1) ..controls (194bp,263bp) and (201bp,252bp)  .. (4+);
+              \draw [->] (2+2) ..controls (140bp,155bp) and (141bp,145bp)  .. (2+2+1);
+              \draw [->] (3+1) ..controls (229bp,155bp) and (229bp,145bp)  .. (3+1+1);
+              \draw [->] (3+) ..controls (183bp,209bp) and (183bp,199bp)  .. (3+2);
+              \draw [->] (d2tnn1) ..controls (183bp,263bp) and (183bp,253bp)  .. (3+);
+              \draw [->] (d2tnn1) ..controls (169bp,263bp) and (159bp,252bp)  .. (2+);
+              \draw [->] (2+1) ..controls (91bp,155bp) and (91bp,145bp)  .. (2+1+1);
+              \draw [->] (1+) ..controls (58bp,209bp) and (51bp,198bp)  .. (1+1);
+              \draw [->] (2+1+1) ..controls (92bp,101bp) and (92bp,91bp)  .. (2+1+1+1);
+              \draw [->] (2+) ..controls (137bp,209bp) and (137bp,199bp)  .. (2+2);\end{tikzpicture}]]>
+        </latex-image-code>
+      </image>
+    </figure>
+
+    <p>
+      Le probl&#xe8;me usuel dans ce type d'approche est d'&#xe9;viter les mauvaises
+      d&#xe9;cisions amenant &#xe0; sortir de l'arbre pr&#xe9;fixe et &#xe0; l'exploration de
+      branches mortes, ce d'autant que la croissance du nombre d'&#xe9;l&#xe9;ments
+      avec la profondeur est exponentielle. Il se trouve que les contraintes
+      list&#xe9;es ci-dessus sont suffisamment simples pour garantir la propri&#xe9;t&#xe9;
+      suivante: &#xe9;tant donn&#xe9; un pr&#xe9;fixe <m>\ell_0,\dots,\ell_k</m> de <m>S</m>,
+      l'ensemble des <m>\ell_{k+1}</m> tels que <m>\ell_0,\dots,\ell_{k+1}</m> est un
+      pr&#xe9;fixe de <m>S</m> est soit vide, soit un intervalle de la forme <m>[a,b]</m>,
+      et les bornes <m>a</m> et <m>b</m> peuvent &#xea;tre calcul&#xe9;es en temps lin&#xe9;aire en
+      la longueur du plus long &#xe9;l&#xe9;ment de <m>S</m> ayant <m>\ell_0,\dots,\ell_k</m>
+      comme pr&#xe9;fixe.
+    </p>
+
+    <p>
+      &#xc0; noter: cet algorithme a &#xe9;t&#xe9; originellement d&#xe9;velopp&#xe9; et implant&#xe9;
+      dans <c>MuPAD-Combinat</c> et port&#xe9; &#xe0; l'identique sous
+      <c>Sage</c>; cette implantation n'est pas robuste en cas d'entr&#xe9;es
+      subtilement incoh&#xe9;rentes, ce qui peut donner des r&#xe9;sultats surprenants.
+      Par exemple, l'exemple suivant devrait donner les partitions
+      de <m>2</m> de longueur <m>2</m> strictement d&#xe9;croissantes:
+    </p>
+
+    <sage>
+      <input>
+        Partitions(2, max_slope=-1, length=2).list()
+      </input>
+      <output>
+        [[1, 1]]
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_combinatoire_generique_polytopes">
+    <title>Points entiers dans les polytopes</title>
+    <p>
+      Si l'algorithme d'it&#xe9;ration de <c>IntegerListsLex</c> est efficace,
+      son algorithme de comptage est na&#xef;f: il se contente d'it&#xe9;rer &#xe0; travers
+      tous les &#xe9;l&#xe9;ments.
+    </p>
+
+    <p>
+      Il y a une approche alternative pour traiter ce probl&#xe8;me: mod&#xe9;liser
+      les listes d'entiers d&#xe9;sir&#xe9;es comme l'ensemble des points entiers d'un
+      polytope, c'est-&#xe0;-dire l'ensemble des solutions &#xe0; coordonn&#xe9;es enti&#xe8;res
+      d'un syst&#xe8;me d'in&#xe9;quations lin&#xe9;aires. C'est un cadre tr&#xe8;s g&#xe9;n&#xe9;ral pour
+      lequel il existe des algorithmes de comptage avanc&#xe9;s (par
+      ex. Barvinok), qui sont implant&#xe9;s dans des biblioth&#xe8;ques comme
+      <em>LattE</em> . L'it&#xe9;ration ne pose en principe pas de grosse difficult&#xe9;. Il y
+      a cependant deux limitations qui justifient l'existence de
+      <c>IntegerListsLex</c>. La premi&#xe8;re est d'ordre th&#xe9;orique: les
+      points d'entiers d'un polytope ne permettent de mod&#xe9;liser que des
+      probl&#xe8;mes en dimension (longueur) fixe; la deuxi&#xe8;me d'ordre pratique:
+      &#xe0; l'heure actuelle seule la biblioth&#xe8;que <em>PALP</em>  a une interface avec
+      <em>Sage</em> ; si elle offre de multiples fonctionnalit&#xe9;s sur l'&#xe9;tude des
+      polytopes, pour ce qui nous int&#xe9;resse ici elle ne permet que de
+      construire la liste les points entiers, sans fournir d'it&#xe9;rateur ni de
+      comptage non na&#xef;f:
+    </p>
+
+    <sage>
+      <input>
+        A=random_matrix(ZZ,3,6,x=7)
+        L=LatticePolytope(A)
+        L.points()
+      </input>
+      <output>
+        [1 6 6 2 5 5 6 5 4 5 4 5 4 2 5 3 4 5 3 4 5 3 3]
+          [4 4 2 6 4 1 3 2 3 3 4 4 3 4 3 4 4 4 4 4 4 5 5]
+          [3 1 1 6 5 1 1 2 2 2 2 2 3 3 3 3 3 3 4 4 4 4 5]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        L.npoints()
+      </input>
+      <output>
+        23
+      </output>
+    </sage>
+
+    <p>
+      Ce polytope peut &#xea;tre visualis&#xe9; en 3D avec <c>L.plot3d()</c> (voir
+      <xref ref="gr_polytope">figure</xref>).
+    </p>
+
+    <figure xml:id="gr_polytope" >
+      <caption>Le polytope <m>L</m> et ses points entiers, en vision
+          st&#xe9;r&#xe9;ographique yeux crois&#xe9;s.</caption>
+      <image width="73%" source="images/polytope.png" />
+    </figure>
+  </subsection>
+
+  <subsection xml:id="sec_combinatoire_generique_especes">
+    <title>Esp&#xe8;ces, classes combinatoires d&#xe9;composables</title>
+    <p>
+      En <xref ref="sec_combinatoire_exemples_catalan">&#xa7;</xref>, nous avons
+      montr&#xe9; comment utiliser la d&#xe9;finition r&#xe9;cursive des arbres binaires
+      pour les d&#xe9;nombrer efficacement au moyen de s&#xe9;ries g&#xe9;n&#xe9;ratrices. Les
+      techniques expos&#xe9;es sont tr&#xe8;s g&#xe9;n&#xe9;rales, et s'appliquent d&#xe8;s qu'un
+      ensemble peut &#xea;tre d&#xe9;fini r&#xe9;cursivement (selon les communaut&#xe9;s, un tel
+      ensemble est appel&#xe9; classe combinatoire d&#xe9;composable ou
+      une esp&#xe8;ce). Cela inclut toutes les vari&#xe9;t&#xe9;s d'arbres, mais aussi les
+      permutations, ...
+    </p>
+
+    <p>
+      Nous nous contentons ici d'illustrer quelques exemples d'utilisation
+      de la biblioth&#xe8;que de <em>Sage</em>  sur les esp&#xe8;ces:
+    </p>
+
+    <sage>
+      <input>
+        fromsage.combinat.species.library import *
+        o = var("o")
+      </input>
+    </sage>
+
+    <p>
+      Nous commen&#xe7;ons par red&#xe9;finir les arbres binaires complets; pour cela,
+      on stipule l'&#xe9;quation de r&#xe9;currence directement sur les ensembles:
+    </p>
+
+    <sage>
+      <input>
+        BT = CombinatorialSpecies()
+        Leaf =  SingletonSpecies()
+        BT.define( Leaf + (BT*BT) )
+      </input>
+    </sage>
+
+    <p>
+      On peut maintenant construire l'ensemble des arbres &#xe0; cinq n\oeuds,
+      et les lister, les compter, ...:
+    </p>
+
+    <sage>
+      <input>
+        BT5 = BT.isotypes([o]*5)
+        BT5.cardinality()
+      </input>
+      <output>
+        14
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        BT5.list()
+      </input>
+      <output>
+        [o*(o*(o*(o*o))), o*(o*((o*o)*o)), o*((o*o)*(o*o)),
+           o*((o*(o*o))*o), o*(((o*o)*o)*o), (o*o)*(o*(o*o)),
+           (o*o)*((o*o)*o), (o*(o*o))*(o*o), ((o*o)*o)*(o*o),
+           (o*(o*(o*o)))*o, (o*((o*o)*o))*o, ((o*o)*(o*o))*o,
+           ((o*(o*o))*o)*o, (((o*o)*o)*o)*o]
+      </output>
+    </sage>
+
+    <p>
+      Les arbres sont construits en utilisant une structure de donn&#xe9;e
+      r&#xe9;cursive g&#xe9;n&#xe9;rique; l'affichage ne peut donc &#xea;tre fameux; pour faire
+      mieux, il faudrait fournir &#xe0; <em>Sage</em>  une structure de donn&#xe9;e plus
+      sp&#xe9;cialis&#xe9;e, avec l'affichage d&#xe9;sir&#xe9;.
+    </p>
+
+    <p>
+      On retrouve la s&#xe9;rie g&#xe9;n&#xe9;ratrice des nombres de Catalan:
+    </p>
+
+    <sage>
+      <input>
+        g = BT.isotype_generating_series(); g
+      </input>
+      <output>
+        x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + O(x^6)
+      </output>
+    </sage>
+
+    <p>
+      qui est renvoy&#xe9;e sous forme d'une s&#xe9;rie paresseuse:
+    </p>
+
+    <sage>
+      <input>
+        g[100]
+      </input>
+      <output>
+        227508830794229349661819540395688853956041682601541047340
+      </output>
+    </sage>
+
+    <p>
+      Nous finissons avec les mots de Fibonacci, qui sont les mots binaires
+      sans deux <q><m>1</m></q> cons&#xe9;cutifs. Ils admettent une d&#xe9;finition r&#xe9;cursive
+      naturelle:
+    </p>
+
+    <sage>
+      <input>
+        Eps =  EmptySetSpecies()
+        Z0  =  SingletonSpecies()
+        Z1  =  Eps*SingletonSpecies()
+        FW  = CombinatorialSpecies()
+        FW.define(Eps + Z0*FW  +  Z1*Eps + Z1*Z0*FW)
+      </input>
+    </sage>
+
+    <p>
+      On reconna&#xee;t la fameuse suite de Fibonacci, d'o&#xf9; le nom:
+    </p>
+
+    <sage>
+      <input>
+        L = FW.isotype_generating_series().coefficients(15); L
+      </input>
+      <output>
+        [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        sloane_find(L)
+      </input>
+      <output>
+        Searching Sloane's online database...
+          [[45, 'Fibonacci numbers: F(n) = F(n-1) + F(n-2),
+           F(0) = 0, F(1) = 1, F(2) = 1, ...',
+           [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, ...
+      </output>
+    </sage>
+
+    <p>
+      ce qui est une cons&#xe9;quence directe de l'&#xe9;quation de r&#xe9;currence. L&#xe0;
+      encore, on peut aussi g&#xe9;n&#xe9;rer imm&#xe9;diatement tous les mots de Fibonacci
+      d'une longueur donn&#xe9;e, avec les m&#xea;mes limitations de l'affichage
+      g&#xe9;n&#xe9;rique:
+    </p>
+
+    <sage>
+      <input>
+        FW3 = FW.isotypes([o]*3)
+        FW3.list()
+      </input>
+      <output>
+        [o*(o*(o*{})), o*(o*(({}*o)*{})), o*((({}*o)*o)*{}),
+           (({}*o)*o)*(o*{}), (({}*o)*o)*(({}*o)*{})]
+      </output>
+    </sage>
+
+    <p>
+      \hypersetup{bookmarksopen=true}
+      \appendix
+      \part*{Annexes}
+
+      \hypersetup{bookmarksopen=false}
+      {Calcul math&#xe9;matique avec Sage, &#xa7;\thesection}
+    </p>
+  </subsection>
+</section>
+

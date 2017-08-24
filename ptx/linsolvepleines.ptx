@@ -1,0 +1,1420 @@
+
+
+<section xml:id="linsolvepleines">
+  <title>Matrices pleines</title>
+  <subsection xml:id="linsolvecramer">
+    <title>R&#xe9;solution de syst&#xe8;mes lin&#xe9;aires</title>
+    <p>
+      \paragraph{Ce qu'il ne faut (presque) jamais faire:} utiliser les formules de
+      Cramer. Un raisonnement par r&#xe9;currence montre que le co&#xfb;t du calcul
+      du d&#xe9;terminant d'une matrice <m>n \times n</m> est de l'ordre
+      <m>n!</m> multiplications (et autant d'additions). Pour
+      r&#xe9;soudre un syst&#xe8;me de taille <m>n</m>, ce sont <m>n+1</m>
+      d&#xe9;terminants qu'il faut calculer. Prenons <m>n = 20</m>:
+    </p>
+
+    <sage>
+      <input>
+        n = 20
+        cout = (n+1)*factorial(n)
+      </input>
+    </sage>
+
+    <p>
+      nous obtenons la valeur respectable de
+      <c>51090942171709440000</c> multiplications. Supposons que notre calculateur
+      effectue <m>3\ 10^9</m> multiplications par seconde (ce qui est r&#xe9;aliste), et
+      calculons la dur&#xe9;e
+      approximative du calcul:
+    </p>
+
+    <sage>
+      <input>
+        v = 3*10^9
+        float(cout/v/3600/24/365)
+      </input>
+      <output>
+        540.02771617315068
+      </output>
+    </sage>
+
+    <p>
+      Il faudra donc <em><c>540</c> ans</em> (environ) pour effectuer le calcul!
+      Bien s&#xfb;r vous pouvez utiliser les formules de Cramer pour r&#xe9;soudre un
+      syst&#xe8;me <m>2 \times 2</m>, mais pas bien au del&#xe0;! Toutes les m&#xe9;thodes
+      utilis&#xe9;es en pratique ont en commun un co&#xfb;t polynomial, c'est &#xe0; dire
+      de l'ordre de <m>n^p</m>, avec <m>p</m> petit (<m>p = 3</m>, en g&#xe9;n&#xe9;ral).
+    </p>
+
+    <p>
+      \paragraph{M&#xe9;thodes pratiques.}
+      La r&#xe9;solution de syst&#xe8;mes lin&#xe9;aires <m>Ax = b</m> est le plus souvent bas&#xe9;e sur une
+      factorisation de la matrice <m>A</m> en un produit de deux matrices <m>A=
+      M_1M_2</m>, <m>M_1</m> et <m>M_2</m> d&#xe9;finissant des
+      syst&#xe8;mes lin&#xe9;aires faciles &#xe0; r&#xe9;soudre. Pour r&#xe9;soudre <m>Ax = b</m>, on r&#xe9;sout
+      alors successivement
+      <m>M_1y = b</m>, puis <m>M_2x = y.</m>
+    </p>
+
+    <p>
+      Par exemple <m>M_1</m> et <m>M_2</m>
+      peuvent &#xea;tre deux matrices
+      triangulaires; dans ce cas, une fois la factorisation effectu&#xe9;e, il
+      faut r&#xe9;soudre deux syst&#xe8;mes lin&#xe9;aires &#xe0; matrice triangulaire. Le co&#xfb;t
+      de la factorisation est bien plus &#xe9;lev&#xe9; que celui de la r&#xe9;solution des
+      deux syst&#xe8;mes triangulaires (par exemple <m>O(n^3)</m> pour la
+      factorisation <m>LU</m> contre
+      <m>O(n^2)</m> pour la r&#xe9;solution des syst&#xe8;mes triangulaires). Il convient
+      donc, dans le
+      cas de la r&#xe9;solution de plusieurs syst&#xe8;mes avec la m&#xea;me matrice, de ne
+      calculer qu'une seule fois la d&#xe9;composition.
+      Bien entendu, on
+      n'inverse <em>jamais</em> une matrice pour r&#xe9;soudre un syst&#xe8;me lin&#xe9;aire,
+      l'inversion demandant la factorisation de la matrice, puis la r&#xe9;solution de <m>n</m>
+      syst&#xe8;mes au lieu d'un seul.
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>R&#xe9;solution directe</title>
+    <p>
+      Voici la mani&#xe8;re la plus simple de proc&#xe9;der:
+    </p>
+
+    <sage>
+      <input>
+        A = Matrix(RDF, [[-1,2],[3,4]])
+        b =  vector(RDF,[2,3])
+        x = A\b
+        print x
+      </input>
+      <output>
+        (-0.2, 0.9)
+      </output>
+    </sage>
+
+    <p>
+      Dans <em>Sage</em> , les matrices poss&#xe8;dent une m&#xe9;thode
+      <c>solve_right</c> pour la r&#xe9;solution de
+      syst&#xe8;mes lin&#xe9;aires (bas&#xe9;e sur la d&#xe9;composition <m>LU</m>); c'est cette
+      commande qui est appel&#xe9;e ci-dessus. On aurait aussi pu &#xe9;crire:
+    </p>
+
+    <sage>
+      <input>
+        x = A.solve_right(b)
+      </input>
+    </sage>
+
+    <p>
+      La syntaxe <c> x = A</c><m>\backslash</m><c>b</c> de la premi&#xe8;re version
+      est pratiquement
+      identique &#xe0; ce qu'on utilise dans les syst&#xe8;mes de calcul
+      <em>Matlab</em>, <em>Octave</em> ou <em>Scilab</em>. La m&#xe9;thode
+      utilise la d&#xe9;composition <m>LU.</m>
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>La d&#xe9;composition <m>LU</m></title>
+    <sage>
+      <input>
+        A = Matrix(RDF, [[-1,2],[3,4]])
+        P, L, U = A.LU()
+      </input>
+    </sage>
+
+    <p>
+      Cette m&#xe9;thode fournit les facteurs <m>L</m> et <m>U</m> ainsi que la matrice
+      de permutation<nbsp /><m>P</m>, tels que <m>A = PLU</m>. Ce sont les choix de pivots qui
+      imposent la cr&#xe9;ation de la matrice <m>P</m>. La matrice <m>L</m> est
+      triangulaire inf&#xe9;rieure, &#xe0; diagonale unit&#xe9;, et <m>U</m> est une matrice
+      triangulaire sup&#xe9;rieure. Cette d&#xe9;composition est directement d&#xe9;riv&#xe9;e
+      de la m&#xe9;thode de Gauss (d&#xe9;crite en <xref ref="sec_linalg_gauss">&#xa7;</xref>).
+      En effet, en
+      n&#xe9;gligeant pour la simplicit&#xe9; de l'expos&#xe9; les probl&#xe8;mes de choix de
+      pivots, la m&#xe9;thode de Gauss consiste &#xe0; transformer la matrice <m>A</m>
+      (d'ordre <m>n</m>) pour
+      faire appara&#xee;tre des coefficients nuls sous la diagonale de la premi&#xe8;re
+      colonne, puis de la deuxi&#xe8;me colonne et ainsi de suite. Cette &#xe9;limination peut
+      s'&#xe9;crire
+      <me>
+        L_{n-1}\ldots L_2L_1A= U.
+      </me>
+    </p>
+
+    <p>
+      En posant <m>L=(L_{n-1}\ldots L_2L_1)^{-1}</m>, on obtient bien <m>A = LU</m> et
+      on v&#xe9;rifie sans difficult&#xe9;s que <m>L</m> est triangulaire inf&#xe9;rieure &#xe0;
+      diagonale unit&#xe9;.
+    </p>
+
+    <p>
+      Notons
+      que <em>Sage</em>  garde en m&#xe9;moire la factorisation de <m>A</m>: la
+      commande <c>A.LU_valid()</c> va r&#xe9;pondre <c>True</c> si et
+      seulement si la factorisation <m>LU</m> a d&#xe9;j&#xe0; &#xe9;t&#xe9; calcul&#xe9;e.
+      Mieux, la commande
+      <c>a.solve_right(b)</c> ne calculera la factorisation que si
+      c'est n&#xe9;cessaire, c'est-&#xe0;-dire si elle n'a pas &#xe9;t&#xe9; calcul&#xe9;e auparavant, ou
+      si la matrice <c>A</c> a chang&#xe9;.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        Cr&#xe9;ons une matrice de taille 1000, al&#xe9;atoire et un vecteur de taille
+        1000:
+      </p>
+
+      <sage>
+        <input>
+          A = random_matrix(RDF,1000)
+          b = vector(RDF,[i for i in range(0,1000)])
+        </input>
+      </sage>
+
+      <p>
+        factorisons <c>A</c>:
+      </p>
+
+      <sage>
+        <input>
+          %time A.LU()
+        </input>
+        <output>
+          CPU times: user 0.23 s, sys: 0.01 s, total: 0.24 s
+            Wall time: 0.29 s
+        </output>
+      </sage>
+
+      <p>
+        et &#xe0; pr&#xe9;sent r&#xe9;solvons le syst&#xe8;me <m>Ax = b</m>:
+      </p>
+
+      <sage>
+        <input>
+          %time x = A.solve_right(b)
+        </input>
+        <output>
+          CPU times: user 0.10 s, sys: 0.00 s, total: 0.10 s
+            Wall time: 0.12 s
+        </output>
+      </sage>
+
+      <p>
+        La r&#xe9;solution est plus rapide, parce qu'elle
+        a tenu compte de la factorisation
+        pr&#xe9;c&#xe9;demment calcul&#xe9;e.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection>
+    <title>La d&#xe9;composition de Cholesky des matrices r&#xe9;elles
+      sym&#xe9;triques   d&#xe9;finies positives</title>
+    <p>
+      Une matrice sym&#xe9;trique A est dite d&#xe9;finie positive
+      si pour
+      tout vecteur <m>x</m> non nul, <m>\trans{x}Ax>0</m>. Pour toute matrice
+      sym&#xe9;trique d&#xe9;finie
+      positive, il existe une matrice triangulaire inf&#xe9;rieure<nbsp /><m>C</m>
+      telle que <m>A = C\trans{C}</m>. Cette factorisation est appel&#xe9;e
+      d&#xe9;composition de Cholesky.
+      Dans <em>Sage</em> , elle se calcule en appelant la m&#xe9;thode
+      <c>cholesky_decomposition()</c>. Exemple:
+    </p>
+
+    <sage>
+      <input>
+        
+      </input>
+      <output>
+        #fabriquer une matrice A sym\'etrique presque s\^urement d\'efinie
+          #positive
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        m = random_matrix(RDF,10)
+        A = transpose(m)*m
+        C = A.cholesky_decomposition()
+      </input>
+    </sage>
+
+    <p>
+      Il faut noter qu'on ne peut pas tester en un co&#xfb;t raisonnable si une
+      matrice sym&#xe9;trique est d&#xe9;finie positive; si on applique la m&#xe9;thode de
+      Cholesky avec une matrice qui ne l'est pas, la
+      d&#xe9;composition ne pourra
+      pas &#xea;tre calcul&#xe9;e et une exception <c>ValueError</c> sera lanc&#xe9;e
+      par
+      <c>cholesky_decomposition()</c> au cours du calcul.
+    </p>
+
+    <p>
+      Pour r&#xe9;soudre un syst&#xe8;me <m>Ax = b</m> &#xe0; l'aide de la d&#xe9;composition de Cholesky, on
+      proc&#xe8;de comme avec la d&#xe9;composition <m>LU</m>. Une fois la d&#xe9;composition
+      calcul&#xe9;e, on ex&#xe9;cute <c>A.solve_right(b).</c> L&#xe0; aussi, la
+      d&#xe9;composition n'est pas recalcul&#xe9;e.
+    </p>
+
+    <p>
+      Pourquoi utiliser la d&#xe9;composition de Cholesky plut&#xf4;t que la
+      d&#xe9;composition <m>LU</m> pour r&#xe9;soudre des syst&#xe8;mes &#xe0; matrice sym&#xe9;trique
+      d&#xe9;finie positive? bien s&#xfb;r, la taille m&#xe9;moire n&#xe9;cessaire pour
+      stocker les facteurs est deux
+      fois plus petite, ce qui n'est pas tr&#xe8;s important,
+      mais c'est surtout du point de vue du compte d'op&#xe9;rations que la
+      m&#xe9;thode de Cholesky s'av&#xe8;re avantageuse: en effet, pour une matrice de
+      taille <m>n</m>, la factorisation de Cholesky co&#xfb;te <m>n</m> extractions de racines
+      carr&#xe9;es, <m>n(n-1)/2</m> divisions, <m>(n^3-n)/6</m> additions et autant de
+      multiplications. En comparaison la factorisation <m>LU</m> co&#xfb;te aussi <m>n(n-1)/2</m>
+      divisions, mais <m>(n^3-n)/3</m> additions et multiplications.
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>La d&#xe9;composition <m>QR</m></title>
+    <p>
+      Soit <m>A \in \mathbb{R}^{n\times m}</m>, avec <m>n\geq m</m>. Il s'agit
+      ici de trouver deux
+      matrices <m>Q</m> et <m>R</m> telles que <m>A = QR</m> o&#xf9; <m>Q \in \mathbb{R}^{n\times n}</m>
+      est orthogonale (<m>\trans{Q}\cdot Q = I</m>) et <m>R \in \mathbb{R}^{n\times m}</m> est
+      triangulaire sup&#xe9;rieure. Bien s&#xfb;r, une fois la d&#xe9;composition
+      calcul&#xe9;e, on peut s'en servir pour r&#xe9;soudre des syst&#xe8;mes lin&#xe9;aires si la
+      matrice <m>A</m>
+      est carr&#xe9;e et inversible,
+      mais c'est
+      surtout, comme on le verra, une d&#xe9;composition int&#xe9;ressante pour la
+      r&#xe9;solution de syst&#xe8;mes aux moindres
+      carr&#xe9;s et pour le
+      calcul de valeurs propres. Bien noter que <m>A</m> n'est pas forc&#xe9;ment carr&#xe9;e. La
+      d&#xe9;composition existe si <m>A</m> est de rang maximum <m>m</m>. Exemple:
+    </p>
+
+    <sage>
+      <input>
+        A = random_matrix(RDF,6,5)
+        Q,R = A.QR()
+      </input>
+    </sage>
+  </subsection>
+
+  <subsection>
+    <title>La d&#xe9;composition en valeurs singuli&#xe8;res</title>
+    <p>
+      Il s'agit d'une d&#xe9;composition peu enseign&#xe9;e, et pourtant riche en
+      applications!
+      Soit <m>A</m> une matrice <m>n \times m</m> &#xe0; coefficients r&#xe9;els. Alors il existe
+      deux matrices orthogonales <m>U \in \R^{n{\times}n}</m> et <m>V \in \R^{m{\times}m}</m>,
+      telles que
+      <me>
+        \trans{U}\cdot A \cdot V=\Sigma= { diag}(\sigma_1,
+        \sigma_2,\ldots,\sigma_p)
+      </me>
+      o&#xf9;
+      <m>\sigma_1\geq \sigma_2\geq\ldots\geq\sigma_p\geq 0</m>
+      (<m>p\leq
+      \mathrm{min}(m,n)</m>).
+    </p>
+
+    <p>
+      Les matrices <m>U</m> et <m>V</m> sont orthogonales: <m>U\cdot \trans{U}=I</m> et
+      <m>V\cdot \trans{V}=I</m> et par
+      cons&#xe9;quent:
+      <me>
+        A= U\Sigma \trans{V}.
+      </me>
+    </p>
+
+    <p>
+      Exemple:
+    </p>
+
+    <sage>
+      <input>
+        A = matrix(RDF,[[1,3,2],[1,2,3],[0,5,2],[1, 1, 1]]) 
+        U,Sig,V = A.SVD()
+        A1=A-U*Sig*transpose(V)
+        print(A1) # v\'erification
+      </input>
+      <output>
+        [  4.4408920985e-16   4.4408920985e-16   -8.881784197e-16]
+        [ 6.66133814775e-16   -8.881784197e-16  -4.4408920985e-16]
+        [-1.29063426613e-15   1.7763568394e-15  2.22044604925e-16]
+        [ 6.66133814775e-16 -6.66133814775e-16 -1.11022302463e-15]
+      </output>
+    </sage>
+
+    <p>
+      (les calculs ne sont &#xe9;videmment jamais exacts!)
+    </p>
+
+    <p>
+      On peut montrer que les valeurs singuli&#xe8;res d'une matrice <m>A</m> sont les
+      racines carr&#xe9;es des valeurs propres de <m>\trans{A}A</m>. Il est facile de
+      v&#xe9;rifier que, pour une matrice
+      carr&#xe9;e de taille <m>n</m>, la norme euclidienne <m>\mathopen\|
+      A\mathclose\|_2</m> est &#xe9;gale &#xe0; <m>\sigma_1</m> et que, si la matrice est de plus
+      non singuli&#xe8;re, le
+      conditionnement de <m>A</m> en norme euclidienne est &#xe9;gal &#xe0; <m>\sigma_1/\sigma_n</m>.
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>Application aux moindres carr&#xe9;s</title>
+    <introduction>
+      <p>
+        On voudrait r&#xe9;soudre le syst&#xe8;me surd&#xe9;termin&#xe9; <m>Ax = b</m> o&#xf9; <m>A</m> est une matrice &#xe0;
+        coefficients r&#xe9;els, rectangulaire, &#xe0; <m>n</m> lignes et <m>m</m> colonnes avec
+        <m>n>m</m>. &#xc9;videmment ce syst&#xe8;me n'a pas, en g&#xe9;n&#xe9;ral, de solution. On
+        consid&#xe8;re alors le probl&#xe8;me de minimisation du carr&#xe9; de la norme
+        euclidienne <m>\mathopen\<c> \cdot \mathclose\</c>_2</m> du r&#xe9;sidu:
+        <me>
+          \min_x\  \mathopen\<c> Ax-b\mathclose\</c>_2^2.
+        </me>
+      </p>
+
+      <p>
+        La matrice <m>A</m> peut m&#xea;me &#xea;tre de rang inf&#xe9;rieur &#xe0; <m>m</m>.
+      </p>
+    </introduction>
+    <subsubsection xml:id="equnorm">
+    <title>En r&#xe9;solvant les &#xe9;quations normales</title>
+    <p>
+      En annulant la
+      diff&#xe9;rentielle par rapport &#xe0; <m>x</m>
+      du probl&#xe8;me de minimisation,
+      on v&#xe9;rifiera sans trop de peine que la solution v&#xe9;rifie:
+      <me>
+        \trans{A}Ax=\trans{A}b.
+      </me>
+    </p>
+
+    <p>
+      Supposant <m>A</m> de rang maximum <m>m</m>, on peut donc penser former la matrice
+      <m>\trans{A}A</m> et r&#xe9;soudre le syst&#xe8;me
+      <m>\trans{A}Ax=\trans{A}b</m>,
+      par exemple en calculant la d&#xe9;composition de Cholesky de
+      <m>\trans{A}A</m>. C'est m&#xea;me
+      l&#xe0; l'origine du <em>proc&#xe9;d&#xe9; du commandant Cholesky</em><fn>Polytechnicien et officier d'artillerie  (1875-1918); la m&#xe9;thode a
+        &#xe9;t&#xe9; invent&#xe9;e   pour r&#xe9;soudre 
+      des probl&#xe8;mes de g&#xe9;od&#xe9;sie.</fn>. Quel est le conditionnement de
+      <m>\trans{A}A</m>? C'est ce qui va conditionner la pr&#xe9;cision des calculs.
+      Les valeurs singuli&#xe8;res de <m>\trans{A}A</m> sont les
+      carr&#xe9;s des valeurs singuli&#xe8;res de <m>A</m>; le conditionnement en norme
+      euclidienne est donc <m>\sigma_1^2/\sigma_n^2</m>, qui est facilement grand
+      (pour une matrice carr&#xe9;e le conditionnement euclidien de <m>\trans{A}A</m>
+      est &#xe9;gal au carr&#xe9; du conditionnement de <m>A</m>).
+      On
+      pr&#xe9;f&#xe8;re donc des m&#xe9;thodes bas&#xe9;es soit sur la d&#xe9;composition <m>QR</m> de
+      <m>A</m>, soit sur sa d&#xe9;composition en valeurs singuli&#xe8;res<fn>Mais le
+        commandant Cholesky n'avait pas d'ordinateur, et n'envisageait
+        probablement que la r&#xe9;solution de petits syst&#xe8;mes, pour lesquels le
+        mauvais conditionnement n'est pas vraiment un probl&#xe8;me.</fn>.
+    </p>
+
+    <p>
+      Malgr&#xe9; tout, cette m&#xe9;thode est utilisable pour de petits syst&#xe8;mes, pas
+      trop mal conditionn&#xe9;s. Voici le code correspondant:
+    </p>
+
+    <sage>
+      <input>
+        A = matrix(RDF,[[1,3,2],[1,4,2],[0,5,2],[1,3,2]]) 
+        B = vector(RDF,[1,2,3,4])
+        Z = transpose(A)*A
+        C = Z.cholesky_decomposition()
+        R = transpose(A)*B   
+        Z.solve_right(R)
+      </input>
+    </sage>
+
+    <p>
+      On obtient:
+    </p>
+
+    <pre>
+      (-1.5, -0.5, 2.75)
+    </pre>
+
+    <p>
+      Bien noter ici que la d&#xe9;composition de Cholesky est <em>cach&#xe9;e</em> et que
+      la r&#xe9;solution <c>Z.solve_right(C)</c> utilise cette d&#xe9;composition,
+      sans la recalculer.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>Avec la d&#xe9;composition <m>QR</m></title>
+    <p>
+      Supposons <m>A</m> de rang maximum<fn>On peut s'en affranchir en
+        utilisant une m&#xe9;thode <m>QR</m> avec pivots.</fn>, et soit <m>A = QR</m>. Alors
+      <me>
+        \mathopen\<c> Ax-b\mathclose\</c>_2^2=\mathopen\<c> QRx-b\mathclose\</c>_2^2
+        =\mathopen\<c> Rx-\trans{Q}b\mathclose\</c>_2^2.
+      </me>
+    </p>
+
+    <p>
+      On a: <m>R=\left[
+      \begin{array}{c}
+      R_1\\
+      0
+      \end{array} 
+      \right]</m> o&#xf9; <m>R_1</m> est un bloc triangulaire sup&#xe9;rieur de taille <m>m</m> et
+      <m>\trans{Q}b=\left[
+      \begin{array}{c}
+      c\\
+      d
+      \end{array} 
+      \right]</m> (<m>c</m> de taille <m>m</m>). Donc <m>\mathopen\<c> Ax-b\mathclose\</c>_2^2=\mathopen\<c> R_1x-c\mathclose\</c>_2^2+ \mathopen\<c> d\mathclose\</c>_2^2</m>,
+      et le minimum est obtenu pour <m>x</m> solution du syst&#xe8;me triangulaire
+      <m>R_1x = c</m>:
+    </p>
+
+    <sage>
+      <input>
+        A = matrix(RDF,[[1,3,2],[1,4,2],[0,5,2],[1,3,2]]) 
+        B = vector(RDF,[1,2,3,4]) 
+        Q,R = A.QR()
+        R1=R[0:3,0:3]
+        B1=transpose(Q)*B
+        C = B1[0:3]
+        R1.solve_right(C)
+      </input>
+    </sage>
+
+    <p>
+      On obtient l&#xe0; aussi:
+    </p>
+
+    <pre>
+      (-1.5, -0.5, 2.75).
+    </pre>
+
+    <p>
+      Calculons le conditionnement de <m>\trans{A}A</m> en norme infinie:
+    </p>
+
+    <sage>
+      <input>
+        Z = A.transpose()*A
+        Z.norm(Infinity)*(Z^-1).norm(Infinity)
+      </input>
+      <output>
+        1992.375
+      </output>
+    </sage>
+
+    <p>
+      Le syst&#xe8;me &#xe9;tant de petite taille, n'est pas trop mal conditionn&#xe9;:
+      la m&#xe9;thode <m>QR</m> et la m&#xe9;thode des
+      &#xe9;quations normales (<xref ref="equnorm">page</xref>) donnent donc (&#xe0; peu pr&#xe8;s) le
+      m&#xea;me r&#xe9;sultat.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>Avec la d&#xe9;composition en valeurs singuli&#xe8;res</title>
+    <p>
+      La d&#xe9;composition en valeurs singuli&#xe8;res <m>A= U\Sigma \trans{V}</m>
+      permet aussi de calculer la solution; mieux
+      elle est utilisable m&#xea;me
+      si <m>A</m> n'est pas de rang maximum.
+      Rappelons d'abord que <m>\Sigma</m> poss&#xe8;de <m>p\leq m</m>
+      coefficients non nuls<nbsp /><m>\sigma_i</m>, positifs (et rang&#xe9;s par ordre d&#xe9;croissant).
+      On note
+      <m>u_i</m> et <m>v_i</m>
+      les colonnes de <m>U</m> et <m>V</m>. On a alors:
+      <me>
+        \mathopen\<c> Ax-b\mathclose\</c>_2^2=\mathopen\| \trans{U}AV\trans{V}x-\trans{U}b\mathclose\|^2_2.
+      </me>
+    </p>
+
+    <p>
+      En posant <m>v=\trans{V}x</m>, on a:
+      <me>
+        \mathopen\<c> Ax-b\mathclose\</c>_2^2=\sum_{i = 1}^p(\sigma_iv_i-\trans{u_i}b)^2+\sum_{i = p+1}^m\trans{u_i}b.
+      </me>
+    </p>
+
+    <p>
+      Le minimum est donc atteint pour <m>v_i=(\trans{u_i}b)/\sigma_i</m>, et donc:
+      <me>
+        x=\sum_{i = 1}^p\frac{\trans{u_i}b}{\sigma_i}v_i.
+      </me>
+    </p>
+
+    <p>
+      Voici le programme <em>Sage</em> :
+    </p>
+
+    <pre>
+      A = matrix(RDF,[[1,3,2],[1,3,2],[0,5,2],[1,3,2]]) 
+      B = vector(RDF,[1,2,3,4])
+
+      U,Sig,V = A.SVD()
+
+      n = A.ncols()
+      X = vector(RDF,[0]*n)
+
+      for i in range(0,n):
+          s = Sig[i,i]
+          if s&lt;1.e-12:
+              break
+          X+= U.column(i)*B/s*V.column(i)
+
+      print "Solution: "+str(X)
+    </pre>
+
+    <p>
+      On trouve:
+    </p>
+
+    <pre>
+      (0.237037037037, 0.451851851852, 0.37037037037)
+    </pre>
+
+    <p>
+      Notons que
+      ci-dessus, la matrice <m>A</m> est de rang 2 (ce qu'on peut v&#xe9;rifier
+      &#xe0; l'aide de la commande <c>A.rank()</c>) et qu'elle n'est donc pas de
+      rang maximum (<m>3</m>);
+      il y a donc plusieurs solutions au probl&#xe8;me de moindres carr&#xe9;s et la
+      d&#xe9;monstration donn&#xe9;e ci-dessus montre que <m>x</m> est la solution de norme
+      euclidienne minimale.
+    </p>
+
+    <p>
+      Imprimons les valeurs singuli&#xe8;res:
+    </p>
+
+    <sage>
+      <input>
+        n = 3
+        for i in range(0,n):
+        print Sig[i,i]
+      </input>
+    </sage>
+
+    <p>
+      On obtient:
+    </p>
+
+    <p>
+      <c>8.30931683326</c>, <c>1.39830388849</c>
+      <c>2.27183194012e-16</c>.
+    </p>
+
+    <p>
+      <m>A</m> &#xe9;tant de rang 2, la troisi&#xe8;me valeur
+      singuli&#xe8;re est forc&#xe9;ment <m>0</m>. On a donc ici une erreur d'arrondi, due &#xe0;
+      l'approximation flottante. Pour &#xe9;viter une division par <m>0</m>,
+      il convient de
+      ne pas en tenir compte dans le calcul de valeurs singuli&#xe8;res
+      approch&#xe9;es trop proches de <m>0</m> (c'est la raison du test <c>if
+      s&lt;1.e-12</c> dans le programme).
+    </p>
+
+    <paragraphs xml:id="exo_linsolve_rotation">
+      <title>Exemple</title>
+      <p>
+        Parmi les merveilleuses applications de la d&#xe9;composition en valeurs
+        singuli&#xe8;res (SVD, Singular Value Decomposition), voici un
+        probl&#xe8;me qu'on
+        aura bien du mal &#xe0; r&#xe9;soudre avec une autre m&#xe9;thode: soient <m>A</m> et <m>B\in
+        \mathbb{R}^{n{\times}m}</m> les r&#xe9;sultats d'une exp&#xe9;rience r&#xe9;p&#xe9;t&#xe9;e
+        deux fois. On se demande si <m>B</m> peut &#xea;tre <em>tourn&#xe9;e</em> sur<nbsp /><m>A</m>,
+        c'est-&#xe0;-dire s'il existe une matrice orthogonale <m>Q</m> telle que
+        <m>A = QB</m>.
+        &#xc9;videmment, un bruit s'est ajout&#xe9; aux mesures et le probl&#xe8;me n'a pas
+        en g&#xe9;n&#xe9;ral de solution. Il convient donc de le poser aux moindres
+        carr&#xe9;s; pour cela, il faut donc calculer la matrice orthogonale
+        <m>Q</m> qui minimise le carr&#xe9; de la norme de Frobenius:
+        <me>
+          \mathopen\<c> A-QB\mathclose\</c>_F^2.
+        </me>
+      </p>
+
+      <p>
+        On se souvient que <m>\mathopen\<c> A\mathclose\</c>_F^2=\mathrm{trace}(\trans{A}A)</m>. Alors
+        <me>
+          \mathopen\<c> A-QB\mathclose\</c>_F^2
+          =\mathrm{trace}(\trans{A}A)+\mathrm{trace}(\trans{B}B)-2\ \mathrm{trace}(\trans{Q}\trans{B}A)
+          \geq 0,
+        </me>
+        et il faut donc maximiser <m>\mathrm{trace}(\trans{Q}\trans{B}A)</m>. On calcule
+        alors la SVD de <m>\trans{B}A</m>: on a
+        donc <m>\trans{U}(\trans{B}A)V=
+        \Sigma.</m> Soient <m>\sigma_i</m> les
+        valeurs singuli&#xe8;res; soit <m>O= \trans{V}\trans{Q}U.</m> Cette matrice est
+        orthogonale et donc tous ses coefficients sont inf&#xe9;rieurs ou &#xe9;gaux &#xe0;
+        <m>1</m>. Alors:
+        <me>
+          \mathrm{trace}(\trans{Q}\trans{B}A)=\mathrm{trace}(\trans{Q}U\Sigma V)
+           =\mathrm{trace}(O\Sigma)
+          =\sum_{i = 1}^m O_{ii}\sigma_i\leq \sum_{i = 1}^m\sigma_i.
+        </me>
+        et le maximum est atteint pour <m>Q = U\trans{V}.</m>
+      </p>
+
+      <pre>
+        A = matrix(RDF,[[1,2],[3,4],[5,6],[7,8]])
+
+        #B est obtenue en ajoutant un bruit al\'eatoire A et
+        # en lui appliquant une rotation R d'angle th\^eta:
+        theta = 0.7
+        R = matrix(RDF,[[cos(theta),sin(theta)],[-sin(theta),cos(theta)]])
+        B = (A+0.1*random_matrix(RDF,4,2))*transpose(R)
+
+        C = transpose(B)*A
+        U,Sigma,V = C.SVD()
+
+        Q = U*transpose(V)
+        #la perturbation aleatoire est faible: Q doit donc etre proche de R.
+        print(Q)
+        print(R)
+      </pre>
+
+      <p>
+        ce qui donne pour <c>Q</c> et <c>R</c>:
+      </p>
+
+      <pre>
+        [-0.641193265954   0.76737943398]
+      </pre>
+      <pre>
+        [-0.644217687238  0.764842187284]
+      </pre>
+
+      <p>
+        qui sont effectivement proches.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_linsolve_racine">
+      <title>Exercice</title>
+      <p>
+        [Racine carr&#xe9;e d'une matrice sym&#xe9;trique semi d&#xe9;finie positive] Soit <m>A</m> une matrice sym&#xe9;trique semi d&#xe9;finie positive (c'est-&#xe0;-dire
+        qui v&#xe9;rifie <m>\trans{x}Ax \geq 0</m> pour tout <m>x</m> non nul).
+        Montrer qu'on peut calculer une matrice <m>X</m>, elle aussi sym&#xe9;trique semi d&#xe9;finie
+        positive, telle que <m>X^2=A</m>.
+      </p>
+    </paragraphs>
+    </subsubsection>
+  </subsection>
+
+  <subsection>
+    <title>Valeurs propres, vecteurs propres</title>
+    <introduction>
+      <p>
+        Jusqu'&#xe0; pr&#xe9;sent, nous n'avons utilis&#xe9; que des m&#xe9;thodes directes
+        (d&#xe9;composition <m>LU</m>, <m>QR</m>, de Cholesky), qui
+        fournissent une solution en un nombre fini d'op&#xe9;rations
+        (les quatre op&#xe9;rations &#xe9;l&#xe9;mentaires, plus la racine carr&#xe9;e pour la
+        d&#xe9;composition de Cholesky).
+        Cela
+        ne
+        <em>peut pas</em> &#xea;tre le cas pour le calcul des valeurs propres: en
+        effet (cf. <xref ref="compagnon">page</xref>), on peut
+        associer &#xe0; tout polyn&#xf4;me une matrice dont les valeurs
+        propres sont les racines;
+        mais on sait
+        qu'il n'existe pas de formule explicite pour le calcul des racines
+        d'un polyn&#xf4;me de degr&#xe9; sup&#xe9;rieur ou &#xe9;gal &#xe0; 5,
+        formule que donnerait pr&#xe9;cis&#xe9;ment une m&#xe9;thode directe.
+        D'autre part, former le polyn&#xf4;me caract&#xe9;ristique pour en calculer les
+        racines serait extr&#xea;mement
+        co&#xfb;teux (cf. <xref ref="linsolvecramer">page</xref>); notons toutefois que
+        l'algorithme de Leverrier permet de calculer le polyn&#xf4;me
+        caract&#xe9;ristique d'une matrice de taille <m>n</m> en <m>O(n^4)</m> op&#xe9;rations,
+        ce qui est malgr&#xe9; tout consid&#xe9;r&#xe9; comme bien trop co&#xfb;teux. Les m&#xe9;thodes
+        num&#xe9;riques utilis&#xe9;es pour le calcul de valeurs et de vecteurs propres
+        sont toutes it&#xe9;ratives.
+      </p>
+
+      <p>
+        On va donc construire des suites convergeant
+        vers les valeurs propres (et les vecteur propres)
+        et arr&#xea;ter les it&#xe9;rations quand on sera assez proche de la
+        solution<fn>Dans les exemples donn&#xe9;s ci<ndash />dessous, le probl&#xe8;me
+          du choix des tests d'arr&#xea;t des it&#xe9;rations est volontairement pass&#xe9;
+          sous silence, pour des raisons de simplicit&#xe9;.</fn>.
+      </p>
+    </introduction>
+    <subsubsection>
+    <title>La m&#xe9;thode de la puissance it&#xe9;r&#xe9;e</title>
+    <p>
+      Soit <m>A</m> une matrice appartenant &#xe0;
+      <m>\mathbb{C}^{n{\times}n}</m>. On choisit une norme quelconque <m>\mathopen\<c> .\mathclose\</c></m> sur
+      <m>\mathbb{C}^n</m>. En partant de <m>x_0</m>, on consid&#xe8;re
+      la suite des <m>x_k</m> d&#xe9;finie par:
+      <me>
+        x_{k+1}=\frac{ Ax_k}{\mathopen\<c> Ax_{k}\mathclose\</c>}.
+      </me>
+    </p>
+
+    <p>
+      Si les valeurs propres v&#xe9;rifient <m><c>\lambda_1</c>><c>\lambda_2</c>>\ldots >
+      <c>\lambda_n</c></m>, alors la suite des vecteurs <m>x_k</m> converge vers un
+      vecteur propre associ&#xe9; &#xe0; la valeur propre dominante <m><c>\lambda_1</c></m>.
+      De plus
+      la suite <m>\nu_k=\trans{x_{k+1}} x_k</m> converge vers
+      <m><c>\lambda_1</c></m>.
+      Cette hypoth&#xe8;se de s&#xe9;paration des valeurs propres peut &#xea;tre rel&#xe2;ch&#xe9;e.
+    </p>
+
+    <sage>
+      <input>
+        n = 10
+        A = random_matrix(RDF,n); A = A*transpose(A)
+        # A verifie (presque surement) les hypotheses.
+        X = vector(RDF,[1 for i in range(0,n)])
+
+        for i in range(0,1000):
+        Y = A*X
+        Z = Y/Y.norm()
+        lam = Z*Y
+        s = (X-Z).norm()
+        print i, "\ts=", s, "\tlambda=", lam
+        if s&lt;1.e-10: break
+        X = Z
+      </input>
+      <output>
+        0       s= 16.1640760201        lambda= 75.9549361783
+        1       s= 0.411503846291       lambda= 8.21816164112
+        2       s= 0.283595513527       lambda= 10.7020239604
+        3       s= 0.143945984315       lambda= 11.7626944491
+        4       s= 0.0671326308606      lambda= 12.0292765606
+        5       s= 0.0313379335883      lambda= 12.0876762358
+        6       s= 0.0149590182273      lambda= 12.1006031137
+        7       s= 0.00733280989323     lambda= 12.1036013532
+        8       s= 0.00368707185825     lambda= 12.1043343433
+        9       s= 0.00189514202573     lambda= 12.104522518
+        10      s= 0.000991461650756    lambda= 12.1045728607
+        ...
+      </output>
+    </sage>
+
+    <p>
+      Maintenant, utilisons:
+    </p>
+
+    <sage>
+      <input>
+        A.eigenvalues()
+      </input>
+      <output>
+        [12.1045923186, 6.62564474772, 5.45163183814, 4.81356332812,
+         2.46643846586, 1.37770690836, 0.966017076179, 0.653324011458,
+         0.0859636271843, 0.0541281947143]
+      </output>
+    </sage>
+
+    <p>
+      On a bien calcul&#xe9; la valeur propre dominante.
+    </p>
+
+    <p>
+      L'int&#xe9;r&#xea;t de cette m&#xe9;thode peut sembler limit&#xe9;, mais il appara&#xee;tra
+      pleinement lors de l'&#xe9;tude des matrices creuses. Elle inspire aussi ce
+      qui suit, qui est tr&#xe8;s utile.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>La m&#xe9;thode de la puissance inverse avec translation</title>
+    <p>
+      On suppose connue une <em>approximation</em> <m>\mu</m> d'une valeur propre
+      <m>\lambda_j</m> (<m>\mu</m> et <m>\lambda_j \in \mathbb{C}</m>). Comment calculer un
+      vecteur propre associ&#xe9; &#xe0; <m>\lambda_j</m>?
+    </p>
+
+    <p>
+      On fait l'hypoth&#xe8;se que
+      <m>\forall k \neq j,\ 0\lt <c>\mu -\lambda_j</c>\lt  |\mu
+      -\lambda_k|</m>, et donc,
+      <m>\lambda_j</m> est une valeur propre simple.
+      On
+      consid&#xe8;re alors <m>(A-\mu I)^{-1}</m>, dont la plus grande valeur propre
+      est <m>(\lambda_j-\mu)^{-1}</m>, et on applique la m&#xe9;thode de la puissance
+      it&#xe9;r&#xe9;e avec cette matrice.
+    </p>
+
+    <p>
+      Prenons par exemple
+    </p>
+
+    <pre>
+      A = matrix(RDF,[[1,3,2],[1,2,3],[0,5,2]])
+    </pre>
+
+    <p>
+      En appelant la m&#xe9;thode <c>A.eigenvalues()</c>, on
+      trouve les valeurs propres
+      <c>6.39294791649, 0.560519476112, -1.9534673926</c>. On va
+      chercher le vecteur propre associ&#xe9; &#xe0; la deuxi&#xe8;me valeur propre, en
+      partant d'une valeur approch&#xe9;e <c>mu</c>:
+    </p>
+
+    <pre>
+      A = matrix(RDF,[[1,3,2],[1,2,3],[0,5,2]])
+      mu = 0.50519
+      AT = A-mu*identity_matrix(RDF,3)
+
+      x = vector(RDF,[1 for i in range(0,A.nrows())])
+      P,L,U = AT.LU()
+      for i in range(1,10):
+          y = AT.solve_right(x)
+          x = y/y.norm()
+          lamb = x*A*x
+          print x
+          print lamb
+    </pre>
+
+    <p>
+      On obtient, pour <c>x</c>, la suite:
+    </p>
+
+    <pre>
+      (0.960798555257, 0.18570664547, -0.205862036435)
+      (0.927972943625, 0.10448610518, -0.357699412529)
+      (0.927691613383, 0.103298273577, -0.358772542336)
+      (0.927684531828, 0.10329496332, -0.35879180587)
+      (0.927684564843, 0.103294755297, -0.358791780397)
+      (0.927684562912, 0.103294757323, -0.358791784805)
+      (0.927684562945, 0.103294757253, -0.358791784742)
+      (0.927684562944, 0.103294757254, -0.358791784744)
+    </pre>
+
+    <p>
+      et pour <c>lamb</c>, la suite:
+    </p>
+
+    <pre>
+      1.08914936279, 0.563839629189, 0.560558807639, 0.560519659839,
+      0.560519482021,0.560519476073, 0.560519476114,0.560519476112.
+    </pre>
+
+    <p>
+      On peut faire plusieurs remarques:
+      <ul>
+        <li>
+          <p>
+            on ne calcule pas l'inverse de la matrice <m>A-\mu I</m>, mais on
+              utilise sa factorisation <m>LU</m>, qui est calcul&#xe9;e une fois pour toutes;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            on profite des it&#xe9;rations pour am&#xe9;liorer l'estimation de la
+              valeur propre;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            la convergence est tr&#xe8;s rapide; on peut effectivement montrer
+              que (moyennant les hypoth&#xe8;ses ci-dessus, plus le choix d'un vecteur de
+              d&#xe9;part non orthogonal au vecteur propre <m>q_j</m> associ&#xe9; &#xe0;
+              <m>\lambda_j</m>), on a, pour les it&#xe9;r&#xe9;s  <m>x^{(i)}</m> et <m>\lambda^{(i)}</m>:
+            <me>
+              \mathopen\|
+                x^{(i)}-q_j\mathclose\<c>=O(</c>\frac{\mu-\lambda_j}{\mu-\lambda_K}|^i
+                )
+            </me>
+            et
+            <me>
+              \mathopen\| \lambda^{(i)}-\lambda_j\mathclose\<c>=O(</c>\frac{\mu-\lambda_j}{\mu-\lambda_K}|^{2i}
+                )
+            </me>
+            o&#xf9; <m>\lambda_K</m> est la seconde valeur propre par ordre de proximit&#xe9; &#xe0; <m>\mu</m>;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            le conditionnement de <m>(A-\mu I)</m> (reli&#xe9; au rapport entre la
+              plus grande et la plus petite valeur propre 
+              de <m>(A-\mu I)</m>)
+              est
+              mauvais; mais on peut montrer
+              (cf. <xref ref="MR1200897" />, qui cite Parlett)
+              que les erreurs 
+              sont malgr&#xe9; tout sans importance!
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>La m&#xe9;thode <m>QR</m></title>
+    <p>
+      Soit <m>A</m> une matrice non singuli&#xe8;re.
+      On consid&#xe8;re la suite
+      <m>A_0=A</m>, <m>A_1</m>, <m>A_2</m>, <m>\ldots</m>, <m>A_k</m>, <m>A_{k+1}</m>, <m>\ldots</m>.
+      Dans la forme la plus
+      brute de la m&#xe9;thode <m>QR</m>, le passage de <m>A_k</m> &#xe0;
+      <m>A_{k+1}</m> s'effectue ainsi:
+      <ol>
+        <li>
+          <p>
+            on calcule la d&#xe9;composition <m>QR</m> de <m>A_k</m>: <m>A_k = Q_kR_k</m>,
+          </p>
+        </li>
+
+        <li>
+          <p>
+            on calcule <m>A_{k+1}=R_kQ_k</m>.
+          </p>
+        </li>
+      </ol>
+    </p>
+
+    <p>
+      Programmons cette m&#xe9;thode avec pour <m>A</m> une matrice sym&#xe9;trique r&#xe9;elle:
+    </p>
+
+    <pre>
+      m = matrix(RDF,[[1,2,3,4],[1,0,2,6],[1,8,4,-2],[1,5,-10,-20]])
+      Aref = transpose(m)*m
+      A = copy(Aref)
+
+      for i in range(0,20):
+          Q,R = A.QR()
+          A = R*Q
+          print
+          print A
+
+      [      585.03055862 -4.21184953094e-13  3.29676890333e-14  -6.6742634342e-14]
+      [-3.04040944835e-13      92.9142649915  6.15831330805e-14   4.0818545963e-16]
+      [-1.53407859302e-39  7.04777999653e-25      4.02290947948  2.07979726915e-14]
+      [ 1.15814401645e-82 -4.17619045151e-68  6.16774251652e-42  0.0322669089941]
+    </pre>
+
+    <p>
+      On constate que la convergence est rapide, vers une matrice
+      diagonale. Les coefficients diagonaux sont les valeurs propres de
+      <m>A</m>. V&#xe9;rifions:
+    </p>
+
+    <pre>
+      print(Aref.eigenvalues())
+      [585.03055862, 92.9142649915, 0.0322669089941, 4.02290947948]
+    </pre>
+
+    <p>
+      On peut prouver la convergence si la matrice est hermitienne d&#xe9;finie positive.
+      Si on calcule avec une matrice non sym&#xe9;trique, il convient de
+      travailler dans <m>\mathbb{C}</m>, les valeurs propres &#xe9;tant &#xe0; priori
+      complexes, et, si la m&#xe9;thode converge, les parties
+      triangulaires inf&#xe9;rieures des <m>A_k</m> tendent vers z&#xe9;ro, tandis que la
+      diagonale tend vers les valeurs propres de <m>A</m>.
+    </p>
+
+    <p>
+      La m&#xe9;thode <m>QR</m> n&#xe9;cessite beaucoup d'am&#xe9;liorations pour &#xea;tre efficace,
+      ne serait-ce que parce que les d&#xe9;compositions <m>QR</m> successives sont
+      co&#xfb;teuses; parmi les raffinements utilis&#xe9;s,
+      on commence en g&#xe9;n&#xe9;ral par r&#xe9;duire la matrice <m>A</m> &#xe0; une forme
+      plus simple (forme de Hessenberg: triangulaire sup&#xe9;rieure plus une sous
+      diagonale), ce qui rend les d&#xe9;compositions <m>QR</m> bien moins co&#xfb;teuses;
+      ensuite, pour acc&#xe9;l&#xe9;rer la convergence il faut pratiquer des
+      translations <m>A:= A+\sigma I</m> sur <m>A</m>, astucieusement
+      choisies (voir par exemple<nbsp /><xref ref="MR1417720" />).
+      Notons que c'est la m&#xe9;thode utilis&#xe9;e par <em>Sage</em> 
+      quand on travaille avec des matrices pleines <c>CDF</c> ou <c>RDF</c>.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection xml:id="lisolvereppol">
+    <title>En pratique</title>
+    <p>
+      Les programmes donn&#xe9;s ci-dessus sont l&#xe0; &#xe0; titre d'exemples
+      p&#xe9;dagogiques; on utilisera donc les m&#xe9;thodes fournies par <em>Sage</em> 
+      qui, dans la mesure du possible, fait appel aux routines optimis&#xe9;es de la
+      biblioth&#xe8;que <em>Lapack</em>. Les
+      interfaces permettent d'obtenir soit uniquement les valeurs propres,
+      soit les valeurs et les vecteurs propres. Exemple:
+    </p>
+
+    <sage>
+      <input>
+        A = matrix(RDF,[[1,3,2],[1,2,3],[0,5,2]]) 
+        A.eigenmatrix_right()
+      </input>
+      <output>
+        (
+        [ 6.39294791649              0              0]
+        [             0 0.560519476112              0]
+        [             0              0  -1.9534673926],
+
+        [ 0.542484060111  0.927684562944 0.0983425466742]
+        [ 0.554469286109  0.103294757254 -0.617227053099]
+        [ 0.631090211687 -0.358791784744  0.780614827195]
+        )
+      </output>
+    </sage>
+
+    <p>
+      calcule la matrice diagonale des valeurs propres et la matrice des
+      vecteurs propres (les lignes sont les vecteurs propres).
+    </p>
+
+    <pre>
+    </pre>
+
+    <paragraphs xml:id="compagnon">
+      <title>Exemple</title>
+      <p>
+        [Calcul des racines d'un polyn&#xf4;me] &#xc9;tant donn&#xe9; un polyn&#xf4;me (&#xe0; coefficients r&#xe9;els ou complexes)
+        <m>p(x)=x^n+a_{n-1}x^{n-1}+\ldots+a_1x+a_0</m>,
+        il est facile de v&#xe9;rifier que les
+        valeurs propres de la matrice compagnon <m>M</m>, d&#xe9;finie par
+        <m>M_{i+1,i}=1</m> et <m>M_{i,n}=-a_i</m>, sont les racines de
+        <m>p</m>, ce qui fournit donc une m&#xe9;thode pour obtenir les racines de <m>p</m>:
+      </p>
+
+      <sage>
+        <input>
+          def pol2companion(p):
+          n = len(p)
+          m = identity_matrix(RDF,n)
+          for i in range(0,n):
+          m[i,n-1]=-p[i]
+          return m
+        </input>
+      </sage>
+
+      <sage>
+        <input>
+          q = [1,-1,2,3,5,-1,10,11]
+          comp = pol2companion(q); comp
+        </input>
+        <output>
+          [  0.0   0.0   0.0   0.0   0.0   0.0   0.0  -1.0]
+          [  1.0   0.0   0.0   0.0   0.0   0.0   0.0   1.0]
+          [  0.0   1.0   0.0   0.0   0.0   0.0   0.0  -2.0]
+          [  0.0   0.0   1.0   0.0   0.0   0.0   0.0  -3.0]
+          [  0.0   0.0   0.0   1.0   0.0   0.0   0.0  -5.0]
+          [  0.0   0.0   0.0   0.0   1.0   0.0   0.0   1.0]
+          [  0.0   0.0   0.0   0.0   0.0   1.0   0.0 -10.0]
+          [  0.0   0.0   0.0   0.0   0.0   0.0   1.0 -11.0]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          racines = comp.eigenvalues(); racines
+        </input>
+        <output>
+          [0.347521510119 + 0.566550553398*I, 0.347521510119 - 0.566550553398*I,
+          0.345023776962 + 0.439908702386*I, 0.345023776962 - 0.439908702386*I,
+          -0.517257614325 + 0.512958206789*I, -0.517257614325 -
+          0.512958206789*I, -1.36699716455, -9.98357818097]
+        </output>
+      </sage>
+    </paragraphs>
+    <p>
+      Dans cet exemple le polyn&#xf4;me est repr&#xe9;sent&#xe9; par la liste <c>q</c> de ses
+      coefficients, de <m>0</m> &#xe0; <m>n-1</m>. Le polyn&#xf4;me <m>x^2 - 3x + 2</m> serait ainsi
+      repr&#xe9;sent&#xe9; par <c>q=[2,-3]</c>.
+    </p>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection>
+    <title>Ajustement polynomial: le retour du diable</title>
+    <subsubsection>
+    <title>Version continue</title>
+    <p>
+      On voudrait approcher la fonction <m>f(x)</m> par un polyn&#xf4;me <m>P(x)</m> de
+      degr&#xe9;<nbsp /><m>\leq n</m>, sur l'intervalle
+      <m>[\alpha,\beta]</m>.
+      On pose le probl&#xe8;me aux moindres carr&#xe9;s.
+      <me>
+        \min_{a_0,\ldots ,a_n \in \mathbb{R}}   J(a_0,\ldots
+        ,a_n)= \int_\alpha^\beta(f(x)-\sum_{i = 0}^n a_i
+        x^i)^2\ \mathrm{d}x.
+      </me>
+    </p>
+
+    <p>
+      En d&#xe9;rivant <m>J(a_0,\ldots ,a_n)</m> par rapport aux coefficients <m>a_i</m>, on
+      trouve que
+      les <m>a_i\ i = 0,\ldots ,n</m> sont solution d'un syst&#xe8;me lin&#xe9;aire <m>Ma = F</m>
+      ou <m>M_{i,j}= \int_\alpha^\beta x^i x^j \ dx</m> et <m>F_j=\int_\alpha^\beta
+      x^j f(x) \ dx</m>. On voit imm&#xe9;diatement en regardant le cas <m>\alpha = 0</m>
+      et <m>\beta = 1</m> que <m>M_{i,j}</m> est la matrice de Hilbert! Mais
+      il y a un rem&#xe8;de: il suffit d'utiliser une base de polyn&#xf4;mes
+      orthogonaux (par exemple, si <m>\alpha=-1</m> et <m>\beta = 1</m> la base des
+      polyn&#xf4;mes de Legendre): alors la matrice <m>M</m> devient l'identit&#xe9;.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>Version discr&#xe8;te</title>
+    <p>
+      On consid&#xe8;re <m>m</m> observations
+      <m>y_i,\ i = 1, \ldots ,m</m>
+      d'un ph&#xe9;nom&#xe8;ne aux points <m>x_i,\ i = 1,\ldots ,m.</m> On veut ajuster un polyn&#xf4;me
+      <m>\sum_{i = 0}^n a_ix^i</m>
+      de degr&#xe9;
+      <m>n</m> au plus &#xe9;gal &#xe0; <m>m-1</m> parmi ces points. Pour cela, on minimise donc
+      la fonctionnelle:
+      <me>
+        J(a_0,\ldots ,a_n)=\sum_{j = 1}^m (\sum_{i = 0}^n a_ix^i_j -y_j)^2.
+      </me>
+    </p>
+
+    <p>
+      Ainsi &#xe9;crit, le probl&#xe8;me va donner une matrice tr&#xe8;s proche de la
+      matrice de Hilbert et le syst&#xe8;me sera difficile &#xe0; r&#xe9;soudre.
+      Mais on remarque alors que
+      <m>\langle P,Q \rangle =\sum_{j = 1}^{m} P(x_j) \cdot Q(x_j)</m>
+      d&#xe9;finit un
+      produit scalaire sur les polyn&#xf4;mes
+      de degr&#xe9; <m>n \leq m-1</m>.
+      On peut donc
+      d'abord fabriquer <m>n</m> polyn&#xf4;mes &#xe9;chelonn&#xe9;s en degr&#xe9;, orthonorm&#xe9;s
+      pour ce produit scalaire,
+      et donc diagonaliser le syst&#xe8;me lin&#xe9;aire. En se souvenant<fn>le
+        prouver n'est pas tr&#xe8;s difficile!</fn>que le proc&#xe9;d&#xe9; de
+      Gram-Schmidt se simplifie en une r&#xe9;currence
+      &#xe0; trois termes
+      pour le calcul
+      de polyn&#xf4;mes orthogonaux,
+      on cherche le polyn&#xf4;me <m>P_{n+1}(x)</m> sous la forme
+      <m>P_{n+1}(x)=xP_n(x)-\alpha_n P_{n-1}(x)-\beta_n P_{n-2}(x)</m>: c'est ce
+      que fait la proc&#xe9;dure <c>orthopoly</c> ci-dessous
+      (on repr&#xe9;sente
+      ici les
+      polyn&#xf4;mes par la liste de leurs coefficients: par exemple <c>[1,-2,3]</c>
+      repr&#xe9;sente le polyn&#xf4;me <m>1-2x+3x^2</m>).
+    </p>
+
+    <p>
+      L'&#xe9;valuation d'un polyn&#xf4;me par
+      le sch&#xe9;ma de Horner se programme ainsi:
+    </p>
+
+    <pre>
+      def eval(P,x):
+          if len(P)==0:
+              return 0
+          else:
+              return P[0]+x*eval(P[1:],x)
+    </pre>
+
+    <p>
+      On peut ensuite programmer le produit scalaire de deux polyn&#xf4;mes:
+    </p>
+
+    <pre>
+      def pscal(P,Q,lx):
+          return float(sum(eval(P,s)*eval(Q,s) for s in lx))
+    </pre>
+
+    <p>
+      et l'op&#xe9;ration <m>\mathtt{P} \gets \text{\texttt{P-a*Q}}</m> pour deux polyn&#xf4;mes <c>P</c> et
+      <c>Q</c>:
+    </p>
+
+    <pre>
+      def subs(P,a,Q):
+          for i in range(0,len(Q)):
+              P[i]-=a*Q[i]
+    </pre>
+
+    <p>
+      Un programme un peu s&#xe9;rieux doit lancer une exception quand il est mal
+      utilis&#xe9;; dans notre cas, on lance l'exception d&#xe9;finie ci-dessous quand
+      <m>n \geq m</m>:
+    </p>
+
+    <pre>
+      class BadParamsforOrthop(Exception):
+          def __init__(self,degreplusun,npoints):
+              self.deg = degreplusun
+              self.np = npoints
+          def __str__(self):
+              return "degre: " + repr(self.deg) + " nb. points: " +
+                     repr(self.np)
+    </pre>
+
+    <p>
+      La proc&#xe9;dure suivante calcule les <m>n</m> polyn&#xf4;mes orthogonaux:
+    </p>
+
+    <pre>
+      def orthopoly(n,x):
+          if n > len(x):
+              raise BadParamsforOrthop(n-1,len(x))
+          orth = [[1./sqrt(float(len(x)))]]
+          for p in range(1,n):
+              nextp = copy(orth[p-1])
+              nextp.insert(0,0)
+              s = []
+              for i in range(p-1,max(p-3,-1),-1):
+                  s.append(pscal(nextp,orth[i],x))
+              j = 0
+              for i in range(p-1,max(p-3,-1),-1):
+                  subs(nextp,s[j],orth[i])
+                  j += 1
+              norm = sqrt(pscal(nextp,nextp,x))
+              nextpn = [nextp[i]/norm for i in range(0,len(nextp))]
+              orth.append(nextpn)
+          return orth
+    </pre>
+
+    <p>
+      Une fois les polyn&#xf4;mes orthogonaux
+      <m>(P_i(x),\ i = 0,\ldots ,n)</m> calcul&#xe9;s, la
+      solution,
+      est donn&#xe9;e par <m>P(x)=\sum_{i = 0}^n \gamma_i P_i(x)</m>, avec:
+      <me>
+        \gamma_i=\sum_{j = 1}^m P_i(x_j)y_j,
+      </me>
+      ce qu'on peut &#xe9;videmment rapatrier sur la base des mon&#xf4;mes
+      <m>x^i,\ i = 1,\ldots ,n.</m>
+    </p>
+
+    <p>
+      Exemple (<m>n = 15</m>):
+    </p>
+
+    <pre>
+      X=[100*float(i)/L for i in range(0,40)]
+      Y=[float(1/(1+25*X[i]^2)+0.25*random()) for i in range(0,40)]
+      n = 15
+      orth = orthopoly(n,X)
+    </pre>
+
+    <p>
+      Calculons les
+      coefficients de la solution sur la base des polyn&#xf4;mes orthogonaux:
+    </p>
+
+    <pre>
+      coeff= [sum(Y[j]*eval(orth[i],X[j]) for j in range(0,len(X))) 
+              for i in range(0,n)]
+    </pre>
+
+    <p>
+      On peut ensuite transformer ce r&#xe9;sultat dans la base des mon&#xf4;mes
+      <m>x^i,\ i = 0,\ldots ,n</m>, afin par exemple de pouvoir en dessiner le graphe:
+    </p>
+
+    <pre>
+      polmin=[0 for i in range(0,n)]
+      for i in range(0,n):
+          add(polmin,coeff[i],orth[i])
+      p = lambda x: eval(polmin,x)
+      G = plot(p(x),x,0,X[len(X)-1])
+      show(G)
+    </pre>
+
+    <p>
+      On ne d&#xe9;taille pas ici le calcul de l'ajustement na&#xef;f sur la base des
+      mon&#xf4;mes <m>x^i</m>, ni sa
+      repr&#xe9;sentation graphique. On obtient:
+      <image width="70%" source="images/mcarpol.png" />
+      Les deux courbes correspondant l'une &#xe0; l'ajustement &#xe0; base de
+      polyn&#xf4;mes orthogonaux, l'autre &#xe0; la m&#xe9;thode na&#xef;ve sont tr&#xe8;s proches, mais, en
+      en calculant les r&#xe9;sidus (la valeur de la fonctionnelle <m>J</m>)
+      on trouve <m>0.1202</m> pour l'ajustement par les polyn&#xf4;mes
+      orthogonaux, et <m>0.1363</m> pour l'ajustement na&#xef;f.
+    </p>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection xml:id="sec_linsolve_efficacite">
+    <title>Implantation et performances (pour les calculs avec des
+      matrices pleines)</title>
+    <p>
+      Les calculs avec des matrices &#xe0; coefficients dans <c>RDF</c> sont
+      effectu&#xe9;s avec
+      l'arithm&#xe9;tique flottante du processeur, ceux avec les matrices <c>RR</c>
+      avec la biblioth&#xe8;que <em>MPFR</em>. De plus dans le premier cas, <em>Sage</em>  se sert
+      de <em>numpy/scipy</em>, qui passe la main &#xe0; la biblioth&#xe8;que
+      <em>Lapack</em> (cod&#xe9;e en Fortran) et cette derni&#xe8;re
+      biblioth&#xe8;que utilise les BLAS<fn>Basic Linear Algebra
+        Subroutines (produits matrice <times /> vecteur, matrice <times /> matrice,
+        etc.).</fn><em>ATLAS</em> optimis&#xe9;es pour chaque machine. Ainsi, on obtient,
+      pour le calcul du produit de deux matrices de taille 1000:
+    </p>
+
+    <sage>
+      <input>
+        a = random_matrix(RR,1000)
+        b = random_matrix(RR,1000)
+        %time a*b
+      </input>
+      <output>
+        CPU times: user 421.44 s, sys: 0.34 s, total: 421.78 s
+        Wall time: 421.79 s
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        c = random_matrix(RDF,1000)
+        d = random_matrix(RDF,1000)
+        %time c*d
+      </input>
+      <output>
+        CPU times: user 0.18 s, sys: 0.01 s, total: 0.19 s
+        Wall time: 0.19 s
+      </output>
+    </sage>
+
+    <p>
+      soit un rapport de plus de 2000 entre les deux temps de calcul!
+    </p>
+
+    <p>
+      On peut aussi remarquer la rapidit&#xe9; des calculs avec des matrices &#xe0;
+      coefficients <c>RDF</c>: on v&#xe9;rifie imm&#xe9;diatement que le produit de
+      deux matrices
+      carr&#xe9;es de taille <m>n</m> co&#xfb;te <m>n^3</m> multiplications (et autant
+      d'additions); ici, on effectue donc <m>10^9</m> multiplications en <m>0.18</m>
+      seconde; l'unit&#xe9; centrale de la machine de test battant &#xe0;
+      3.1<nbsp />Ghz., ce sont donc de environ <m>5\ 10^9</m> op&#xe9;rations qu'on effectue
+      par seconde
+      (en ne tenant pas compte des additions!) soit encore une vitesse de 5
+      gigaflops. On effectue donc <em>plus</em> d'une op&#xe9;ration par tour d'horloge:
+      ceci est rendu possible par l'appel presque direct de la routine
+      correspondante de la biblioth&#xe8;que <em>ATLAS</em><fn>Cette biblioth&#xe8;que
+        proc&#xe8;de par blocs de taille automatiquement adapt&#xe9;e (d&#xe9;termin&#xe9;e par essais
+        successifs) lors de la compilation: elle est en partie responsable
+        du temps consid&#xe9;rable qui est n&#xe9;cessaire &#xe0; la compilation de \Sage &#xe0; partir
+        du code source.</fn>. Notons qu'il existe un algorithme de co&#xfb;t
+      inf&#xe9;rieur &#xe0; <m>n^3</m>
+      pour effectuer le produit de deux matrices: la m&#xe9;thode de
+      Strassen. Elle n'est pas implant&#xe9;e en pratique (pour des calculs en
+      flottant) pour des raisons de stabilit&#xe9; num&#xe9;rique. Le lecteur pourra
+      v&#xe9;rifier, avec les programmes ci-dessus, que le temps de calcul avec
+      <em>Sage</em>  est bien
+      proportionnel &#xe0; <m>n^3</m>.
+    </p>
+  </subsection>
+</section>
+

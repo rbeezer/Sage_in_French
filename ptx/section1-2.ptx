@@ -1,0 +1,84 @@
+
+
+<section>
+  <title>Premier calcul, aide en ligne et compl&#xe9;tion</title>
+  <p>
+    Selon l'interface, l'utilisateur lance un calcul par
+    la touche de passage &#xe0; la ligne <m>\langle{ Entr\'ee}\rangle</m>
+    ou <m>\langle{ Maj-Entr\'ee}\rangle</m>, ou en validant le
+    lien <c>evaluate</c> &#xe0; la souris :
+  </p>
+
+  <sage>
+    <input>
+      2*3
+    </input>
+    <output>
+      6
+    </output>
+  </sage>
+
+  <p>
+    L'acc&#xe8;s &#xe0; l'aide en ligne s'obtient en faisant suivre le nom de la commande
+    d'un point d'interrogation<nbsp /><c>?</c> :
+  </p>
+
+  <pre>
+    sage: diff?
+  </pre>
+
+  <p>
+    La page de documentation contient la description de la fonction,
+    sa syntaxe, puis plusieurs exemples.
+    Les touches fl&#xe9;ch&#xe9;es du clavier et les commandes de l'&#xe9;diteur <c>vi</c>
+    permettent de naviguer dans la page d'aide :
+  </p>
+
+  <p>
+    <c>j</c> : descendre <c>k</c> : monter <c>q</c> : quitter
+     <c>h</c> : aide sur l'aide
+  </p>
+
+  <p>
+    De m&#xea;me faire suivre une commande par deux points d'interrogation
+    renvoie le code source de cette commande ; celui-ci contient d'ailleurs
+    au d&#xe9;but le texte de l'aide en ligne pr&#xe9;c&#xe9;dente :
+  </p>
+
+  <pre>
+    sage: diff??
+  </pre>
+
+  <p>
+    La touche de tabulation <m>\langle{ tab}\rangle</m>
+    &#xe0; la suite d'un d&#xe9;but de mot montre
+    quelles sont les commandes commen&#xe7;ant par ces lettres :
+    <c>arc</c> suivi de la tabulation affiche ainsi le nom de toutes les
+    fonctions trigonom&#xe9;triques r&#xe9;ciproques.
+    En particulier la commande
+    <c>a.</c><m>\langle{ tab}\rangle</m> &#xe9;num&#xe8;re
+    toutes les m&#xe9;thodes qui s'appliquent &#xe0; l'objet <c>a</c>.
+    La fin de ce chapitre abordera l'objet <c>vector</c> :
+  </p>
+
+  <sage>
+    <input>
+      a = vector([1, 2, 3])
+      a.<m>\langle\textrm{tab} \rangle</m>
+    </input>
+    <output>
+      a.Mod                 a.get                 a.order
+      a.additive_order      a.inner_product       a.pairwise_product
+      a.apply_map           a.integral            a.parent
+      a.base_extend         a.integrate           a.plot
+      a.base_ring           a.is_dense            a.plot_step
+      --More--
+    </output>
+  </sage>
+
+  <p>
+    L'instruction <c>tutorial()</c> de <em>Sage</em>  acc&#xe8;de &#xe0; un tutoriel
+    en anglais.
+  </p>
+</section>
+

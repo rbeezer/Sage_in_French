@@ -1,0 +1,136 @@
+
+
+<section>
+  <title>Transform&#xe9;e de Laplace</title>
+  <subsection>
+    <title>Rappel</title>
+    <p>
+      La transform&#xe9;e de Laplace permet de convertir une &#xe9;quation
+      diff&#xe9;rentielle avec des conditions initiales en &#xe9;quation alg&#xe9;brique et la transform&#xe9;e inverse permet
+      ensuite de revenir &#xe0; la solution &#xe9;ventuelle de l'&#xe9;quation
+      diff&#xe9;rentielle.
+    </p>
+
+    <p>
+      Pour m&#xe9;moire, si <m>f</m> est une fonction d&#xe9;finie sur <m>\R</m> en &#xe9;tant
+      identiquement nulle sur <m>\mathopen]-\infty;0\mathclose[</m>, on appelle transform&#xe9;e de Laplace
+      de <m>f</m> la fonction <m>F</m> d&#xe9;finie, sous certaines conditions, par<nbsp />:
+      <me>
+        \mathcal L \bigl( f(x) \bigr)=F(s)=\displaystyle\int_{0}^{+\infty}\mathrm{e}^{-sx}f(x)\;\mathrm{d}x
+      </me>
+    </p>
+
+    <p>
+      On obtient facilement les transform&#xe9;es de Laplace des fonctions
+      polynomiales, trigonom&#xe9;triques, exponentielles, etc. qu'on regroupe dans
+      une table. Ces transform&#xe9;es ont des propri&#xe9;t&#xe9;s fort int&#xe9;ressantes,
+      notamment concernant la transform&#xe9;e d'une d&#xe9;riv&#xe9;e : si <m>f'</m> est continue
+      par morceaux sur <m>\R_+</m> alors
+      <me>
+        \mathcal L \bigl( f'(x) \bigr)=s\mathcal L \bigl( f(x) \bigr)-f(0)
+      </me>
+      et si <m>f'</m> satisfait les conditions impos&#xe9;es sur <m>f</m>:
+      <me>
+        \mathcal L \bigl( f''(x) \bigr)=s^2\mathcal L \bigl( f(x) \bigr)-sf(0)-f'(0)
+      </me>
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>Exemple</title>
+    <p>
+      On veut r&#xe9;soudre l'&#xe9;quation diff&#xe9;rentielle <m>y''-3y'-4y-\sin(x)</m> en
+      utilisant les transform&#xe9;es de Laplace avec les conditions initiales
+      <m>y(0)=1</m> et <m>y'(0)=-1</m>.
+    </p>
+
+    <p>
+      Alors<nbsp />:
+      <me>
+        \mathcal L \left(y''-3y'-4y\right)=\mathcal L \left(\sin(x)\right)
+      </me>
+      c'est-&#xe0;-dire:
+      <me>
+        \left(s^2-3s-4\right)\mathcal L(y)-sy(0)-y'(0)+3y(0)=\mathcal L(\sin(x))
+      </me>
+    </p>
+
+    <p>
+      Si on a oubli&#xe9; les tables des transform&#xe9;es de Laplace des fonctions usuelles, on peut utiliser <em>Sage</em>  pour
+      retrouver la transform&#xe9;e du sinus<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        x=var('x')
+        s=var('s')
+        f=function('f',x)
+        f(x)=sin(x)
+        f.laplace(x,s)
+      </input>
+      <output>
+        t |--> 1/(s^2 + 1)
+      </output>
+    </sage>
+
+    <p>
+      Ainsi on obtient une expression de la transform&#xe9;e de Laplace de <m>y</m><nbsp />:
+      <me>
+        \mathcal L(y)=\frac{1}{(s^2-3s-4)(s^2+1)}+\frac{s-4}{s^2-3s-4}
+      </me>
+    </p>
+
+    <p>
+      Utilisons alors <em>Sage</em>  pour obtenir la transform&#xe9;e inverse<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        X=function('X',s)
+        X(s)=1/(s^2-3*s-4)/(s^2+1)+(s-4)/(s^2-3*s-4)
+        X(s).inverse_laplace(s,x)
+      </input>
+      <output>
+        9/10*e^(-x) + 1/85*e^(4*x) - 5/34*sin(x) + 3/34*cos(x)
+      </output>
+    </sage>
+
+    <p>
+      Si on veut &#xe0; moiti&#xe9; \og tricher, on peut d&#xe9;composer <m>X(s)</m> en &#xe9;l&#xe9;ments
+      simples d'abord<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        X(s).partial_fraction()
+      </input>
+      <output>
+        1/34*(3*s - 5)/(s^2 + 1) + 1/85/(s - 4) + 9/10/(s + 1)
+      </output>
+    </sage>
+
+    <p>
+      et il ne reste plus qu'&#xe0; lire une table d'inverses.
+      On peut cependant utiliser directement utiliser la bo&#xee;te noire
+      <c>desolve_laplace</c> qui donnera directement la solution<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve_laplace(diff(y(x),x,2)-3*diff(y(x),x)-4*y(x)
+      </input>
+      <output>
+        ==sin(x),[y,x],ics=[0,1,-1])
+           9/10*e^(-x) + 1/85*e^(4*x) - 5/34*sin(x) + 3/34*cos(x)
+      </output>
+    </sage>
+
+    <p>
+      \hypersetup{bookmarksopen=true}
+      \part{Probabilit&#xe9;s, combinatoire et statistiques}
+      \hypersetup{bookmarksopen=false}
+      {Calcul math&#xe9;matique avec Sage, &#xa7;\thesection}
+    </p>
+  </subsection>
+</section>
+

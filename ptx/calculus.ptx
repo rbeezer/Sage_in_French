@@ -1,0 +1,26 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="calculus">
+  <title>Analyse et alg&#xe8;bre avec <em>Sage</em></title>
+  <introduction>
+    <p>
+      Ce chapitre pr&#xe9;sente les fonctions de base utiles en analyse et en alg&#xe8;bre
+      &#xe0; travers des exemples simples. Les lyc&#xe9;ens et &#xe9;tudiants
+      trouveront mati&#xe8;re &#xe0; remplacer {le crayon et le papier}
+      par {\textit le clavier et l'&#xe9;cran} tout en relevant le m&#xea;me d&#xe9;fi
+      intellectuel de compr&#xe9;hension des math&#xe9;matiques.
+    </p>
+
+    <p>
+      Cet expos&#xe9; des principales commandes de calcul avec <em>Sage</em>  se veut accessible aux
+      &#xe9;l&#xe8;ves de lyc&#xe9;e ; figurent &#xe9;galement des compl&#xe9;ments signal&#xe9;s par un ast&#xe9;risque
+      (*) pour les &#xe9;tudiants de premi&#xe8;re ann&#xe9;e de licence.
+      On renvoie aux autres chapitres pour plus de d&#xe9;tails.
+    </p>
+  </introduction>
+  <xi:include  href="sec_calculus_simplifications.ptx" />
+  <xi:include  href="sec_calculus_equations.ptx" />
+  <xi:include  href="sec_calculus_analyse.ptx" />
+  <xi:include  href="sec_calculus_linalg.ptx" />
+</chapter>
+

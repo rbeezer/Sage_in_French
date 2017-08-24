@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mathbook xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en-US">
+<docinfo>
+<macros>
+\newcommand{\TODO}[2][To do: ]{\textcolor{red}{\textbf{#1#2}}}
+\newcommand{\TODO}[2][]{}
+\newcommand{\Bold}{\mathbf}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\GF}{\mathrm{GF}}
+\DeclareMathOperator{\Res}{Res}
+\def\endobeylines{\catcode`\^^M=5}
+\DeclareMathOperator{\disc}{disc}
+\DeclareMathOperator{\pgcd}{pgcd}
+\DeclareMathOperator{\ppcm}{ppcm}
+\newcommand{\cmdtitle}[1]{
+  \\
+  \toprule
+  #1 \\
+  \midrule
+}
+\newcommand{\dis}{\displaystyle}
+\newcommand{\et}{,\hspace{1em}}
+\newcommand{\scr}{\scriptstyle}
+\newcommand{\ou}{\hspace{1em}\emph{ou}\,\hspace{1em}}
+\newcommand{\infr}{\leqslant}
+\newcommand{\ex}{\emph{ex.}~}
+\newcommand{\supr}{\geqslant}
+\newcommand{\divides}{\mathrel{|}}
+\newcommand{\tend}[2]{\xrightarrow[#1 \rightarrow #2]{}}
+\newcommand{\vabs}[1]{\left\arrowvert   #1 \right\arrowvert}
+\newcommand{\cmdtitle}[1]{
+  \\
+  \toprule
+  #1 \\
+  \midrule
+}
+\newcommand{\norme}[1]{\left\Arrowvert   #1 \right\Arrowvert}
+\newcommand{\et}{,\hspace{1em}}
+\def\dd{\mathop{ d\null}\mskip-\thinmuskip\mathord{\null}}
+\newcommand{\ou}{\hspace{1em}\emph{ou}\,\hspace{1em}}
+\newcommand{\vv}{\overrightarrow}
+\newcommand{\ex}{\emph{ex.}~}
+\renewcommand{\leq}{\leqslant}
+\newcommand{\divides}{\mathrel{|}}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\arraystretch}{.8}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\arraystretch}{.8}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\arraystretch}{.8}
+\newcommand{\trans}[1]{\mathinner{{}^{\mathit t}{#1}}}
+\newcommand{\Python}{\textsf{Python} }
+\newcommand{\Sage}{\textsf{Sage} }
+\newcommand{\gmp}{\textsf{GMP} }
+\newcommand{\maxima}{\textsf{Maxima} }
+\newcommand{\numpy}{\textsf{NumPy} }
+\newcommand{\scipy}{\textsf{SciPy} }
+\newcommand{\GSL}{\textsf{GSL} }
+\newcommand{\pari}{\textsf{PARI} }
+\newcommand{\latte}{\textsf{LattE} }
+\newcommand{\palp}{\textsf{PALP} }
+\def\version{Version 1.0 --- Juillet 2010}
+</macros>
+
+<latex-image-preamble>
+\usepackage{tikz}
+\usepackage{tkz-graph}
+\usepackage{tkz-euclide}
+\usetikzlibrary{patterns}
+\usetikzlibrary{positioning}
+\usetikzlibrary{matrix,arrows}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
+\usetikzlibrary{through,intersections,decorations,shadows,fadings}
+
+\usepackage{pgfplots}
+
+</latex-image-preamble>
+
+</docinfo>
+
+
+<book>
+<title>Calcul math\'ematique avec Sage</title>
+<frontmatter>
+<titlepage>
+<author>
+<personname>Alexandre Casamayou</personname>
+</author>
+<author>
+<personname>Guillaume Connan</personname>
+</author>
+<author>
+<personname>Thierry Dumont</personname>
+</author>
+<author>
+<personname>Laurent Fousse</personname>
+</author>
+<author>
+<personname>Fran\c{c}ois Maltey</personname>
+</author>
+<author>
+<personname>Matthias Meulien</personname>
+</author>
+<author>
+<personname>Marc Mezzarobba</personname>
+</author>
+<author>
+<personname>Cl\'ement Pernet</personname>
+</author>
+<author>
+<personname>Nicolas M. Thi\'ery</personname>
+</author>
+<author>
+<personname>Paul Zimmermann</personname>
+</author>
+</titlepage>
+</frontmatter>
+
+
+<xi:include href="./chapter1x.ptx" />
+
+<xi:include href="./premierspas.ptx" />
+
+<xi:include href="./calculus.ptx" />
+
+<xi:include href="./graphique.ptx" />
+
+<xi:include href="./linsolve.ptx" />
+
+<xi:include href="./integration.ptx" />
+
+<xi:include href="./nonlinear.ptx" />
+
+<xi:include href="./numbertheory.ptx" />
+
+<xi:include href="./polynomes.ptx" />
+
+<xi:include href="./linalg.ptx" />
+
+<xi:include href="./equadiffexa.ptx" />
+
+<xi:include href="./combinat.ptx" />
+
+<xi:include href="./Solutions.ptx" />
+
+<xi:include href="./chapter13.ptx" />
+
+<backmatter>
+
+<xi:include href="./bibliography.ptx" />
+
+</backmatter>
+</book>
+</mathbook>

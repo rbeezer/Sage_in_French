@@ -1,0 +1,348 @@
+
+
+<section>
+  <title>Corps finis et th&#xe9;orie des nombres</title>
+  <p>
+    \begin{correction}{exo:carmichael}
+    On suppose <m>p \lt  q \lt  r</m>. N&#xe9;cessairement
+    <m>p^3 \leq n</m>, donc la fonction principale s'&#xe9;crit:
+  </p>
+
+  <pre>
+    def enum_carmichael(n,verbose=True):
+       p=3; s=0
+       while p^3 &lt;= n:
+          s+=enum_carmichael_p(n,p,verbose); p=next_prime(p)
+       return s
+  </pre>
+
+  <p>
+    o&#xf9; la fonction <c>enum_carmichael_p</c> compte les nombres de
+    Carmichael multiples de <m>p</m>, qui sont de la forme <m>a + \lambda m</m>
+    o&#xf9; <m>a=p</m> et <m>m = p(p-1)</m>, puisque <m>n</m> doit &#xea;tre multiple de <m>p</m> et
+    <m>n-1</m> de <m>p-1</m>:
+  </p>
+
+  <pre>
+    def enum_carmichael_p(n,p,verbose):
+       a=p; m=p*(p-1); q=p; s=0
+       while p*q^2 &lt;= n:
+          q=next_prime(q); s+=enum_carmichael_pq(n,a,m,p,q,verbose)
+       return s
+  </pre>
+
+  <p>
+    La fonction <c>enum_carmichael_pq</c> compte les nombres de
+    Carmichael multiples de <m>pq</m>, qui sont de la forme <m>a + \lambda m</m>
+    o&#xf9; <m>a=p</m> et <m>m = p(p-1)</m>:
+  </p>
+
+  <pre>
+    def enum_carmichael_pq(n,a,m,p,q,verbose):
+       s = 0
+       try:
+          a=crt(a,0,m,q); m=lcm(m,q)
+          a=crt(a,1,m,q-1); m=lcm(m,q-1)
+          while a &lt;= p*q^2:
+             a += m
+          for t in range(a,n+1,m):
+             r = t // (p*q)
+       if is_prime(r) and t % (r-1) == 1:
+                if verbose:
+             print p*q*r, factor(p*q*r)
+                s += 1
+          return s
+       except ValueError:
+          return 0
+  </pre>
+
+  <p>
+    Avec ces fonctions, on obtient:
+  </p>
+
+  <sage>
+    <input>
+      enum_carmichael(10^4)
+    </input>
+    <output>
+      3 11 17 561
+      5 13 17 1105
+      5 17 29 2465
+      7 13 19 1729
+      7 13 31 2821
+      7 19 67 8911
+      7 23 41 6601
+      7
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      enum_carmichael(10^5,False)
+    </input>
+    <output>
+      12
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      enum_carmichael(10^6,False)
+    </input>
+    <output>
+      23
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      enum_carmichael(10^7,False)
+    </input>
+    <output>
+      47
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:aliq}
+    On commence par &#xe9;crire une fonction <c>aliq</c>
+    calculant la suite aliquote partant de <m>s</m>, et s'arr&#xea;tant d&#xe8;s qu'on
+    atteint <m>1</m> ou un cycle:
+    \begin{sageblock}
+    def aliq(s):
+    l=[s]
+    while s <lt/>> 1:
+    s = sigma(s) - s
+    if s in l:
+    break
+    l.append(s)
+    return l
+    l = aliq(840)
+    len(l), l[:5], l[-5:]
+    p=points([(i,log(l[i])/log(10)) for i in range(len(l))]); p
+    \end{sageblock}
+    \sageplot{p}
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:masser_gramain}
+    Pour la question 1, sans restriction de g&#xe9;n&#xe9;ralit&#xe9; on peut supposer
+    que l'origine <m>O</m> est sur le cercle <mdash /> en effet, il y a au moins
+    un point de <m>\Z^2</m> sur le cercle, sinon celui-ci n'est pas optimal.
+    On peut aussi supposer que le centre du cercle est dans le premier quadrant
+    (par rotation du cercle d'un multiple de <m>\pi/2</m> autour de <m>O</m>).
+    On admettra qu'on a &#xe9;galement deux points <m>A</m> et <m>B</m> du premier quadrant
+    sur le cercle, et donc le cercle <m>C</m> est circonscrit au triangle <m>O, A, B</m>.
+    La borne <m>r_k \lt  \sqrt{k/\pi}</m> permet de d&#xe9;limiter les points <m>A</m> et <m>B</m>,
+    car leur distance &#xe0; <m>O</m> est au plus <m>2\sqrt{k/\pi}</m>.
+    On peut supposer qu'un des points <m>A</m> et <m>B</m>, par exemple <m>A</m>,
+    est dans le second octant (s'ils sont tous deux dans le premier
+    octant, par sym&#xe9;trie par rapport &#xe0; la droite <m>x=y</m> on les ram&#xe8;ne
+    dans le second octant).
+    On peut aussi supposer que l'angle en <m>A</m> du triangle <m>OAB</m> est aigu
+    (en &#xe9;changeant <m>A</m> et <m>B</m> au besoin, apr&#xe8;s une sym&#xe9;trie par
+    rapport &#xe0; la droite <m>x=y</m> s'ils sont dans des octants diff&#xe9;rents).
+    L'abscisse de <m>A</m> v&#xe9;rifie donc
+    <m>x_A \lt  \sqrt{2k/\pi}</m>, son ordonn&#xe9;e v&#xe9;rifie
+    <m>x_A \leq y_A \lt  \sqrt{4k/\pi - x_A^2}</m>.
+    Pour le point <m>B</m>, on a <m>0 \leq x_B \lt  2 \sqrt{k/\pi}</m>, et
+    <m>0 \leq x_A y_B + y_A x_B \leq x_A^2 + y_A^2</m> (angle aigu en <m>A</m>).
+    Cela donne le code suivant, o&#xf9; la routine <c>rk_aux</c> calcule le
+    nombre de points dans le disque de centre <m>(x_c/d,y_c/d)</m>, et de rayon
+    <m>\sqrt{r_2}/d</m>, o&#xf9; <m>x_c, y_c, d, r_2</m> sont tous entiers.
+  </p>
+
+  <sage>
+    <input>
+      
+    </input>
+    <output>
+      def rk_aux(xc,yc,d,r2):
+         s = 0
+         xmin = ceil((xc - sqrt(r2))/d)
+         xmax = floor((xc + sqrt(r2))/d)
+         for x in range(xmin,xmax+1):
+            # (d*y-yc)^2 &lt;= r2 - (d*x-xc)^2
+            r3 = r2 - (d*x-xc)^2
+            ymin = ceil((yc - sqrt(r3))/d)
+            ymax = floor((yc + sqrt(r3))/d)
+            s += ymax + 1 - ymin
+         return s
+
+      def rk(k): # renvoie (r_k^2, xc, yc)
+         if k == 2:
+            return 1/4, 1/2, 0 # disque de centre (1/2,0) et rayon 1/2
+         dmax = (2*sqrt(k/pi)).numerical_approx() # borne sur diametre
+         xamax = (sqrt(2*k/pi)).numerical_approx() # borne sur xa
+         sol = (dmax/2)^2, 0, 0, 0
+         for xa in range(0,floor(xamax)+1):
+            # si xa=0, ya > 0 car A ne peut etre en O
+            yamin = max(xa,1)
+            for ya in range(yamin,floor(sqrt(dmax^2-xa^2))+1):
+               # on veut xb*ya &lt;= xa^2+ya^2
+               xbmin = 0
+               if xa == 0:
+                  xbmin = 1 # O, A, B ne doivent pas etre alignes
+               xbmax = min(floor(dmax),floor((xa*xa+ya*ya)/ya))
+               for xb in range(xbmin,xbmax+1):
+                  ybmax = floor(sqrt(dmax^2-xb^2))
+                  # on veut xb*ya+yb*xa &lt;= xa^2+ya^2
+                  if xa > 0:
+                     ybmax = min(ybmax,floor((xa*xa+ya*ya-xb*ya)/xa))
+                  # si xb=0, yb > 0 car B doit etre distinct de O
+                  ybmin = 0
+                  if xb == 0:
+                     ybmin = 1
+                  for yb in range(ybmin,ybmax+1):
+                     # calcul du centre du cercle passant par O,A,B
+                     d = 2*abs(xb*ya - xa*yb)
+                     if d &lt;> 0:
+                      ra2 = xa^2+ya^2
+                        rb2 = xb^2+yb^2
+                        xc = abs(ra2*yb - rb2*ya) # vrai xc est xc/d
+                        yc = abs(rb2*xa - ra2*xb) # vrai yc esr yc/d
+                        r2 = ra2*rb2*((xa-xb)^2+(ya-yb)^2) # carre de (r*d)
+                        m = rk_aux(xc,yc,d,r2)
+                        if m>=k and r2/d^2&lt;sol[0]:
+                           sol = r2/d^2, xc/d, yc/d
+         return sol
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      for k in range(2,10):
+    </input>
+    <output>
+      print k, rk(k)
+      2 (1/4, 1/2, 0)
+      3 (1/2, 1/2, 1/2)
+      4 (1/2, 1/2, 1/2)
+      5 (1, 0, 1)
+      6 (5/4, 1/2, 1)
+      7 (25/16, 3/4, 1)
+      8 (2, 1, 1)
+      9 (2, 1, 1)
+    </output>
+  </sage>
+
+  <p>
+    Pour la question 2, une solution est la suivante:
+  </p>
+
+  <pre>
+    def plotrk(k):
+       r2, x0, y0 = rk(k); r = numerical_approx(sqrt(r2))
+       var('x,y')
+       c = implicit_plot((x-x0)^2+(y-y0)^2-r2,(x,x0-r-1/2,x0+r+1/2),
+                                              (y,y0-r-1/2,y0+r+1/2))
+       center = points([(x0,y0)],pointsize=50,color='black')
+       # on veut (i-x0)^2+(j-y0)^2 &lt;= r2
+       # donc <c>i-x0</c> &lt;= r et <c>j-y0</c> &lt;= r2 - (i-x0)^2
+       l = [(i, j) for i in range(ceil(x0-r),floor(x0+r)+1)
+                   for j in range(ceil(y0-sqrt(r^2-(i-x0)^2)),
+                                  floor(y0+sqrt(r2-(i-x0)^2))+1)]
+       d = points(l,pointsize=100)
+       return (c+center+d).show(aspect_ratio=1,axes=True)
+  </pre>
+
+  <p>
+    La question 3 demande un peu de r&#xe9;flexion. Notons
+    <m>S_{i,j} = \sum_{k=i}^j 1/(\pi r_k^2)</m>.
+    Partant de la borne sup&#xe9;rieure <xref ref="eq_mg" /> pour <m>r_k</m>,
+    on obtient <m>r_k^2 \lt  (k-1)/\pi</m>, donc <m>1/(\pi r_k^2) >
+    1/(k-1)</m>, et <m>S_{n,N} > \sum_{k=n}^N 1/(k-1)
+    > \int_n^{N+1} { d}k/k = \log ((N+1)/n)</m>.
+  </p>
+
+  <p>
+    La borne inf&#xe9;rieure pour <m>r_k</m> donne
+    <m>1/(\pi r_k^2) \lt  1/k + 2/k^{3/2}</m> pour <m>k \geq 407</m>, qui conduit
+    pour <m>n \geq 407</m> &#xe0;
+    <me>
+      S_{2,n-1} + \log(1/n) \leq \delta \leq S_{2,n-1} + \log(1/(n-1)) +
+      4/\sqrt{n-1}.
+    </me>
+  </p>
+
+  <sage>
+    <input>
+      
+    </input>
+    <output>
+      def bound(n):
+         s = sum(1/pi/rk(k)[0] for k in range(2,n+1))
+         return float(s+log(1/n)), float(s+log(1/(n-1))+4/sqrt(n-1))
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      bound(60)
+    </input>
+    <output>
+      (1.7327473659779615, 2.2703101282176377)
+    </output>
+  </sage>
+
+  <p>
+    On en d&#xe9;duit <m>1.73 \lt  \delta \lt  2.28</m>, soit l'approximatation <m>\delta \approx
+    2.00</m> avec une erreur born&#xe9;e par <m>0.28</m>.
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:beauzamy}
+    On reprend ici les m&#xea;mes notations que dans l'article de Beauzamy.
+    On pose <m>s_i = 1-x_i-\cdots-x_k</m> avec <m>s_{k+1}=1</m>.
+    On doit donc avoir <m>x_1 + \cdots + x_{i-1} \leq s_i</m>, et en particulier
+    <m>x_2 \leq x_1 \leq s_2</m>. Soit
+    <me>
+      C_1 = \int_{x_1=x_2}^{s_2} x_1^{n_1} { d}x_1 =
+               \frac{1}{n_1+1} (s_2^{n_1+1} - x_2^{n_1+1}).
+    </me>
+  </p>
+
+  <sage>
+    <input>
+      var('x1,x2,s2');
+      n1=9; C1=integrate(x1^n1,x1,x2,s2); C1
+    </input>
+    <output>
+      1/10*s2^10 - 1/10*x2^10
+    </output>
+  </sage>
+
+  <p>
+    Ensuite on a <m>x_3 \leq x_2 \leq s_3 = s_2 + x_2</m>, donc en rempla&#xe7;ant
+    <m>s_2</m> par <m>s_3 - x_2</m> dans <m>C_1</m>, et en int&#xe9;grant pour <m>x_2</m> allant
+    de <m>x_3</m> &#xe0; <m>s_3/2</m> <mdash /> car <m>x_1 + x_2 \leq s_3</m> et <m>x_2 \leq x_1</m> <mdash />
+    on obtient:
+  </p>
+
+  <sage>
+    <input>
+      var('x3,s3');
+      n2=7; C2=integrate(C1.subs(s2=s3-x2)*x2^n2,x2,x3,s3/2); C2
+    </input>
+    <output>
+      44923/229417943040*s3^18 - 1/80*s3^10*x3^8 + 1/9*s3^9*x3^9
+      - 9/20*s3^8*x3^10 + 12/11*s3^7*x3^11 - 7/4*s3^6*x3^12
+      + 126/65*s3^5*x3^13 - 3/2*s3^4*x3^14 + 4/5*s3^3*x3^15
+      - 9/32*s3^2*x3^16 + 1/17*s3*x3^17
+    </output>
+  </sage>
+
+  <p>
+    et ainsi de suite. &#xc0; chaque it&#xe9;ration <m>C_i</m> est un polyn&#xf4;me en <m>x_{i+1}</m>
+    et <m>s_{i+1}</m> &#xe0; coefficients rationnels, homog&#xe8;ne et de degr&#xe9; total
+    <m>n_1 + \ldots + n_i + i</m>.
+    \end{correction}
+  </p>
+</section>
+

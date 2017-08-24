@@ -1,0 +1,79 @@
+
+
+<section>
+  <title>Calcul formel et m&#xe9;thodes num&#xe9;riques</title>
+  <p>
+    Un syst&#xe8;me de calcul formel est un logiciel qui a pour but de manipuler,
+    de simplifier et de calculer des formules math&#xe9;matiques en appliquant
+    uniquement des transformations exactes.
+    Le terme {formel} s'oppose ici &#xe0; {\textit num&#xe9;rique} ;
+    il signifie que les calculs
+    sont effectu&#xe9;s sur des formules, de fa&#xe7;on alg&#xe9;brique, en manipulant
+    formellement des symboles. Pour cette raison l'expression
+    {\textit calcul symbolique} est parfois employ&#xe9;e &#xe0; la place de
+    {\textit calcul formel}, et le terme anglais fait r&#xe9;f&#xe9;rence
+    &#xe0; l'alg&#xe8;bre sous le vocable {\textit computer algebra}.
+  </p>
+
+  <p>
+    Les calculatrices manipulent de fa&#xe7;on exacte les nombres entiers
+    ayant moins d'une douzaine de chiffres ;
+    les nombres plus grands sont arrondis, ce qui entra&#xee;ne des erreurs.
+    Ainsi une calculatrice num&#xe9;rique &#xe9;value de fa&#xe7;on
+    erron&#xe9;e l'expression suivante en obtenant<nbsp /><m>0</m> &#xe0; la place de<nbsp /><m>1</m> :
+    <me>
+      (1 + 10^{50}) - 10^{50} \text{.}
+    </me>
+  </p>
+
+  <p>
+    De telles erreurs sont difficilement d&#xe9;tectables si elles se produisent
+    lors d'un calcul interm&#xe9;diaire sans &#xea;tre pr&#xe9;vues
+    <mdash /><nbsp />ni facilement pr&#xe9;visibles<nbsp /><mdash /> par une &#xe9;tude th&#xe9;orique.
+    Les syst&#xe8;mes de calcul formel, au contraire, s'appliquent &#xe0; repousser
+    ces limites et &#xe0; ne faire aucune approximation sur les nombres entiers
+    pour que les op&#xe9;rations qui en d&#xe9;coulent soient exactes :
+    ils r&#xe9;pondent<nbsp /><m>1</m> au calcul pr&#xe9;c&#xe9;dent.
+  </p>
+
+  <p>
+    Les m&#xe9;thodes d'analyse num&#xe9;rique approchent
+    &#xe0; une pr&#xe9;cision donn&#xe9;e
+    (par une m&#xe9;thode des trap&#xe8;zes, de Simpson, de Gauss, etc.) l'int&#xe9;grale
+    <m>\int_0^\pi \cos t \dd t</m> pour obtenir un r&#xe9;sultat num&#xe9;rique plus ou
+    moins proche de z&#xe9;ro (&#xe0; <m>10^{-10}</m> pr&#xe8;s par exemple) sans pouvoir
+    affirmer si le r&#xe9;sultat est le nombre entier <m>0</m> <mdash /><nbsp />de fa&#xe7;on exacte<nbsp /><mdash />
+    ou au contraire est proche de z&#xe9;ro mais est non nul.
+  </p>
+
+  <p>
+    Un syst&#xe8;me formel transforme par une manipulation de symboles math&#xe9;matiques
+    l'int&#xe9;grale <m>\int_0^\pi \cos t\dd t</m> en la formule <m>\sin \pi - \sin 0</m>
+    qui est ensuite &#xe9;valu&#xe9;e de fa&#xe7;on exacte en <m>0-0 = 0</m>.
+    Cette m&#xe9;thode prouve donc <m>\int_0^\pi \cos t\dd t = 0 \in \N</m>.
+  </p>
+
+  <p>
+    Cependant les transformations uniquement alg&#xe9;briques ont aussi des limites.
+    La plupart des expressions manipul&#xe9;es par les syst&#xe8;mes formels
+    sont des fractions rationnelles et l'expression <m>a/a</m> est automatiquement
+    simplifi&#xe9;e en<nbsp /><m>1</m>. Ce mode de calcul alg&#xe9;brique ne convient pas &#xe0; la
+    r&#xe9;solution des &#xe9;quations ;
+    dans ce cadre, la solution de l'&#xe9;quation <m>ax=a</m> est <m>x=a/a</m> qui
+    est simplifi&#xe9;e en <m>x=1</m> sans distinguer suivant
+    la valeur de <m>a</m> par rapport &#xe0; <m>0</m>, valeur particuli&#xe8;re pour laquelle
+    tout nombre <m>x</m> est solution.
+  </p>
+
+  <p>
+    Les algorithmes programm&#xe9;s dans tout syst&#xe8;me de calcul formel refl&#xe8;tent
+    uniquement les connaissances math&#xe9;matiques des concepteurs du
+    syst&#xe8;me.
+    Un tel outil ne peut pas d&#xe9;montrer directement un nouveau th&#xe9;or&#xe8;me ;
+    il permet simplement d'effectuer
+    des calculs dont les m&#xe9;thodes sont bien connues
+    mais qui sont trop longs pour &#xea;tre men&#xe9;s &#xe0; bien
+    avec un papier et un crayon\fg.
+  </p>
+</section>
+

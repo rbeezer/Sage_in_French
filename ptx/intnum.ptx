@@ -1,0 +1,965 @@
+
+
+<section xml:id="intnum">
+  <title>Int&#xe9;gration num&#xe9;rique</title>
+  <introduction>
+    <p>
+      On s'int&#xe9;resse au calcul num&#xe9;rique d'int&#xe9;grales de fonctions r&#xe9;elles:
+      pour une fonction <m>f: I\longrightarrow\R</m> on veut calculer
+      <me>
+        \int_I f(x)\dd{x}
+      </me>
+      o&#xf9; <m>I</m> est un intervalle de <m>\R</m>.
+    </p>
+
+    <p>
+      Par exemple, calculons
+      <me>
+        \int_{1}^{3}\exp(-x^2)\ln(x)\dd{x}.
+      </me>
+    </p>
+
+    <sage>
+      <input>
+        f(x) = exp(-x^2) * ln(x)
+        N(integrate(f, x, 1, 3))
+      </input>
+      <output>
+        0.035860294991267694
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        plot(f, 1, 3, fill='axis')
+      </input>
+    </sage>
+
+    <figure>
+      <caption>Les fonctions <m>x\mapsto\exp(-x^2)\log{x}</m> et
+      <m>x\mapsto\frac{\sin(x^2)}{x^2}</m>.</caption>
+      <image width="46%" source="images/int_expln1_3.png" />
+      <image width="46%" source="images/int_sinx2.png" />
+    </figure>
+
+    <p>
+      La fonction <c>integrate</c> calcule l'int&#xe9;grale symbolique de
+      l'expression, il faut demander explicitement une valeur num&#xe9;rique pour
+      l'obtenir.
+    </p>
+
+    <p>
+      Il est aussi possible de calculer des int&#xe9;grales sur un intervalle dont les
+      bornes sont infinies:
+    </p>
+
+    <sage>
+      <input>
+        N(integrate(sin(x^2)/(x^2), x, 1, infinity))
+      </input>
+      <output>
+        0.2862504407259549
+        plot(sin(x^2)/(x^2), x, 1, 10, fill='axis')
+      </output>
+    </sage>
+
+    <p>
+      Il existe plusieurs m&#xe9;thodes dans <em>Sage</em>  pour calculer num&#xe9;riquement
+      une int&#xe9;grale, et si leurs impl&#xe9;mentations diff&#xe9;rent techniquement, elles
+      reposent toutes sur l'un des deux principes suivants:
+      <ul>
+        <li>
+          <p>
+            une interpolation polynomiale (m&#xe9;thode de Gauss-Kronrod en
+                particulier),
+          </p>
+        </li>
+
+        <li>
+          <p>
+            une transformation de fonction (m&#xe9;thode doublement
+                exponentielle).
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      \subsubsection{M&#xe9;thodes interpolatoires}
+      Dans ces m&#xe9;thodes, on &#xe9;value la fonction <m>f</m> &#xe0; int&#xe9;grer en un
+      certain nombre <m>n</m> de points bien choisis <m>x_1, x_2, \ldots, x_n</m>, et on
+      calcule une valeur approch&#xe9;e de l'int&#xe9;grale de <m>f</m> sur <m>[a, b]</m> par
+      <me>
+        \int_a^b f(x)\dd{x} \approx \sum_{i=1}^nw_if(x_i).
+      </me>
+    </p>
+
+    <p>
+      Les coefficients <m>w_i</m> sont appel&#xe9;s les poids de la m&#xe9;thode, et ils
+      sont d&#xe9;termin&#xe9;s par la condition que la m&#xe9;thode doit &#xea;tre exacte pour
+      tout polyn&#xf4;me <m>f</m> de degr&#xe9; inf&#xe9;rieur ou &#xe9;gal &#xe0; <m>n-1</m>. Pour des points
+      <m>(x_i)</m> fix&#xe9;s, les poids <m>(w_i)</m> sont uniquement d&#xe9;termin&#xe9;s par cette
+      condition. On d&#xe9;finit l'<em>ordre</em> de la m&#xe9;thode comme le degr&#xe9; maximal
+      des polyn&#xf4;mes qu'elle int&#xe8;gre exactement; cet ordre est donc au moins
+      <m>n-1</m> par construction mais il peut &#xea;tre plus grand.
+    </p>
+
+    <p>
+      Ainsi la famille des m&#xe9;thodes d'int&#xe9;gration de Newton-Cotes (dont font
+      partie les m&#xe9;thodes des rectangles, des trap&#xe8;zes, la r&#xe8;gle de Simpson)
+      choisissent pour points d'int&#xe9;gration des points &#xe9;quir&#xe9;partis sur
+      l'intervalle <m>[a, b]</m>:
+    </p>
+
+    <sage>
+      <input>
+        fp = plot(f, 1, 3, color='red')
+        n = 4
+        interp_points = [(1+2*u/(n-1), N(f(1+2*u/(n-1)))) \verb!\!
+        for u in xrange(n)]
+        pp = plot(A.lagrange_polynomial(interp_points), 1, 3, \verb!\!
+        fill='axis')
+        show(fp+pp)
+      </input>
+    </sage>
+
+    <p>
+      <image width="80%" source="images/int_nc4.png" />
+      Pour les m&#xe9;thodes de type interpolatoire, on peut donc consid&#xe9;rer que
+      l'on calcule le polyn&#xf4;me d'interpolation de Lagrange de la fonction
+      consid&#xe9;r&#xe9;e et que l'int&#xe9;grale de ce polyn&#xf4;me est choisie comme valeur
+      approch&#xe9;e de l'int&#xe9;grale de la fonction.
+      Ces deux &#xe9;tapes sont en r&#xe9;alit&#xe9; condens&#xe9;es en une formule appel&#xe9;e
+      <q>r&#xe8;gle</q> de quadrature, le polyn&#xf4;me d'interpolation de Lagrange n'est
+      jamais calcul&#xe9; explicitement.
+      Le choix des points
+      d'interpolation influe grandement sur la qualit&#xe9; de l'approximation
+      polynomiale obtenue, et le choix de points &#xe9;quir&#xe9;partis n'assure pas
+      la convergence quand le nombre de points augmente (ph&#xe9;nom&#xe8;ne de Runge).
+      La m&#xe9;thode d'int&#xe9;gration correspondante peut ainsi souffrir de ce
+      probl&#xe8;me illustr&#xe9; en <xref ref="intnum_interpolation_instable">Figure</xref>.
+    </p>
+
+    <figure xml:id="intnum_interpolation_instable" >
+      <caption>Interpolation par un polyn&#xf4;me de degr&#xe9; <m>10</m> (trait fin) de la
+        fonction <m>x\mapsto 1/(1+x^2)</m> (trait gras) sur <m>11</m> points
+        &#xe9;quir&#xe9;partis sur <m>[-10, 10]</m>. Le ph&#xe9;nom&#xe8;ne de Runge est apparent
+        aux bornes.</caption>
+      <image width="80%" source="images/int_bad_interpol.png" />
+    </figure>
+
+    <p>
+      Lorsqu'on demande &#xe0; <em>Sage</em>  de calculer num&#xe9;riquement une int&#xe9;grale sur
+      un intervalle quelconque, la m&#xe9;thode d'int&#xe9;gration n'est pas appliqu&#xe9;e
+      directement sur le domaine entier: on subdivise le domaine
+      d'int&#xe9;gration en intervalles suffisamment petits pour que la m&#xe9;thode
+      &#xe9;l&#xe9;mentaire donne un r&#xe9;sultat assez pr&#xe9;cis (on parle de composition de
+      m&#xe9;thodes). Comme strat&#xe9;gie de subdivision, on peut par exemple
+      s'adapter dynamiquement &#xe0; la fonction &#xe0; int&#xe9;grer: si on appelle
+      <m>I_a^b(f)</m> la valeur de <m>\int_a^bf(x)\dd{x}</m> calcul&#xe9;e par la m&#xe9;thode
+      d'int&#xe9;gration, on compare
+      <me>
+        I_0 = I_a^b(f)
+      </me>
+      avec
+      <me>
+        I_1 = I_a^{(a+b)/2}(f) + I_{(a+b)/2}^b(f)
+      </me>
+      et on arr&#xea;te de subdiviser si <m><c>I_0-I_1</c></m> n'est pas significatif par
+      rapport &#xe0; la pr&#xe9;cision de calcul utilis&#xe9;e. C'est ici que la notion
+      d'ordre d'une m&#xe9;thode est importante: pour une m&#xe9;thode d'ordre <m>n</m>,
+      diviser l'intervalle d'int&#xe9;gration en <m>2</m> divise l'erreur th&#xe9;orique
+      par <m>2^n</m>, sans tenir compte des erreurs d'arrondis. Une m&#xe9;thode de type interpolatoire particuli&#xe8;re disponible dans <em>Sage</em> 
+      est la m&#xe9;thode de Gauss-Legendre. Dans cette m&#xe9;thode les <m>n</m> points
+      d'int&#xe9;gration sont choisis comme les racines du polyn&#xf4;me de Legendre
+      de degr&#xe9; <m>n</m> (avec un intervalle de d&#xe9;finition correctement translat&#xe9;
+      &#xe0; l'intervalle d'int&#xe9;gration consid&#xe9;r&#xe9; <m>[a, b]</m>). Les propri&#xe9;t&#xe9;s des
+      polyn&#xf4;mes de Legendre, orthogonaux pour le
+      produit scalaire
+      <me>
+        \langle f, g \rangle = \int_a^bf(x)g(x)\dd{x}
+      </me>
+      font que la m&#xe9;thode d'int&#xe9;gration obtenue calcule exactement les
+      int&#xe9;grales des polyn&#xf4;mes de degr&#xe9; <m>2n-1</m> inclus, au lieu de
+      simplement jusqu'au degr&#xe9; <m>n-1</m> comme on pouvait s'y attendre. De plus
+      les poids d'int&#xe9;gration correspondants sont toujours positifs, ce qui
+      rend la m&#xe9;thode moins vuln&#xe9;rable &#xe0; des probl&#xe8;mes num&#xe9;riques du type
+      <em>cancellation</em><fn>Ce ph&#xe9;nom&#xe8;ne se produit lorsqu'une
+        somme est significativement plus petite (en valeur
+        absolue) que les termes de la somme: chaque erreur d'arrondi peut
+        alors &#xea;tre plus grande que le r&#xe9;sultat final, d'o&#xf9; une perte totale
+        de pr&#xe9;cision.</fn>.
+    </p>
+
+    <p>
+      Pour terminer sur les m&#xe9;thodes de type interpolatoire, la m&#xe9;thode de
+      Gauss-Kronrod &#xe0; <m>2n+1</m> points est une <q>augmentation</q> de la m&#xe9;thode de
+      Gauss-Legendre &#xe0; <m>n</m> points:
+      <ul>
+        <li>
+          <p>
+            parmi les <m>2n+1</m> points, <m>n</m> sont les points de la m&#xe9;thode
+                de Gauss-Legendre;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            la m&#xe9;thode est exacte pour tout polyn&#xf4;me de degr&#xe9; inf&#xe9;rieur ou
+                &#xe9;gal &#xe0; <m>3n+1</m>.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      On peut observer na&#xef;vement que les <m>3n+2</m> inconnues (les <m>2n+1</m> poids
+      et les <m>n+1</m> points ajout&#xe9;s) sont <em>a priori</em> d&#xe9;termin&#xe9;s en exigeant
+      que la m&#xe9;thode soit au moins d'ordre <m>3n+1</m> (ce qui donne bien <m>3n+2</m> conditions).
+      Attention, les
+      poids associ&#xe9;s dans la m&#xe9;thode de Gauss-Kronrod aux <m>n</m> points de Gauss-Legendre n'ont aucune raison de
+      co&#xef;ncider avec ceux qui leur sont associ&#xe9;s dans la m&#xe9;thode de
+      Gauss-Legendre.
+    </p>
+
+    <p>
+      L'int&#xe9;r&#xea;t d'une telle m&#xe9;thode augment&#xe9;e se manifeste lorsque l'on
+      consid&#xe8;re que le co&#xfb;t principal d'un algorithme d'int&#xe9;gration est le
+      nombre d'&#xe9;valuations de la fonction <m>f</m> &#xe0; int&#xe9;grer (en particulier si
+      les points et poids sont tabul&#xe9;s). La m&#xe9;thode de Gauss-Kronrod &#xe9;tant
+      en principe plus pr&#xe9;cise que celle de Gauss-Legendre, on peut
+      utiliser son r&#xe9;sultat <m>I_1</m> pour valider le r&#xe9;sultat <m>I_0</m> de cette derni&#xe8;re et obtenir une
+      estimation de l'erreur commise par <m><c>I_1-I_0</c></m>, tout en minimisant le nombre d'appels
+      &#xe0; <m>f</m>. On peut comparer cette strat&#xe9;gie, particuli&#xe8;re &#xe0; la m&#xe9;thode de Gauss-Legendre,
+      avec la strat&#xe9;gie plus g&#xe9;n&#xe9;rale de subdivision vue en <xref ref="intnum_subdivision">page</xref>.
+    </p>
+
+    <p>
+      \subsubsection{M&#xe9;thodes doublement exponentielles}
+    </p>
+
+    <p>
+      Les m&#xe9;thodes doublement exponentielles (DE) reposent sur le choix d'un
+      changement de variable qui transforme un intervalle d'int&#xe9;gration born&#xe9; &#xe0;
+      <m>\R</m>, et sur la tr&#xe8;s bonne pr&#xe9;cision obtenue par la m&#xe9;thode des trap&#xe8;zes sur <m>\R</m> pour les
+      fonctions analytiques. Pour une fonction <m>f</m> int&#xe9;grable sur <m>\R</m> et un
+      pas d'int&#xe9;gration <m>h</m> la
+      m&#xe9;thode des trap&#xe8;zes consiste &#xe0; calculer
+      <me>
+        I_h = h \sum_{i=-\infty}^{+\infty} f(hi)
+      </me>
+      comme valeur approch&#xe9;e de <m>\int_{-\infty}^{+\infty} f(x)\dd{x}</m>.
+      D&#xe9;couverte en 1973 par Takahasi et Mori, la transformation doublement
+      exponentielle est couramment utilis&#xe9;e par les logiciels d'int&#xe9;gration num&#xe9;rique. Une introduction &#xe0;
+      la transformation et &#xe0; sa d&#xe9;couverte est donn&#xe9;e dans<nbsp /><xref ref="Mori2005" />;
+      l'essentiel en est restitu&#xe9; ici. On y trouve en particulier une explication
+      de la surprenante pr&#xe9;cision obtenue par la m&#xe9;thode des trap&#xe8;zes (elle est
+      optimale dans un certain sens) pour les fonctions analytiques sur <m>\R</m>.
+    </p>
+
+    <p>
+      Pour calculer
+      <me>
+        I = \int_{-1}^1 f(x) \dd{x}
+      </me>
+      il est possible d'utiliser une transformation
+      <me>
+        x = \phi(t)
+      </me>
+      o&#xf9; <m>\phi</m> est analytique sur <m>\R</m> et v&#xe9;rifie
+      <me>
+        \lim_{t \to -\infty} \phi(t) = -1,
+         \lim_{t \to \infty} \phi(t) = 1
+      </me>
+      et alors
+      <me>
+        I = \int_{-\infty}^\infty f(\phi(t)) \phi'(t) \dd{t}.
+      </me>
+    </p>
+
+    <figure xml:id="intnum_phide" >
+      <caption>La transformation <m>\phi(t) = \tanh(\frac{\pi}{2}\sinh t)</m> utilis&#xe9;e dans la m&#xe9;thode doublement
+      exponentielle (&#xe0; gauche) et la d&#xe9;croissance de <m>\phi'(x)</m> (&#xe0; droite).</caption>
+      <image width="50%" source="images/int_phi.png" />
+      <image width="50%" source="images/int_phip.png" />
+    </figure>
+
+    <p>
+      En appliquant la formule des trap&#xe8;zes &#xe0; cette derni&#xe8;re expression on
+      calcule
+      <me>
+        I_h^N = \sum_{k=-N}^N f(\phi(kh))\phi'(kh)
+      </me>
+      pour un certain pas de discr&#xe9;tisation <m>h</m> et en tronquant la somme aux
+      termes de <m>-N</m> &#xe0; <m>N</m>. Le choix de transformation
+      propos&#xe9; est
+      <me>
+        \phi(t) = \tanh\left(\frac{\pi}{2} \sinh t\right)
+      </me>
+      qui donne la formule
+      <me>
+        I_h^N = \sum_{k=-N}^N f\left(\tanh\left(\frac{\pi}{2} \sinh
+        kh\right)\right) \frac{\frac{\pi}{2}\cosh
+        kh}{\cosh^2(\frac{\pi}{2}\sinh kh)}.
+      </me>
+    </p>
+
+    <p>
+      La formule doit son nom &#xe0; la d&#xe9;croissance doublement exponentielle de
+      <me>
+        \phi'(t) = \frac{\frac{\pi}{2} \cosh t}{\cosh^2(\frac{\pi}{2}\sinh
+        t)}
+      </me>
+      quand <m><c>t</c>\rightarrow \infty</m> (voir <xref ref="intnum_phiprimede">Figure</xref>).
+      Le principe de la transformation est de concentrer l'essentiel de la
+      contribution de la fonction &#xe0; int&#xe9;grer autour de <m>0</m>, d'o&#xf9; la forte
+      d&#xe9;croissance quand <m><c>t</c></m> cro&#xee;t. Il y a un compromis &#xe0; trouver dans le
+      choix des param&#xe8;tres et de la transformation <m>\phi</m> utilis&#xe9;e: une
+      d&#xe9;croissance plus rapide que doublement exponentielle diminue l'erreur
+      de troncature mais augmente l'erreur de discr&#xe9;tisation.
+    </p>
+
+    <p>
+      Depuis la d&#xe9;couverte de la transformation DE, cette m&#xe9;thode est
+      appliqu&#xe9;e seule ou avec d'autres transformations, en fonction de la
+      nature de l'int&#xe9;grande, de ses singularit&#xe9;s et du domaine
+      d'int&#xe9;gration. Un tel exemple est la d&#xe9;composition sinus cardinal
+      <q><m>\text{ sinc }</m></q>:
+      <me>
+        f(x) \approx \sum_{k=-N}^N f(kh) S_{k, h}(x)
+      </me>
+      o&#xf9;
+      <me>
+        S_{k, h}(x) = \frac{\sin(\pi (x-kh)/h)}{\pi(x-kh)/h}
+      </me>
+      qui est utilis&#xe9;e conjointement &#xe0; la m&#xe9;thode doublement exponentielle
+      dans<nbsp /><xref ref="Tanaka2004" />, am&#xe9;liorant les formules pr&#xe9;c&#xe9;dentes qui
+      utilisaient une transformation simplement exponentielle <m>\phi(x) =
+      \tanh(x/2)</m>. La fonction
+      \mathrm{sinc} est d&#xe9;finie par
+      <me>
+        \mathrm{sinc} = 
+        \begin{cases}1 \amp  \text{ si }  x=0, \\
+            \frac{\sin(\pi x)}{\pi x} \amp  \text{ sinon } 
+        \end{cases}
+      </me>
+      et son graphe est donn&#xe9; en <xref ref="intnum_sinc">Figure</xref>.
+    </p>
+
+    <figure xml:id="intnum_sinc" >
+      <caption>La fonction sinus cardinal.</caption>
+      <image width="80%" source="images/int_sinc.png" />
+    </figure>
+
+    <p>
+      Le choix de la transformation &#xe0; utiliser d&#xe9;termine en grande partie la
+      qualit&#xe9; du r&#xe9;sultat en pr&#xe9;sence de singularit&#xe9;s aux bornes (il n'y a
+      cependant pas de bonne solution en cas de singularit&#xe9;s &#xe0; l'int&#xe9;rieur
+      de l'intervalle). Nous verrons plus loin que dans la version de <em>Sage</em>  consid&#xe9;r&#xe9;e, seules les
+      fonctions d'int&#xe9;gration de <em>PARI</em>  utilisent des transformations
+      doublement exponentielles avec la possibilit&#xe9; de pr&#xe9;ciser le
+      comportement aux bornes.
+    </p>
+  </introduction>
+
+  <subsection xml:id="intnum_dispos">
+    <title>Manuel des fonctions d'int&#xe9;gration disponibles</title>
+    <introduction>
+      <p>
+        Nous allons maintenant voir plus en d&#xe9;tail les diff&#xe9;rentes fa&#xe7;ons de
+        calculer une int&#xe9;grale num&#xe9;rique avec <em>Sage</em> , &#xe0; travers quelques exemples
+        de calculs d'int&#xe9;grales:
+        <md>
+          <mrow>I_1 \amp  = \amp  \int_{17}^{42}\exp(-x^2)\log(x)\dd{x}, {} I_2  =  \int_0^1 x \log(1+x) \dd{x} = \frac{1}{4},</mrow>
+          <mrow>I_3 \amp  = \amp  \int_0^1 \sqrt{1-x^2}\dd{x} = \frac{\pi}{4},</mrow>
+          <mrow>I_{4} \amp  = \amp  \int_0^1 \mathrm{max}(\sin(x), \cos(x))\dd{x} = \int_0^{\frac{\pi}{4}}\cos(x)\dd{x} + \int_{\frac{\pi}{4}}^1 \sin(x)\dd{x}</mrow>
+          <mrow>\amp  = \amp  \sin \frac{\pi}{4} + \cos \frac{\pi}{4} - \cos 1 = \sqrt{2} - \cos 1,</mrow>
+          <mrow>I_5 \amp  = \amp  \int_0^1 \sin(\sin(x))\dd{x}, {} I_6 = \int_0^\pi \sin(x) \exp(\cos(x))\dd{x} = e - \frac{1}{e},</mrow>
+          <mrow>I_7 \amp  = \amp  \int_0^1 \frac{1}{1+10^{10}x^2}\dd{x} = 10^{-5} \arctan(10^5), {} I_8 = \int_0^{1,1} \exp(-x^{100})\dd{x},</mrow>
+          <mrow>I_{9} \amp  = \amp  \int_0^{10} x^2\sin(x^3)\dd{x} = \frac{1}{3}(1 - \cos(1000)), {} I_{10} = \int_0^1 \sqrt{x}\dd{x} = \frac{2}{3}.</mrow>
+        </md>
+      </p>
+
+      <p>
+        Nous ne donnons pas une description exhaustive de l'usage des
+        fonctions d'int&#xe9;gration trait&#xe9;es-cela se trouve dans l'aide en
+        ligne-mais uniquement leur usage le plus courant.
+      </p>
+    </introduction>
+    <subsubsection>
+    <title><c>N(integrate(...))</c></title>
+    <p>
+      La premi&#xe8;re m&#xe9;thode que l'on peut utiliser avec <em>Sage</em>  pour
+      calculer num&#xe9;riquement est <c>N(integrate(...))</c>:
+    </p>
+
+    <sage>
+      <input>
+        N(integrate(exp(-x^2)*log(x), x, 17, 42))
+      </input>
+      <output>
+        2.5657285006962035e-127
+      </output>
+    </sage>
+
+    <p>
+      Il faut remarquer qu'il n'est pas garanti que l'int&#xe9;grale sera
+      calcul&#xe9;e num&#xe9;riquement par ce biais, en effet la fonction
+      <c>integrate</c> demande une int&#xe9;gration symbolique. Si celle-ci est
+      possible, alors <em>Sage</em>  ne fera qu'&#xe9;valuer num&#xe9;riquement l'expression
+      symbolique obtenue:
+    </p>
+
+    <sage>
+      <input>
+        integrate(log(1+x)*x, x, 0, 1)
+      </input>
+      <output>
+        1/4
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        N(integrate(log(1+x)*x, x, 0, 1))
+      </input>
+      <output>
+        0.250000000000000
+      </output>
+    </sage>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title><c>numerical_integral</c></title>
+    <p>
+      La fonction <c>numerical_integral</c> demande <em>explicitement</em> une
+      int&#xe9;gration num&#xe9;rique de la fonction donn&#xe9;e en param&#xe8;tre. Elle utilise
+      pour ceci la biblioth&#xe8;que num&#xe9;rique <em>GSL</em>  qui impl&#xe9;mente la m&#xe9;thode de
+      Gauss-Kronrod pour un nombre de points d'int&#xe9;gration <m>n</m> fix&#xe9;. Les
+      points et poids sont pr&#xe9;calcul&#xe9;s, et la pr&#xe9;cision est limit&#xe9;e &#xe0; la
+      pr&#xe9;cision des nombres flottants machine (<m>53</m> bits de
+      mantisse). Le r&#xe9;sultat est un couple compos&#xe9; du r&#xe9;sultat calcul&#xe9; et
+      d'une estimation de l'erreur:
+    </p>
+
+    <sage>
+      <input>
+        numerical_integral(exp(-x^2)*log(x), 17, 42)
+      </input>
+      <output>
+        (2.5657285006962035e-127, 3.3540254049238093e-128)
+      </output>
+    </sage>
+
+    <p>
+      L'estimation de l'erreur n'est pas une borne garantie
+      de l'erreur commise, mais une simple valeur indicative de la difficult&#xe9;
+      &#xe0; calculer l'int&#xe9;grale donn&#xe9;e. On constate que dans l'exemple ci-dessus l'estimation
+      donn&#xe9;e de l'erreur est telle que l'on peut douter de presque tous les chiffres
+      du r&#xe9;sultat (sauf le premier).
+    </p>
+
+    <p>
+      Les arguments de <c>numerical_integral</c> permettent notamment:
+      <ul>
+        <li>
+          <p>
+            de choisir le nombre de points utilis&#xe9;s (six choix allant de
+                <m>15</m> &#xe0; <m>61</m> avec <m>61</m> par d&#xe9;faut);
+          </p>
+        </li>
+
+        <li>
+          <p>
+            de demander une subdivision adaptative (choix par d&#xe9;faut), ou d'imposer une
+                application directe sans composition de la m&#xe9;thode sur
+                l'intervalle d'int&#xe9;gration (par l'ajout de <c>algorithm='qng'</c>);
+          </p>
+        </li>
+
+        <li>
+          <p>
+            de borner le nombre d'appels &#xe0; l'int&#xe9;grande.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      Emp&#xea;cher <em>GSL</em>  de proc&#xe9;der &#xe0; une int&#xe9;gration adaptative peut
+      entra&#xee;ner une perte de pr&#xe9;cision:
+    </p>
+
+    <sage>
+      <input>
+        numerical_integral(exp(-x^100), 0, 1.1)
+      </input>
+      <output>
+        (0.99432585119150096, 4.0775730413694644e-09)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        numerical_integral(exp(-x^100), 0, 1.1, algorithm='qng')
+      </input>
+      <output>
+        (0.99432753857653178, 0.016840666914688864)
+      </output>
+    </sage>
+
+    <p>
+      Lorsque la fonction <c>integrate</c> ne trouve pas d'expression
+      analytique correspondant &#xe0; l'int&#xe9;grale demand&#xe9;e, elle renvoie une expression
+      symbolique inchang&#xe9;e:
+    </p>
+
+    <sage>
+      <input>
+        integrate(exp(-x^2)*log(x), x, 17, 42)
+      </input>
+      <output>
+        integrate(e^(-x^2)*log(x), x, 17, 42)
+      </output>
+    </sage>
+
+    <p>
+      et le calcul num&#xe9;rique effectu&#xe9; via <c>N</c> utilise
+      <c>numerical_integral</c>. Ceci explique en particulier pourquoi le
+      param&#xe8;tre de la pr&#xe9;cision sera ignor&#xe9; dans ces cas l&#xe0;:
+    </p>
+
+    <sage>
+      <input>
+        N(integrate(exp(-x^2)*log(x), x, 17, 42), 200)
+      </input>
+      <output>
+        2.5657285006962035e-127
+      </output>
+    </sage>
+
+    <p>
+      mais on aura:
+    </p>
+
+    <sage>
+      <input>
+        N(integrate(sin(x)*exp(cos(x)), x, 0, pi), 200)
+      </input>
+      <output>
+        2.3504023872876029137647637011912016303114359626681917404591
+      </output>
+    </sage>
+
+    <p>
+      car l'int&#xe9;gration symbolique est possible dans ce cas.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title><c>sage.calculus.calculus.nintegral</c></title>
+    <p>
+      Pour les fonctions d&#xe9;finies symboliquement, il est possible
+      de demander &#xe0; <em>Maxima</em>  de calculer num&#xe9;riquement une int&#xe9;grale:
+    </p>
+
+    <sage>
+      <input>
+        sage.calculus.calculus.nintegral(sin(sin(x)), x, 0, 1)
+      </input>
+      <output>
+        (0.43060610312069059, 4.7806881022870532e-15, 21, 0)
+      </output>
+    </sage>
+
+    <p>
+      mais il est aussi possible d'appeler la m&#xe9;thode <c>nintegral</c>
+      directement sur l'objet <em>Maxima</em> :
+    </p>
+
+    <sage>
+      <input>
+        g(x) = sin(sin(x))
+        g.nintegral(x, 0, 1)
+      </input>
+      <output>
+        (0.43060610312069059, 4.7806881022870532e-15, 21, 0)
+      </output>
+    </sage>
+
+    <p>
+      <em>Maxima</em>  utilise la biblioth&#xe8;que d'int&#xe9;gration num&#xe9;rique QUADPACK, qui
+      comme <em>GSL</em>  est limit&#xe9;e aux nombres flottants machine. La fonction
+      <c>nintegral</c> utilise une strat&#xe9;gie de subdivision adaptative de
+      l'intervalle d'int&#xe9;gration, et il est possible de pr&#xe9;ciser:
+      <ul>
+        <li>
+          <p>
+            la pr&#xe9;cision relative d&#xe9;sir&#xe9;e pour la sortie;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            le nombre maximal de sous-intervalles consid&#xe9;r&#xe9;s pour le
+                calcul.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      La sortie est un tuple:
+      <ol>
+        <li>
+          <p>
+            la valeur approch&#xe9;e de l'int&#xe9;grale;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            une estimation de l'erreur absolue;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            le nombre d'appels &#xe0; l'int&#xe9;grande;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            un code d'erreur (<m>0</m> si aucun probl&#xe8;me n'a &#xe9;t&#xe9; rencontr&#xe9;,
+                pour plus de d&#xe9;tails sur les autres valeurs possibles vous pouvez consulter
+                la documentation avec <c>sage.calculus.calculus.nintegral?</c>).
+          </p>
+        </li>
+      </ol>
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title><c>gp('intnum(...)')</c></title>
+    <p>
+      Le calculateur <em>PARI</em>  est disponible depuis <em>Sage</em>  et impl&#xe9;mente aussi
+      une commande pour l'int&#xe9;gration num&#xe9;rique de fonctions nomm&#xe9;e
+      <c>intnum</c>:
+    </p>
+
+    <sage>
+      <input>
+        gp('intnum(x=17, 42, exp(-x^2)*log(x))')
+      </input>
+      <output>
+        2.5657285005610514829173563961304785900 E-127
+      </output>
+    </sage>
+
+    <p>
+      La fonction <c>intnum</c> utilise la m&#xe9;thode doublement
+      exponentielle.
+    </p>
+
+    <p>
+      Il est possible de choisir la pr&#xe9;cision du r&#xe9;sultat en modifiant
+      la pr&#xe9;cision globale de l'interpr&#xe8;te <em>PARI</em> :
+    </p>
+
+    <sage>
+      <input>
+        gp('intnum(x=0, 1, sin(sin(x)))')
+      </input>
+      <output>
+        0.43060610312069060491237735524846578643
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        gp.set_precision(50)
+      </input>
+      <output>
+        38
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        gp('intnum(x=0, 1, sin(sin(x)))')
+      </input>
+      <output>
+        0.43060610312069060491237735524846578643360804182200
+      </output>
+    </sage>
+
+    <p>
+      Un inconv&#xe9;nient majeur de cette m&#xe9;thode est que la fonction &#xe0; int&#xe9;grer
+      est &#xe0; donner sous la forme d'une cha&#xee;ne en respectant la syntaxe de
+      <em>PARI</em> , il n'est pas possible d'int&#xe9;grer des fonctions arbitraires par
+      ce biais.
+    </p>
+
+    <p>
+      La fonction <c>intnum</c> permet d'indiquer le comportement de l'int&#xe9;grande
+      aux bornes de l'intervalle d'int&#xe9;gration. L'exemple suivant illustre l'impact
+      que cela peut avoir sur la pr&#xe9;cision du r&#xe9;sultat. Int&#xe9;grons <m>x\mapsto{}x^{-1/2}</m>
+      sans indication:
+    </p>
+
+    <sage>
+      <input>
+        gp('intnum(x=0, 1, x^(-1/2))')
+      </input>
+      <output>
+        1.9999999999999999999999999999981458433
+      </output>
+    </sage>
+
+    <p>
+      En indiquant la nature de la singularit&#xe9;, &#xe0; savoir que la fonction se comporte <q>comme</q> <m>x\mapsto{}x^{-1/2}</m> en <m>0</m>:
+    </p>
+
+    <sage>
+      <input>
+        gp('intnum(x=[0, -1/2], 1, x^(-1/2))')
+      </input>
+      <output>
+        2.0000000000000000000000000000000000000
+      </output>
+    </sage>
+
+    <p>
+      L'utilisateur est responsable de l'exactitude du comportement annonc&#xe9;;
+      si par exemple nous indiquons (de fa&#xe7;on erron&#xe9;e) que la fonction se comporte
+      comme <m>x\mapsto{}x^{-1/42}</m> en <m>0</m>, l'erreur commise restera importante:
+    </p>
+
+    <sage>
+      <input>
+        gp('intnum(x=[0, -1/42], 1, x^(-1/2))')
+      </input>
+      <output>
+        1.9999999999999999999999999999996571353
+      </output>
+    </sage>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title><c>mpmath.quad*</c></title>
+    <p>
+      La biblioth&#xe8;que <c>mpmath</c> est une biblioth&#xe8;que de calcul
+      num&#xe9;rique en pr&#xe9;cision arbitraire &#xe9;crite en Python. Elle est capable
+      de calculer avec des nombres flottants r&#xe9;els et complexes, des matrices,
+      et des intervalles de nombres flottants r&#xe9;els.
+    </p>
+
+    <p>
+      Elle dispose de fonctions d'int&#xe9;gration num&#xe9;rique (la principale &#xe9;tant
+      <c>quad</c>) et est disponible en <em>Sage</em> , il suffit de l'importer:
+    </p>
+
+    <sage>
+      <input>
+        import mpmath
+        mpmath.quad(lambda x: mpmath.sin(mpmath.sin(x)), [0, 1])
+      </input>
+      <output>
+        mpf('0.43060610312069059')
+      </output>
+    </sage>
+
+    <p>
+      La valeur de sortie n'est pas garantie &#xea;tre exacte avec toute
+      la pr&#xe9;cision demand&#xe9;e, comme on le constate sur l'exemple suivant:
+    </p>
+
+    <sage>
+      <input>
+        mpmath.mp.prec = 113                                    
+        mpmath.quad(lambda x: mpmath.sin(mpmath.sin(x)), [0, 1])
+      </input>
+      <output>
+        mpf('0.430606103120690604912377355248465809')
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        mpmath.mp.prec = 114                                    
+        mpmath.quad(lambda x: mpmath.sin(mpmath.sin(x)), [0, 1])
+      </input>
+      <output>
+        mpf('0.430606103120690604912377355248465785')
+      </output>
+    </sage>
+
+    <p>
+      Il est possible de sp&#xe9;cifier la pr&#xe9;cision demand&#xe9;e en nombre de
+      chiffres d&#xe9;cimaux (<c>mpmath.mp.dps</c>) ou en nombre de bits
+      (<c>mpmath.mp.prec</c>). Dans un souci de coh&#xe9;rence avec la
+      fonction <c>N</c> de <em>Sage</em>  nous nous restreignons &#xe0; une pr&#xe9;cision en
+      bits.
+    </p>
+
+    <p>
+      La fonction <c>mpmath.quad</c> peut faire appel soit &#xe0; la m&#xe9;thode de
+      Gauss-Legendre, soit &#xe0; la transformation doublement exponentielle
+      (c'est cette derni&#xe8;re qui est utilis&#xe9;e par d&#xe9;faut).
+      Il est possible de sp&#xe9;cifier directement la m&#xe9;thode &#xe0; utiliser avec
+      les fonctions <c>mpmath.quadgl</c> et <c>mpmath.quadts</c>.<fn>du nom de
+      la transformation utilis&#xe9;e <m>\phi:t\mapsto{}\tanh(\pi/2\sinh(t))</m> et vue pr&#xe9;c&#xe9;demment.</fn></p>
+
+    <p>
+      Une limitation importante pour l'utilisation des fonctions
+      d'int&#xe9;gration de <c>mpmath</c> dans <em>Sage</em>  est qu'elles ne savent pas
+      manipuler directement des fonctions arbitraires d&#xe9;finies en <em>Sage</em> :
+    </p>
+
+    <sage>
+      <input>
+        mpmath.quad(sin(sin(x)), [0, 1])
+      </input>
+      <output>
+        [...]
+        TypeError: no canonical coercion from \verb!\!
+         &lt;lt/>type 'sage.libs.mpmath.ext_main.mpf'> to Symbolic Ring
+      </output>
+    </sage>
+
+    <p>
+      La situation est cependant moins probl&#xe9;matique que pour l'utilisation
+      de <em>PARI</em>  qui est elle limit&#xe9;e &#xe0; une interaction en mode texte. Il est
+      en effet possible d'ajouter les fonctions d'&#xe9;valuation et de
+      conversion n&#xe9;cessaires pour pouvoir int&#xe9;grer via <c>mpmath.quad</c>
+      des fonctions quelconques:
+    </p>
+
+    <sage>
+      <input>
+        def g(x):
+        return max(sin(x), cos(x))
+        mpmath.mp.prec = 100
+        mpmath.quadts(lambda x: g(N(x, 100)), [0, 1])
+      </input>
+      <output>
+        mpf('0.873912416263035435957979086252')
+      </output>
+    </sage>
+
+    <p>
+      On constate que l'int&#xe9;gration de fonctions non r&#xe9;guli&#xe8;res (comme
+      l'exemple de <m>I_4</m> ci-dessus) peut entra&#xee;ner des pertes de pr&#xe9;cision
+      cons&#xe9;quentes, m&#xea;me en demandant le r&#xe9;sultat avec une grande pr&#xe9;cision:
+    </p>
+
+    <sage>
+      <input>
+        mpmath.mp.prec = 170
+        mpmath.quadts(lambda x: g(N(x, 190)), [0, 1])
+      </input>
+      <output>
+        mpf('0.87391090757400975205393005981962476344054148354188794')
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        N(sqrt(2) - cos(1), 100)
+      </input>
+      <output>
+        0.87391125650495533140075211677
+      </output>
+    </sage>
+
+    <p>
+      Seuls <m>5</m> chiffres sont corrects ici. On peut n&#xe9;anmoins aider
+      <c>mpmath</c> en sugg&#xe9;rant une subdivision de l'intervalle
+      d'int&#xe9;gration (ici, au point irr&#xe9;gulier,
+      cf. <xref ref="intnum_max_sin_cos">Figure</xref>):
+    </p>
+
+    <sage>
+      <input>
+        mpmath.quadts(lambda x: g(N(x, 170)), \verb!\!
+        [0, mpmath.pi / 4, 1])
+      </input>
+      <output>
+        mpf('0.87391125650495533140075211676672147483736145475902551')
+      </output>
+    </sage>
+
+    <p>
+      Les fonctions discontinues repr&#xe9;sentent un <q>pi&#xe8;ge</q> classique pour
+      les m&#xe9;thodes d'int&#xe9;gration; n&#xe9;anmoins une strat&#xe9;gie d'adaptation
+      automatique par subdivision, telle qu'&#xe9;voqu&#xe9;e plus haut, peut limiter
+      les d&#xe9;g&#xe2;ts.
+    </p>
+
+    <figure xml:id="intnum_max_sin_cos" >
+      <caption>La fonction <m>x\mapsto \max(\sin(x), \cos(x))</m>. L'irr&#xe9;gularit&#xe9;
+      en <m>\pi/4</m> rend l'int&#xe9;gration num&#xe9;rique tr&#xe8;s probl&#xe9;matique.</caption>
+      <image width="80%" source="images/int_max_sin_cos.png" />
+    </figure>
+
+    <paragraphs xml:id="exo_integration_newton_cotes">
+      <title>Exercice</title>
+      <p>
+        [Calcul des coefficients de Newton-Cotes] On cherche &#xe0; calculer les coefficients de la m&#xe9;thode de Newton-Cotes &#xe0;
+        <m>n</m> points, celle-ci n'&#xe9;tant pas disponible dans <em>Sage</em> . On consid&#xe8;re
+        pour simplifier que l'intervalle d'int&#xe9;gration est <m>I=[0, n-1]</m>, les
+        points d'int&#xe9;gration &#xe9;tant alors <m>x_1 = 0, x_2 = 1, \ldots, x_n =
+        n-1</m>. Les coefficients <m>(w_i)</m> de la m&#xe9;thode sont tels que l'&#xe9;quation
+        <men xml:id="intnum_interpol" >
+          \int_0^{n-1}f(x)\dd{x} = \sum_{i=0}^{n-1}w_if(i)
+        </men>
+        est exacte pour tout polyn&#xf4;me <m>f</m> de degr&#xe9; inf&#xe9;rieur ou &#xe9;gal &#xe0; <m>n-1</m>.
+        <ol>
+          <li>
+            <p>
+              On consid&#xe8;re pour <m>i\in \{0, \ldots, n-1\}</m> le polyn&#xf4;me
+                  <m>P_i(X) = \prod_{\stackrel{j=1}{j\neq i}}^{n-1}(X-x_i)</m>.
+                  En appliquant l'&#xe9;quation <xref ref="intnum_interpol" /> &#xe0; <m>P_i</m>, exprimer
+                  <m>w_i</m> en fonction de <m>P_i</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              En d&#xe9;duire une fonction <c>NCRule</c> qui &#xe0; <m>n</m> associe les
+                  coefficients de la m&#xe9;thode de Newton-Cotes &#xe0; <m>n</m> points sur l'intervalle
+                  <m>[0, n-1]</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Montrer comment appliquer ces poids sur un segment
+                  d'int&#xe9;gration <m>[a, b]</m> quelconque.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              &#xc9;crire une fonction <c>QuadNC</c> qui calcule l'int&#xe9;grale
+                  d'une fonction sur un segment de <m>\R</m> donn&#xe9; en param&#xe8;tre. Comparer
+                  les r&#xe9;sultats avec les fonctions d'int&#xe9;gration disponibles en <em>Sage</em> 
+                  sur les int&#xe9;grales <m>I_1</m> &#xe0; <m>I_{10}</m>.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+    </subsubsection>
+  </subsection>
+</section>
+

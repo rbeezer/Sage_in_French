@@ -1,0 +1,158 @@
+
+
+<section xml:id="sec_numbertheory_intapplis">
+  <title>Applications</title>
+  <subsection xml:id="subsec_numbertheory_delta">
+    <title>La constante <m>\delta</m></title>
+    <p>
+      La constante <m>\delta</m> est une g&#xe9;n&#xe9;ralisation en dimension deux
+      de la constante <m>\gamma</m> d'Euler. Elle est d&#xe9;finie comme suit:
+      <men xml:id="eq_delta" >
+        \delta = \lim_{n \rightarrow \infty} \left( \sum_{k=2}^n \frac{1}{\pi r_k^2}
+                 - \log n \right),
+      </men>
+      o&#xf9; <m>r_k</m> est le rayon du plus petit disque du plan affine <m>\R^2</m> contenant
+      au moins <m>k</m> points de <m>\Z^2</m>.
+      Par exemple <m>r_2=1/2</m>, <m>r_3 = r_4 = \sqrt{2}/2</m>, <m>r_5=1</m>,
+      <m>r_6 = \sqrt{5}/2</m>, <m>r_7 = 5/4</m>, <m>r_8 = r_9 = \sqrt{2}</m>, <ellipsis />
+      \begin{sagesilent}
+      def rk_aux(xc,yc,d,r2):
+      s = 0
+      xmin = ceil((xc - sqrt(r2))/d)
+      xmax = floor((xc + sqrt(r2))/d)
+      for x in range(xmin,xmax+1):
+      # now (d*y-yc)^2 <lt/>= r2 - (d*x-xc)^2
+      r3 = r2 - (d*x-xc)^2
+      ymin = ceil((yc - sqrt(r3))/d)
+      ymax = floor((yc + sqrt(r3))/d)
+      s += ymax + 1 - ymin
+      return s
+    </p>
+
+    <p>
+      # return rationals r^2, x, y such that the disk of center (x,y) and radius
+      # r contains at least k points (and r is smallest)
+      def rk(k):
+      if k == 2:
+      return 1/4, 1/2, 0 # disk of center (1/2,0) and radius 1/2
+      dmax = (2*sqrt(k/pi)).numerical_approx() # bound on diameter
+      xamax = (sqrt(2*k/pi)).numerical_approx() # bound on xa
+      sol = (dmax/2)^2, 0, 0, 0
+      for xa in range(0,floor(xamax)+1):
+      # if xa=0, ya > 0 since A must differ from 0
+      yamin = max(xa,1)
+      for ya in range(yamin,floor(sqrt(dmax^2-xa^2))+1):
+      # we want xb*ya <lt/>= xa^2+ya^2
+      xbmin = 0
+      if xa == 0:
+      xbmin = 1 # so that O, A, B are not aligned
+      xbmax = min(floor(dmax),floor((xa*xa+ya*ya)/ya))
+      for xb in range(xbmin,xbmax+1):
+      ybmax = floor(sqrt(dmax^2-xb^2))
+      # we want xb*ya+yb*xa <lt/>= xa^2+ya^2
+      if xa > 0:
+      ybmax = min(ybmax,floor((xa*xa+ya*ya-xb*ya)/xa))
+      # if xb=0, yb > 0 since B must differ from 0
+      ybmin = 0
+      if xb == 0:
+      ybmin = 1
+      for yb in range(ybmin,ybmax+1):
+      # compute the center of the circle going through O,A,B
+      d = 2*abs(xb*ya - xa*yb)
+      if d <lt/>> 0:
+      ra2 = xa^2+ya^2
+      rb2 = xb^2+yb^2
+      xc = abs(ra2*yb - rb2*ya) # true xc is xc/d
+      yc = abs(rb2*xa - ra2*xb) # true yc is yc/d
+      r2 = ra2*rb2*((xa-xb)^2+(ya-yb)^2) # square of (r*d)
+      m = rk_aux(xc,yc,d,r2)
+      if m>=k and r2/d^2<lt/>sol[0]:
+      sol = r2/d^2, xc/d, yc/d
+      return sol
+    </p>
+
+    <p>
+      def plotrk(k):
+      r2, x0, y0 = rk(k); r = numerical_approx(sqrt(r2))
+      var('x,y')
+      c = implicit_plot((x-x0)^2+(y-y0)^2-r2,(x,x0-r-1/2,x0+r+1/2),(y,y0-r-1/2,y0+r+1/2))
+      center = points([(x0,y0)],pointsize=50,color='black')
+      # we want (i-x0)^2+(j-y0)^2 <lt/>= r2
+      # thus <c>i-x0</c> <lt/>= r and <c>j-y0</c> <lt/>= r2 - (i-x0)^2
+      l = [(i, j) for i in range(ceil(x0-r),floor(x0+r)+1) for j in range(ceil(y0-sqrt(r^2-(i-x0)^2)),floor(y0+sqrt(r2-(i-x0)^2))+1)]
+      d = points(l,pointsize=100)
+      return (c+center+d).show(aspect_ratio=1,axes=True)
+    </p>
+
+    <p>
+      # ntg2 = plotrk(2) # x0=1/2, y0=0
+      # ntg3 = plotrk(3) # x0=1/2, y0=1/2
+      # ntg5 = plotrk(5) # x0=0, y0=0
+      # ntg6 = plotrk(6) # x0=1/2, y0=1
+      # ntg7 = plotrk(7)
+      # ntg8 = plotrk(8)
+      \end{sagesilent}
+      <image width="73%" source="images/ntg2.png" />
+      <image width="73%" source="images/ntg3.png" />
+      <image width="73%" source="images/ntg5.png" />
+    </p>
+
+    <p>
+      <image width="73%" source="images/ntg6.png" />
+      <image width="73%" source="images/ntg7.png" />
+      <image width="73%" source="images/ntg8.png" />
+    </p>
+
+    <paragraphs xml:id="exo_masser_gramain">
+      <title>Exercice</title>
+      <p>
+        1. &#xc9;crire une fonction qui prend en entr&#xe9;e un entier positif
+        <m>k</m>, et renvoie le rayon <m>r_k</m> et le centre <m>(x,y)</m> d'un plus petit disque
+        contenant au moins <m>k</m> points de <m>\Z^2</m>.
+      </p>
+
+      <p>
+        2. &#xc9;crire une fonction dessinant le cercle correspondant &#xe0; <m>r_k</m> avec
+        les <m>m \geq k</m> points de <m>\Z^2</m> inclus.
+      </p>
+
+      <p>
+        3. En utilisant l'encadrement
+        <men xml:id="eq_mg" >
+          \frac{\sqrt{\pi(k-6)+2}-\sqrt{2}}{\pi} \lt  r_k \lt  \sqrt{\frac{k-1}{\pi}},
+        </men>
+        calculer une approximation de <m>\delta</m> avec une erreur born&#xe9;e par <m>0.3</m>.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="subsec_numbertheory_beauzamy">
+    <title>Calcul d'int&#xe9;grale multiple via reconstruction rationnelle</title>
+    <p>
+      Cette application est inspir&#xe9;e de l'article <em>Robust Mathematical Methods
+      for Extremely Rare Events</em> de Bernard Beauzamy.
+      Soient <m>k</m> et <m>n_1, n_2, \ldots, n_k</m> des entiers positifs ou nuls.
+      On veut calculer l'int&#xe9;grale
+      <me>
+        I=\int_V x_1^{n_1} x_2^{n_2} \cdots x_k^{n_k} { d}x_1{ d}x_2 \ldots
+           { d}x_k,
+      </me>
+      o&#xf9; le domaine d'int&#xe9;gration est d&#xe9;fini par
+      <m>V = \{ x_1 \geq x_2 \geq \cdots \geq x_k \geq 0, x_1 + \cdots + x_k \leq 1\}</m>.
+    </p>
+
+    <paragraphs xml:id="exo_beauzamy">
+      <title>Exercice</title>
+      <p>
+        Sachant que <m>I</m> est un nombre rationnel, mettre au point un algorithme
+        utilisant la reconstruction rationnelle et/ou les restes chinois pour calculer
+        <m>I</m>. On implantera cet algorithme en <em>Sage</em>  et on l'appliquera au cas o&#xf9;
+        <m>[n_1, \ldots, n_{31}] =</m>
+        <me>
+          [9,7,8,11,6,3,7,6,6,4,3,4,1,2,2,1,1,1,2,0,0,0,3,0,0,0,0,1,0,0,0].
+        </me>
+      </p>
+    </paragraphs>
+  </subsection>
+</section>
+

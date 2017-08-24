@@ -1,0 +1,155 @@
+
+
+<section>
+  <title>Variables</title>
+  <subsection xml:id="premierspas_variables">
+    <title>Variables et affectations</title>
+    <p>
+      <em>Sage</em>  note par le signe &#xe9;gal \og <c>=</c> la commande d'affectation
+      d'une valeur &#xe0; une variable.
+      La partie situ&#xe9;e &#xe0; droite du caract&#xe8;re \og <c>=</c>
+      est d'abord &#xe9;valu&#xe9;e puis sa valeur
+      est m&#xe9;moris&#xe9;e dans la variable dont le nom est &#xe0; gauche :
+    </p>
+
+    <pre>
+      y=3 ; y=3*y+1 ; y=3*y+1 ; y                # r\'esultat final 31
+    </pre>
+
+    <p>
+      Les affectations pr&#xe9;c&#xe9;dentes modifient la valeur de la variable <c>y</c>
+      sans afficher de r&#xe9;sultat interm&#xe9;diaire, la derni&#xe8;re de ces
+      quatre commandes affiche la valeur <m>31</m> de la variable <c>y</c> &#xe0; la fin de
+      ces calculs.
+    </p>
+
+    <p>
+      La commande <c>del x</c> supprime l'affectation de la variable <c>x</c>,
+      et la fonction sans param&#xe8;tre <c>reset()</c> r&#xe9;initialise l'ensemble
+      des variables.
+    </p>
+
+    <p>
+      L'affectation de plusieurs variables de fa&#xe7;on parall&#xe8;le
+      ou synchronis&#xe9;e est aussi possible, ces commandes sont &#xe9;quivalentes
+      et ne correspondent en rien aux affectations successives
+      <c>a=b;b=a</c> :
+    </p>
+
+    <sage>
+      <input>
+        a,b = 10,20   # (a,b)=(10,20) et [a,b]=[10,10] possibles
+        a,b = b,a                        # r\'esultat a=20 et b=10
+      </input>
+    </sage>
+
+    <p>
+      Cette derni&#xe8;re affectation est &#xe9;quivalente
+      &#xe0; l'&#xe9;change des valeurs des variables<nbsp /><c>a</c> et <c>b</c>
+      en utilisant une variable interm&#xe9;diaire :
+    </p>
+
+    <sage>
+      <input>
+        temp = a ; a = b ; b = temp   # est \'equivalent \`a a,b=b,a
+      </input>
+    </sage>
+
+    <p>
+      L'affectation multiple affecte la m&#xea;me valeur &#xe0; plusieurs variables,
+      avec une syntaxe de la forme <c>a=b=c=0</c> ;
+      les instructions <c>x+=5</c> et <c>n*=2</c> sont respectivement &#xe9;quivalentes
+      &#xe0; <c>x=x+5</c> et &#xe0; <c>n=n*2</c>.
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>Variables symboliques</title>
+    <p>
+      <em>Sage</em>  distingue les variables au sens informatique des symboles intervenant
+      dans les expressions math&#xe9;matiques formelles. Les variables formelles
+      doivent &#xea;tre d&#xe9;clar&#xe9;es par la fonction <c>var(..)</c>
+      avant d'&#xea;tre employ&#xe9;es :
+    </p>
+
+    <sage>
+      <input>
+        var('a b') ; c = 2  ; u = a*c + b ; u
+      </input>
+      <output>
+        2*a + b
+      </output>
+    </sage>
+
+    <p>
+      L'affectation de <c>u</c> op&#xe8;re sur une variable
+      qui {prend une valeur} au sens informatique
+      du terme, alors que la variable <c>a</c> est une variable symbolique
+      qui {\textit reste} <c>a</c>.
+    </p>
+
+    <p>
+      Par d&#xe9;faut la seule variable symbolique de <em>Sage</em>  est <c>x</c>.
+      L'argument de la fonction <c>var(..)</c> est une cha&#xee;ne
+      de caract&#xe8;res plac&#xe9;e entre parenth&#xe8;ses
+      et d&#xe9;limit&#xe9;e par des guillemets simples <c>'...'</c>
+      ou doubles <c>"..."</c> ; les noms des variables sont alors s&#xe9;par&#xe9;s
+      par des virgules<nbsp />\og <c>,</c> ou par des espaces.
+      Cette fonction remplace l'&#xe9;ventuelle affectation associ&#xe9;e
+      &#xe0; une telle variable par la variable symbolique de m&#xea;me nom, et
+      renvoie comme r&#xe9;sultat cette variable symbolique ou la liste
+      des variables symboliques cr&#xe9;es.
+      La commande <c>del...</c> d&#xe9;truit aussi les variables symboliques.
+      L'instruction <c>automatic_names(True)</c> dans le navigateur internet permet
+      d'utiliser n'importe quel nom comme variable symbolique sans d&#xe9;claration
+      pr&#xe9;alable.
+    </p>
+
+    <p>
+      L'exemple suivant illustre que la commande <c>var('u')</c> cr&#xe9;e et
+      affecte en fait la variable symbolique <m>u</m> &#xe0; la variable
+      informatique <c>u</c> ; ensuite
+      la variable affect&#xe9;e <c>u</c> a pour valeur l'expression symbolique
+      <m>u+2</m> et <em>Sage</em>  n'effectue aucune substitution ni r&#xe9;&#xe9;criture de l'expression
+      finale ; cette forme de code est cependant d&#xe9;conseill&#xe9;e car
+      il n'est ensuite plus possible de r&#xe9;cup&#xe9;rer simplement
+      la variable symbolique <m>u</m> :
+    </p>
+
+    <pre>
+      var('u') ; u=u+1 ; u=u+1 ; u                 # de r\'esultat u+2
+    </pre>
+
+    <p>
+      Cet autre exemple illustre comment
+      &#xe9;changer les valeurs symboliques des variables <c>a</c> et <c>b</c>
+      par des sommes et des diff&#xe9;rences sans variable interm&#xe9;diaire :
+    </p>
+
+    <sage>
+      <input>
+        var ('x y') ; a = x ; b = y        # au d\'ebut a=x et b=y
+        a = a+b ; b = a-b ; a = a-b        # \`a la fin a=y et b=x
+        a, b                               #      ici a=y et b=x
+      </input>
+    </sage>
+
+    <p>
+      Cette derni&#xe8;re commande est &#xe9;quivalente &#xe0; <c>(a,b)</c>
+      et construit l'&#xe9;num&#xe9;ration ou s&#xe9;quence des deux termes <m>a</m> et <m>b</m>
+      &#xe0; la mani&#xe8;re d'un couple.
+    </p>
+
+    <p>
+      Par ailleurs <em>Sage</em>  effectue le test de comparaison entre deux
+      expressions par le double signe d'&#xe9;galit&#xe9; \og <c>==</c> :
+    </p>
+
+    <sage>
+      <input>
+        2+2 == 2^2, 3*3 == 3^3        # de r\'eponse (True, False)
+      </input>
+    </sage>
+  </subsection>
+</section>
+

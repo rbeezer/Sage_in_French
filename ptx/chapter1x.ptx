@@ -1,0 +1,108 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude" >
+  <title>Pr&#xe9;face</title>
+  <p>
+    Ce livre est destin&#xe9; &#xe0; tous ceux qui d&#xe9;sirent utiliser efficacement un
+    syst&#xe8;me de calcul math&#xe9;matique, en particulier le logiciel <em>Sage</em> .
+    Ces syst&#xe8;mes offrent une multitude
+    de fonctionnalit&#xe9;s, et trouver comment r&#xe9;soudre un probl&#xe8;me donn&#xe9;
+    n'est pas toujours facile.
+    Un manuel de r&#xe9;f&#xe9;rence fournit une description analytique et en d&#xe9;tail
+    de chaque fonction du syst&#xe8;me; encore faut-il savoir le nom de la fonction
+    que l'on cherche!
+    Le point de vue adopt&#xe9; ici est compl&#xe9;mentaire, en donnant une vision
+    globale et synth&#xe9;tique, avec un accent sur les math&#xe9;matiques sous-jacentes,
+    les classes de probl&#xe8;mes que l'on sait r&#xe9;soudre et les algorithmes
+    correspondants.
+  </p>
+
+  <p>
+    La premi&#xe8;re partie, plus sp&#xe9;cifique au logiciel <em>Sage</em> ,
+    constitue une prise en main du syst&#xe8;me.
+    Cette partie
+    se veut accessible aux &#xe9;l&#xe8;ves de lyc&#xe9;e, et donc a fortiori aux
+    &#xe9;tudiants de BTS et de licence.
+    Les autres parties s'adressent &#xe0; des &#xe9;tudiants au niveau agr&#xe9;gation,
+    et sont d'ailleurs organis&#xe9;es en suivant le programme de l'&#xe9;preuve de
+    mod&#xe9;lisation de l'agr&#xe9;gation de math&#xe9;matiques.
+    Contrairement &#xe0; un manuel de r&#xe9;f&#xe9;rence, les concepts math&#xe9;matiques
+    sont clairement &#xe9;nonc&#xe9;s avant d'illustrer leur mise en oeuvre avec
+    <em>Sage</em> . Ce livre est donc aussi un livre sur les math&#xe9;matiques.
+  </p>
+
+  <p>
+    Pour illustrer cet ouvrage, le choix s'est port&#xe9; naturellement vers
+    <em>Sage</em> , car c'est un
+    logiciel libre, que tout un chacun peut librement utiliser, modifier
+    et redistribuer.
+    Ainsi l'&#xe9;l&#xe8;ve qui a appris <em>Sage</em>  au lyc&#xe9;e pourra l'utiliser quelle que
+    soit sa voie professionnelle: en licence, Master, doctorat, en &#xe9;cole
+    d'ing&#xe9;nieur, en entreprise, ...
+    <em>Sage</em>  est un logiciel encore jeune par rapport
+    aux logiciels concurrents, et malgr&#xe9; ses capacit&#xe9;s
+    d&#xe9;j&#xe0; &#xe9;tendues, comporte encore de nombreuses <em>bogues</em>.
+    Mais par sa communaut&#xe9; tr&#xe8;s active de d&#xe9;veloppeurs, <em>Sage</em>  &#xe9;volue
+    tr&#xe8;s vite. Chaque utilisateur de <em>Sage</em>  peut rapporter une bogue <mdash /> et
+    &#xe9;ventuellement sa solution <mdash /> sur \url{trac.sagemath.org} ou via la
+    liste \url{sage-support}.
+  </p>
+
+  <p>
+    Pour r&#xe9;diger ce livre, nous avons utilis&#xe9; la version 4.4.4 de <em>Sage</em> .
+    N&#xe9;anmoins, les exemples doivent fonctionner avec toute version ult&#xe9;rieure.
+    Par contre, certaines affirmations peuvent ne plus &#xea;tre v&#xe9;rifi&#xe9;es,
+    comme par exemple le fait que <em>Sage</em>  utilise
+    Maxima pour &#xe9;valuer des int&#xe9;grales num&#xe9;riques.
+  </p>
+
+  <p>
+    Quand j'ai propos&#xe9; en d&#xe9;cembre 2009
+    &#xe0; Alexandre Casamayou, Guillaume Connan, Thierry Dumont,
+    Laurent Fousse, Fran&#xe7;ois Maltey, Matthias Meulien, Marc Mezzarobba,
+    Cl&#xe9;ment Pernet et Nicolas Thi&#xe9;ry d'&#xe9;crire un livre sur <em>Sage</em> ,
+    tous ont r&#xe9;pondu pr&#xe9;sent, malgr&#xe9; une charge de travail d&#xe9;j&#xe0;
+    importante. Je tiens &#xe0; les remercier, notamment pour le respect du planning
+    serr&#xe9; que j'avais fix&#xe9;.
+  </p>
+
+  <p>
+    Tous les auteurs remercient les personnes suivantes
+    qui ont relu une version pr&#xe9;liminaire de
+    ce livre<nbsp />: Ga&#xeb;tan Bisson, Fran&#xe7;oise Jung;
+    ainsi qu'Emmanuel Thom&#xe9; pour son aide pr&#xe9;cieuse
+    lors de la r&#xe9;alisation de ce livre, et Sylvain Chevillard pour ses
+    conseils typographiques.
+  </p>
+
+  <p>
+    En r&#xe9;digeant ce livre, nous avons beaucoup appris sur <em>Sage</em> , nous avons
+    bien s&#xfb;r rencontr&#xe9; quelques bogues, dont certaines sont d&#xe9;j&#xe0;
+    corrig&#xe9;es. Nous esp&#xe9;rons que ce livre sera utile &#xe0; d'autres, lyc&#xe9;ens,
+    &#xe9;tudiants, professeurs, ing&#xe9;nieurs, chercheurs, ...
+    Cette premi&#xe8;re version comportant certainement de nombreuses imperfections,
+    nous attendons en retour du lecteur qu'il nous fasse part de toute erreur,
+    critique ou suggestion pour une version ult&#xe9;rieure; merci d'utiliser
+    pour cela la page \url{sagebook.gforge.inria.fr}.
+  </p>
+  <tabular>
+    <row>
+      <cell>Villers-l&#xe8;s-Nancy, France</cell>
+    </row>
+    <row>
+      <cell>juillet 2010</cell>
+    </row>
+  </tabular>
+  <tabular>
+    <row>
+      <cell>Paul Zimmermann</cell>
+    </row>
+  </tabular>
+  <p>
+    \hypersetup{bookmarksopen=true}
+    \part{Prise en main du logiciel}
+    \hypersetup{bookmarksopen=false}
+    {Calcul math&#xe9;matique avec Sage, &#xa7;\thesection}
+  </p>
+</chapter>
+

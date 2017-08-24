@@ -1,0 +1,36 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="integration">
+  <title>Int&#xe9;gration num&#xe9;rique et &#xe9;quations diff&#xe9;rentielles</title>
+  <introduction>
+    <p>
+      Ce chapitre traite le calcul num&#xe9;rique d'int&#xe9;grales
+      (<xref ref="intnum">&#xa7;</xref>) ainsi que la r&#xe9;solution num&#xe9;rique
+      d'&#xe9;quations diff&#xe9;rentielles (<xref ref="equadiff">&#xa7;</xref>) avec <em>Sage</em> . Nous
+      rappelons des bases th&#xe9;oriques des m&#xe9;thodes d'int&#xe9;gration,
+      puis nous d&#xe9;taillons les fonctions
+      disponibles et leur usage (<xref ref="intnum_dispos">&#xa7;</xref>).
+    </p>
+
+    <p>
+      Le calcul symbolique d'int&#xe9;grales avec <em>Sage</em>  a &#xe9;t&#xe9; trait&#xe9; pr&#xe9;c&#xe9;demment
+      (<xref ref="sec_calculus_integration">&#xa7;</xref>), et ne sera que mentionn&#xe9;
+      rapidement ici comme une possibilit&#xe9; de calculer la valeur num&#xe9;rique
+      d'une int&#xe9;grale. Cette approche <q>symbolique puis num&#xe9;rique</q>,
+      lorsqu'elle est possible, constitue une des forces de <em>Sage</em>  et est &#xe0;
+      privil&#xe9;gier car le nombre de calculs effectu&#xe9;s, et donc d'erreurs
+      d'arrondis est en g&#xe9;n&#xe9;ral moindre que pour les m&#xe9;thodes d'int&#xe9;gration
+      num&#xe9;rique.
+    </p>
+
+    <p>
+      Nous donnons une rapide introduction aux m&#xe9;thodes classiques de
+      r&#xe9;solution d'&#xe9;quations diff&#xe9;rentielles, puis le traitement d'un exemple
+      (<xref ref="equadiff_exemple">&#xa7;</xref>) d&#xe9;butera l'inventaire des
+      fonctions disponibles en <em>Sage</em>  (<xref ref="equadiff_dispos">&#xa7;</xref>).
+    </p>
+  </introduction>
+  <xi:include  href="intnum.ptx" />
+  <xi:include  href="equadiff.ptx" />
+</chapter>
+

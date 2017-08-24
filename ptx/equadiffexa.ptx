@@ -1,0 +1,10 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="equadiffexa">
+  <title>&#xc9;quations diff&#xe9;rentielles</title>
+  <xi:include  href="section10-1.ptx" />
+  <xi:include  href="section10-2.ptx" />
+  <xi:include  href="section10-3.ptx" />
+  <xi:include  href="section10-4.ptx" />
+</chapter>
+

@@ -1,0 +1,40 @@
+
+
+<section>
+  <title>Introduction</title>
+  <p>
+    Si la m&#xe9;thode de George P&#xf3;lya semble peu efficace, on
+    peut alors appeler <em>Sage</em>  &#xe0; la rescousse. On peut, si on
+    le souhaite, l'invoquer afin d'obtenir une &#xe9;tude qualitative<nbsp />:<nbsp />en
+    effet, ses outils num&#xe9;riques et graphiques guideront
+    l'intuition. C'est l'objet de la <xref ref="equadiff">section</xref> du chapitre
+    consacr&#xe9; au calcul num&#xe9;rique.
+  </p>
+
+  <p>
+    On peut pr&#xe9;f&#xe9;rer r&#xe9;soudre les &#xe9;quations diff&#xe9;rentielles exactement<nbsp />:<nbsp /><em>Sage</em>  peut alors
+    <em>parfois</em> y aider en donnant directement une r&#xe9;ponse
+    formelle comme nous le verrons dans ce chapitre.
+  </p>
+
+  <p>
+    Dans la plupart des cas, il faudra passer par une manipulation savante
+    de ces &#xe9;quations pour aider <em>Sage</em> . Il faudra veiller dans ces
+    deux derniers cas &#xe0; garder en t&#xea;te que la solution attendue d'une
+    &#xe9;quation diff&#xe9;rentielle est une <em>fonction</em> d&#xe9;rivable sur un certain
+    intervalle mais que <em>Sage</em> , lui, manipule des <em>expressions</em> sans
+    domaine de d&#xe9;finition. La machine aura donc besoin d'une intervention
+    humaine pour aller vers une solution rigoureuse.
+  </p>
+
+  <p>
+    Nous &#xe9;tudierons dans ce chapitre les g&#xe9;n&#xe9;ralit&#xe9;s sur les &#xe9;quations
+    diff&#xe9;rentielles ordinaires d'ordre 1 puis quelques cas particuliers
+    comme les &#xe9;quations lin&#xe9;aires, les
+    &#xe9;quations &#xe0; variables s&#xe9;parables, les &#xe9;quations homog&#xe8;nes, une &#xe9;quation
+    d&#xe9;pendant d'un param&#xe8;tre puis de mani&#xe8;re plus sommaire les &#xe9;quations
+    d'ordre 2 ainsi qu'un exemple d'&#xe9;quation aux d&#xe9;riv&#xe9;es partielles. Nous
+    terminerons par l'utilisation de la transform&#xe9;e de Laplace.
+  </p>
+</section>
+

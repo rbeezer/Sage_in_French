@@ -1,0 +1,40 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="linalg">
+  <title>Alg&#xe8;bre lin&#xe9;aire</title>
+  <introduction>
+    <p>
+      \bottomrule
+      \end{tabular}
+    </p>
+
+    <p>
+      \DefineShortVerb{\|}
+      \VerbatimFootnotes
+    </p>
+
+    <blockquote>
+    Ce chapitre traite de l'alg&#xe8;bre lin&#xe9;aire exacte et symbolique, c'est-&#xe0;-dire sur
+    des anneaux 
+    propres au calcul formel, tels que <m>\Z</m>, des corps
+    finis, des anneaux de polyn&#xf4;mes, ... L'alg&#xe8;bre lin&#xe9;aire num&#xe9;rique est
+    trait&#xe9;e quant &#xe0; elle au <xref ref="linsolve">chapitre</xref>. Nous pr&#xe9;sentons les
+    constructions sur les matrices et leurs espaces ainsi que les
+    op&#xe9;rations 
+     de base
+    (<xref ref="sec_linalg_const">&#xa7;</xref>), puis les diff&#xe9;rents calculs possibles sur
+    ces matrices, regroup&#xe9;s en deux th&#xe8;mes: ceux li&#xe9;s &#xe0; l'&#xe9;limination de Gauss
+    et aux transformations par &#xe9;quivalence &#xe0; gauche
+    (<xref ref="sec_linalg_gauss">&#xa7;</xref> et <xref ref="sec_linalg_syst">&#xa7;</xref>), et ceux li&#xe9;s aux valeurs et espaces 
+    propres et aux transformations de similitude
+    (<xref ref="sec_linalg_similitude">&#xa7;</xref>). 
+    On peut trouver dans les ouvrages de Gantmacher<nbsp /><nbsp /><xref ref="Gantmacher_1959_TM" />, de
+    von zur Gathen et Gerhard<nbsp /><nbsp /><xref ref="voGe03" />, de Lombardi et
+    Journa&#xef;di<nbsp /><nbsp /><xref ref="LomAbd_04_Methodes" /> un traitement approfondi des notions
+    abord&#xe9;es dans ce chapitre.
+    </blockquote>
+  </introduction>
+  <xi:include  href="sec_linalg_const.ptx" />
+  <xi:include  href="section9-2.ptx" />
+</chapter>
+

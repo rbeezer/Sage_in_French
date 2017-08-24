@@ -1,0 +1,183 @@
+
+
+<section>
+  <title>Courbes en 3D</title>
+  <p>
+    Pour le trac&#xe9; de surfaces en 3 dimensions, on dispose de la commande
+    <c>plot3d(f(x,y),(x,a,b),(y,c,d))</c>. La surface obtenue est alors visualis&#xe9;e
+    par d&#xe9;faut gr&#xe2;ce &#xe0; l'application <em>Jmol</em> ; cependant, on peut &#xe9;galement
+    utiliser le <em>Tachyon 3D Ray Tracer</em> gr&#xe2;ce &#xe0; l'argument optionnel
+    suivant <c>g.show(viewer='tachyon')</c>.
+    Voici un premier exemple de trac&#xe9; d'une surface param&#xe9;tr&#xe9;e (Fig. <xref ref="gr_plot3d"></xref>) :
+  </p>
+
+  <sage>
+    <input>
+      u, v = var('u, v')
+      h = lambda u,v: u^2 + 2*v^2
+      f = plot3d(h, (u,-1,1), (v,-1,1), aspect_ratio=[1,1,1])
+    </input>
+  </sage>
+
+  <figure xml:id="gr_plot3d" >
+    <caption>La surface param&#xe9;tr&#xe9;e par <m>(u,v)\mapsto u^2+2v^2</m>.</caption>
+    <image width="50%" source="images/3d_simple_redim.png" />
+  </figure>
+
+  <p>
+    La visualisation de la surface repr&#xe9;sentative d'une fonction de deux variables
+    permet de guider l'&#xe9;tude d'une telle fonction, comme nous allons le voir dans
+    l'exemple suivant.
+  </p>
+
+  <paragraphs>
+    <title>Exemple</title>
+    <p>
+      (<em>Une fonction discontinue dont les d&#xe9;riv&#xe9;es directionnelles existent partout !</em>)
+      &#xc9;tudier l'existence en <m>(0,0)</m> des d&#xe9;riv&#xe9;es directionnelles et la continuit&#xe9;
+      de l'application <m>f</m> de <m>\R^2</m> dans <m>\R</m> d&#xe9;finie par :
+      <me>
+        f(x,y)=\begin{cases}\frac{x^2y}{x^4+y^2} \amp  \mbox{ si }  (x,y)\neq (0,0),\\
+        0\amp  \mbox{ si }  (x,y)= (0,0).
+        \end{cases}
+      </me>
+    </p>
+
+    <p>
+      Pour <m>H=\left(\begin{matrix}\cos \theta\\
+      \sin \theta
+      \end{matrix} \right)</m>, l'application
+      <m>\varphi(t)=f(tH)=f(t\cos \theta,t\sin \theta)</m>
+      est d&#xe9;rivable en <m>t=0</m> pour toute valeur de <m>\theta</m> ; en effet,
+    </p>
+
+    <sage>
+      <input>
+        f(x, y) = x^2 * y / (x^4 + y^2)
+        var('t theta')
+        limit(f(t * cos(theta), t * sin(theta)) / t, t=0)
+      </input>
+      <output>
+        cos(theta)^2/sin(theta)
+      </output>
+    </sage>
+
+    <p>
+      Donc <m>f</m> admet en <m>(0,0)</m> des d&#xe9;riv&#xe9;es directionnelles suivant n'importe quel
+      vecteur.
+      Pour mieux se repr&#xe9;senter la surface repr&#xe9;sentative de <m>f</m>, on peut commencer
+      par chercher quelques lignes de niveau ; par exemple la ligne de
+      niveau associ&#xe9;e &#xe0; la valeur <m>\frac12</m> :
+    </p>
+
+    <sage>
+      <input>
+        solve(f(x,y) == 1/2, y)
+      </input>
+      <output>
+        [y == x^2]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        a = var('a'); h = f(x, a*x^2).simplify_rational(); h
+      </input>
+      <output>
+        a/(a^2 + 1)
+      </output>
+    </sage>
+
+    <p>
+      Le long de la parabole d'&#xe9;quation <m>y=ax^2</m> priv&#xe9;e de l'origine, <m>f</m> est constante &#xe0;
+      <m>f(x,ax^2)=\frac{a}{1+a^2}</m>.
+      On trace alors la fonction <m>h\colon a\longmapsto \frac{a}{1+a^2}</m> :
+    </p>
+
+    <sage>
+      <input>
+        plot(h, a, -4, 4)
+      </input>
+    </sage>
+
+    <figure xml:id="gr_fonctionauxiliaire" >
+      <caption>Une coupe verticale de la surface &#xe9;tudi&#xe9;e.</caption>
+      <image width="60%" source="images/f_auxiliaire.png" />
+    </figure>
+
+    <p>
+      La fonction <m>h</m> atteint son maximum en <m>a=1</m> et son minimum en <m>a=-1</m>.
+      La restriction de <m>f</m> &#xe0; la parabole d'&#xe9;quation <m>y=x^2</m> correspond &#xe0; la \og ligne
+      de cr&#xea;te\fg qui se trouve &#xe0; l'altitude <m>\frac12</m> ;
+      quant &#xe0; la restriction de <m>f</m> &#xe0; la parabole d'&#xe9;quation <m>y=-x^2</m>, elle correspond au
+      fond du \og thalweg\fg qui se trouve &#xe0; l'altitude <m>-\frac12</m>.
+      En conclusion, aussi proche que l'on soit de <m>(0,0)</m>, on peut trouver des points
+      en lesquels <m>f</m> prend respectivement les valeurs <m>\frac12</m> et <m>-\frac12</m>.
+      Par cons&#xe9;quent, la fonction n'est pas continue &#xe0; l'origine.
+    </p>
+
+    <pre>
+      p = plot3d(f(x, y), (x,-2,2), (y,-2,2), plot_points=[150,150])
+    </pre>
+
+    <figure xml:id="gr_surface" >
+      <caption>La surface repr&#xe9;sentative de  <m>f\colon (x,y)\mapsto \frac{x^2y}{x^4+y^2}</m></caption>
+      <image width="60%" source="images/3d_f_discont_redim.png" />
+    </figure>
+
+    <p>
+      On aurait &#xe9;galement pu tracer des plans horizontaux pour visualiser les lignes
+      de niveau de cette fonction en ex&#xe9;cutant :
+    </p>
+
+    <pre>
+      for i in range(1,4):
+          p += plot3d(-0.5 + i / 4, (x, -2, 2), (y, -2, 2),\
+                       color=hue(i / 10), opacity=.1)
+    </pre>
+  </paragraphs>
+  <p>
+    Parmi les autres commandes de trac&#xe9; 3D, citons <c>implicit_plot3d</c> qui permet de
+    tracer des surfaces d&#xe9;finies par une &#xe9;quation implicite de la forme <m>f(x,y,z)=0</m>.
+    Tra&#xe7;ons par exemple la surface de Cassini d&#xe9;finie par l'&#xe9;quation implicite :
+    <me>
+      {\left(a^{2} + x^{2} + y^{2}\right)}^{2} = 4 \, a^{2} x^{2} + z^{4}.
+    </me>
+  </p>
+
+  <pre>
+    var('x, y, z'); a = 1
+    h = lambda x, y, z:(a^2 + x^2 + y^2)^2 - 4*a^2*x^2-z^4
+    f = implicit_plot3d(h, (x, -3, 3), (y, -3, 3), (z, -2, 2),\
+                        plot_points=100, adaptative=True)
+  </pre>
+
+  <figure xml:id="gr_cassini" >
+    <caption>La surface de Cassini</caption>
+    <image width="45%" source="images/3d_cassini_redim.png" />
+  </figure>
+
+  <p>
+    Enfin donnons un exemple de trac&#xe9; de courbe dans l'espace &#xe0; l'aide de la
+    commande <c>line3d</c> :
+  </p>
+
+  <pre>
+    g1 = line3d([(-10*cos(t)-2*cos(5*t)+15*sin(2*t),\
+         -15*cos(2*t)+10*sin(t)-2*sin(5*t),\
+          10*cos(3*t)) for t in srange(0,6.4,.1)],radius=.5)
+  </pre>
+
+  <figure xml:id="gr_courbe3d" >
+    <caption>Un noeud dans l'espace</caption>
+    <image width="45%" source="images/3d_courbe_redim.png" />
+  </figure>
+
+  <p>
+    \hypersetup{bookmarksopen=true}
+    \part{Calcul num&#xe9;rique}
+    \hypersetup{bookmarksopen=false}
+    {Calcul math&#xe9;matique avec Sage, &#xa7;\thesection}
+  </p>
+</section>
+

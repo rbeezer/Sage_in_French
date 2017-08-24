@@ -1,0 +1,56 @@
+
+
+<section xml:id="premierspas_classes">
+  <title>Classes et classes normales</title>
+  <p>
+    Les sections suivantes
+    pr&#xe9;sentent la notion de classe d'objets fondamentale pour tout syst&#xe8;me de calcul
+    formel.
+    On suit ici la pr&#xe9;sentation qui en est faite dans la deuxi&#xe8;me partie du premier chapitre de
+    l'ouvrage <url href="https://gforge.inria.fr/projects/cfmd/">Calcul formel : mode</url>d'emploi. Exemples en Maple de Philippe Dumas, Claude Gomez,
+    Bruno Salvy et Paul Zimmermann<nbsp /><xref ref="DGSZ" />.
+  </p>
+
+  <p>
+    Chaque fonction <em>Sage</em>  s'applique &#xe0; (et produit) une classe bien d&#xe9;finie
+    d'expressions. Reconna&#xee;tre qu'une expression appartient &#xe0; telle ou telle classe
+    permet du m&#xea;me coup de savoir quelles fonctions on peut lui appliquer.
+  </p>
+
+  <p>
+    Un probl&#xe8;me pour lequel cette reconnaissance est essentielle est celui de
+    la simplification d'expressions. C'est autour de ce probl&#xe8;me que sont d&#xe9;finies
+    les principales classes d'expressions des syst&#xe8;mes de calcul formel. En effet,
+    d&#xe8;s qu'il est possible de d&#xe9;terminer si une expression appartenant &#xe0; une classe
+    est nulle ou non, il est possible d'effectuer des divisions dans cette classe.
+    Autrement, tous les calculs faisant intervenir une division
+    deviennent hasardeux.
+  </p>
+
+  <p>
+    Une classe est dite normale
+    lorsque deux expressions repr&#xe9;sentant le m&#xea;me objet math&#xe9;matique
+    sont n&#xe9;cessairement identiques.
+    Les classes &#xe9;l&#xe9;mentaires d&#xe9;crites ci-dessous sont des classes normales.
+    Cependant, la repr&#xe9;sentation id&#xe9;ale n'est pas toujours
+    la forme normale. Dans le cas des polyn&#xf4;mes par exemple, la repr&#xe9;sentation
+    d&#xe9;velopp&#xe9;e est une forme normale, mais la repr&#xe9;sentation factoris&#xe9;e permet des
+    calculs de pgcd bien plus rapides.
+    Ce genre d'exemple am&#xe8;ne les syst&#xe8;mes de
+    calcul formel &#xe0; un compromis. Un certain nombre de simplifications basiques,
+    comme la r&#xe9;duction des rationnels ou la multiplication par z&#xe9;ro, sont effectu&#xe9;es
+    automatiquement ; les autres r&#xe9;&#xe9;critures sont laiss&#xe9;es &#xe0; l'initiative de
+    l'utilisateur auquel des commandes sp&#xe9;cialis&#xe9;es sont propos&#xe9;es.
+  </p>
+
+  <p>
+    Dans <em>Sage</em> , les principales fonctions permettant de r&#xe9;&#xe9;crire des expressions
+    sont <c>expand</c>, <c>combine</c>, <c>collect</c> et <c>simplify</c>. Pour
+    bien utiliser ces fonctions, il faut savoir quel type de transformations elles
+    effectuent et &#xe0; quelle classe d'expressions ces transformations s'appliquent.
+    Ainsi, l'usage aveugle de la fonction <c>simplify</c> peut conduire &#xe0; des
+    r&#xe9;sultats faux. Des variantes de <c>simplify</c> permettent alors de
+    pr&#xe9;ciser la simplification &#xe0; effectuer.
+  </p>
+</section>
+

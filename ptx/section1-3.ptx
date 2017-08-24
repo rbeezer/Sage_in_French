@@ -1,0 +1,331 @@
+
+
+<section>
+  <title>Syntaxe g&#xe9;n&#xe9;rale</title>
+  <p>
+    Les instructions &#xe9;l&#xe9;mentaires de <em>Sage</em>  sont
+    en g&#xe9;n&#xe9;ral trait&#xe9;es ligne par ligne.
+    L'interpr&#xe9;teur de commandes consid&#xe8;re le caract&#xe8;re di&#xe8;se
+    \og <c><hash /></c>
+    comme un d&#xe9;but de commentaire et ignore le texte saisi jusqu'&#xe0;
+    la fin de la ligne.
+  </p>
+
+  <p>
+    Le point-virgule \og <c>;</c> s&#xe9;pare les instructions
+    plac&#xe9;es sur une m&#xea;me ligne :
+  </p>
+
+  <sage>
+    <input>
+      2*3 ; 3*4 ; 4*5            # un commentaire, 3 r\'esultats
+    </input>
+    <output>
+      6
+        12
+        20
+    </output>
+  </sage>
+
+  <p>
+    Une commande du mode terminal
+    peut &#xea;tre saisie sur plusieurs lignes en faisant pr&#xe9;c&#xe9;der les retours &#xe0;
+    la ligne interm&#xe9;diaires d'une contre-oblique \og <c>\</c> ;
+    ces retours &#xe0; la ligne sont consid&#xe9;r&#xe9;s comme un simple blanc :
+  </p>
+
+  <sage>
+    <input>
+      123 \verb!\!
+      + 345                                  # de r\'esultat 468
+    </input>
+  </sage>
+
+  <p>
+    Un identificateur <mdash /><nbsp />c'est-&#xe0;-dire un nom de variable, de fonction, etc.<nbsp /><mdash />
+    est constitu&#xe9; uniquement de lettres, de chiffres
+    ou du caract&#xe8;re de soulignement <c>_</c>
+    sans commencer par un chiffre.
+    Les identificateurs doivent &#xea;tre diff&#xe9;rents des mots-clefs du langage ;
+    de fa&#xe7;on anecdotique la liste des mots-cl&#xe9;s
+    s'obtient apr&#xe8;s le chargement d'une biblioth&#xe8;que sp&#xe9;cialis&#xe9;e
+    de <em>Python</em>  dans <em>Sage</em>  :
+  </p>
+
+  <sage>
+    <input>
+      import keyword ; keyword.kwlist
+    </input>
+  </sage>
+
+  <p>
+    Ces mots-clefs forment le noyau du langage <em>Python</em> .
+    <ul>
+      <li>
+        <p>
+          <c>while</c>, <c>for...in</c> et <c>if...elif...else</c>
+          d&#xe9;crivent boucles et tests,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>continue</c>, <c>break</c>,
+          <c>try...except...finally</c> et <c>raise....</c>
+
+
+          {\raggedleft modifient le d&#xe9;roulement des programmes,
+
+          }
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>def</c>, <c>lambda</c>, <c>return</c> et <c>global</c>
+          d&#xe9;finissent les fonctions,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>and</c>, <c>or</c>, <c>not</c> et <c>is</c>
+          sont les op&#xe9;rateurs logiques,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>del</c> d&#xe9;truit toutes les propri&#xe9;t&#xe9;s associ&#xe9;es &#xe0; une variable,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>print</c> affiche ses arguments, et
+          <c>assert</c> aide au d&#xe9;bogage,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>class</c> et <c>with</c> interviennent en programmation objet,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>from...import...as...</c> appelle une biblioth&#xe8;que,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>exec...in</c> interpr&#xe8;te une commande,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>pass</c> est l'instruction vide et
+          <c>yield</c> le r&#xe9;sultat d'un it&#xe9;rateur.
+        </p>
+      </li>
+    </ul>
+  </p>
+
+  <p>
+    Par ailleurs ces termes jouent un r&#xf4;le particulier m&#xea;me s'ils ne sont pas
+    d&#xe9;finis dans le noyau de <em>Python</em>  :
+    <ul>
+      <li>
+        <p>
+          <c>None</c>, <c>True</c> et <c>False</c>
+          sont des constantes pr&#xe9;d&#xe9;finies du syst&#xe8;me,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <m>\begin{array}{r@{\,}lr@{\,}l}
+            \texttt{pi} \amp =\pi\text{,} 
+          \amp  \texttt{euler\_gamma}
+          \amp \displaystyle
+          =\gamma=\lim_{n\to+\infty}\sum_{k=1}^n \frac 1 k - \ln n\text{,} \\
+            \texttt{I}  \amp ={ i} \in \C\text{,} 
+          \amp  \texttt{golden\_ratio}\amp \displaystyle=\frac{1+\sqrt 5}2\text{,}  \\
+            \texttt{e}  \amp =\exp(1)
+          \amp  \text{ ~et~ }  \texttt{catalan}
+          \amp =\displaystyle\lim_{n\to+\infty}\sum_{k=0}^{n}\frac{(-1)^k}{2k+1}
+          \end{array}</m>
+
+          {\raggedleft repr&#xe9;sentent les constantes math&#xe9;matiques,
+
+          }
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>infinity</c> et les deux voyelles &#xe0; la suite <c>oo</c>
+          correspondent &#xe0; l'infini <m>\infty</m>,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          et la commande
+          interactive <c>quit</c> quitte la session de <em>Sage</em>  en cours.
+        </p>
+      </li>
+    </ul>
+  </p>
+
+  <p>
+    Les fonctions de <em>Sage</em>  comme <c>cos(..)</c>
+    ou <c>integrate(..)</c> sont cod&#xe9;es en <em>Python</em> .
+    Le bon fonctionnement de <em>Sage</em>  impose de ne pas utiliser
+    ces identificateurs comme des variables au risque de d&#xe9;t&#xe9;riorer
+    en profondeur le syst&#xe8;me.
+  </p>
+
+  <p>
+    Ces caract&#xe8;res jouent un r&#xf4;le sp&#xe9;cial dans <em>Sage</em>  :
+    <ul>
+      <li>
+        <p>
+          <c>,</c> et <c>;</c> s&#xe9;parent les arguments et les instructions,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>\string:</c>
+          commence un bloc d'instructions, et construit des sous-listes,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>.</c> est le s&#xe9;parateur d&#xe9;cimal
+          et effectue l'acc&#xe8;s aux m&#xe9;thodes des objets,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>=</c> effectue l'affectation des variables,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>+</c>, <c>-</c>, <c>*</c> et <c>/</c>
+          d&#xe9;finissent les quatre op&#xe9;rations,
+          et <c>\^</c> ou <c>**</c>, la puissance,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c><percent /></c> et <c>//</c> calculent reste et quotient
+          des divisions euclidiennes,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>+=</c>, <c>-=</c>, <c>*=</c>, <c>/=</c>,
+          <c>\^=</c> et <c>**=</c> modifient directement une variable,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>&lt;</c>, <c>&lt;=</c>, <c>></c> et <c>>=</c>
+          effectuent les comparaisons,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>==</c>, <c>!=</c>, <c>&lt;></c> et <c>is</c>
+          testent les &#xe9;galit&#xe9;s,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c><ampersand /></c>, <c>|</c>, <c>\^\^</c>, <c>&lt;&lt;</c> et <c>>></c>
+          op&#xe8;rent sur les nombres binaires,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c><hash /></c> commence des commentaires jusqu'&#xe0; la fin de la ligne,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>[..]</c> d&#xe9;finit les listes et acc&#xe8;de &#xe0; leurs &#xe9;l&#xe9;ments,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>(..)</c> regroupe des arguments et construit les &#xe9;num&#xe9;rations immuables,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>\{..\string:..\}</c> construit les dictionnaires,
+          <c>\</c> est le caract&#xe8;re d'&#xe9;chappement,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>@</c> est associ&#xe9; aux d&#xe9;corateurs des fonctions,
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>?</c> appelle l'aide en ligne,
+          <c><dollar /></c> n'intervient pas dans le langage, et
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <c>_</c> et <c>__</c> reprennent les deux derniers r&#xe9;sultats.
+        </p>
+      </li>
+    </ul>
+  </p>
+
+  <p>
+    L'&#xe9;valuation d'une fonction impose de placer ses &#xe9;ventuels arguments
+    entre parent&#xe8;ses, comme dans <c>cos(pi)</c>
+    ou dans la fonction sans argument <c>reset()</c>.
+    Cependant ces parenth&#xe8;ses sont superflues pour
+    les arguments d'une commande :
+    les instructions <c>print(6*7)</c> et <c>print 6*7</c>
+    sont &#xe9;quivalentes.
+    Le nom d'une fonction sans argument ni parenth&#xe8;se repr&#xe9;sente la fonction
+    elle-m&#xea;me et n'effectue aucun calcul.
+  </p>
+
+  <p>
+    En programmation objet,
+    une m&#xe9;thode <c>meth</c> associ&#xe9;e &#xe0; un objet <c>obj</c>
+    est une fonction qui sp&#xe9;cialis&#xe9;e sur ce type de donn&#xe9;es.
+    <em>Python</em>  est un langage objet dont la syntaxe d'appel d'une m&#xe9;thode
+    est <c>obj.meth(...)</c> ; dans certains cas la commande
+    <c>meth(obj,...)</c> est &#xe9;quivalente.
+  </p>
+</section>
+

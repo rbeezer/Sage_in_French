@@ -1,0 +1,214 @@
+
+
+<section xml:id="sec_numbertheory_isprime">
+  <title>Primalit&#xe9;</title>
+  <p>
+    Tester si un entier est premier est une des op&#xe9;rations fondamentales d'un
+    logiciel de calcul symbolique. M&#xea;me si l'utilisateur ne s'en rend pas compte,
+    de tels tests sont effectu&#xe9;s plusieurs milliers de fois par seconde par le
+    logiciel. Par exemple pour factoriser un polyn&#xf4;me de <m>\Z[x]</m> on commence
+    par le factoriser dans <m>\F_p[x]</m> pour un nombre premier <m>p</m>, il faut donc
+    trouver un tel <m>p</m>.
+  </p>
+
+  <p>
+    Deux grandes classes de tests de primalit&#xe9; existent. Les plus efficaces
+    sont des tests de <em>pseudo-primalit&#xe9;</em>, et sont en g&#xe9;n&#xe9;ral bas&#xe9;s
+    sur des variantes du petit th&#xe9;or&#xe8;me de Fermat, qui dit que si <m>p</m> est
+    premier, alors tout entier <m>0 \lt  a \lt  p</m> est un g&#xe9;n&#xe9;rateur du groupe
+    multiplicatif <m>(\Z/p\Z)^*</m>, donc <m>a^{p-1} \equiv 1 \bmod p</m>.
+    On utilise en g&#xe9;n&#xe9;ral une petite valeur de <m>a</m> (<m>2,3,\ldots</m>) pour
+    acc&#xe9;l&#xe9;rer le calcul de <m>a^{p-1} \bmod p</m>.
+    Si <m>a^{p-1} \neq 1 \bmod p</m>, <m>p</m> n'est certainement pas
+    premier. Si <m>a^{p-1} \equiv 1 \bmod p</m>, on ne peut rien conclure: on dit
+    alors que <m>p</m> est pseudo-premier en base <m>a</m>. L'intuition est qu'un entier <m>p</m>
+    qui est pseudo-premier pour plusieurs bases a de grandes chances d'&#xea;tre
+    premier (voir cependant ci-dessous).
+    Les tests de pseudo-primalit&#xe9; ont en commun que quand ils renvoient
+    <c>False</c>, le nombre est certainement compos&#xe9;, par contre quand ils
+    renvoient <c>True</c>, on ne peut rien conclure.
+  </p>
+
+  <p>
+    La seconde classe est constitu&#xe9;e des tests de <em>vraie primalit&#xe9;</em>.
+    Ces tests renvoient toujours une r&#xe9;ponse correcte, mais peuvent &#xea;tre
+    moins efficaces que les tests de pseudo-primalit&#xe9;, notamment pour les
+    nombres qui sont pseudo-premiers en de nombreuses bases, et en particulier
+    pour les nombres vraiment premiers.
+    De nombreux logiciels ne fournissent qu'un test de pseudo-primalit&#xe9;,
+    voire pire le nom de la fonction correspondante (<c>isprime</c> par exemple)
+    laisse croire &#xe0; l'utilisateur que c'est un test de (vraie) primalit&#xe9;.
+    <em>Sage</em>  fournit deux fonctions distinctes: <c>is_pseudoprime</c> pour la
+    pseudo-primalit&#xe9;, et <c>is_prime</c> pour la primalit&#xe9;:
+  </p>
+
+  <sage>
+    <input>
+      p=previous_prime(2^400)
+      %timeit is_pseudoprime(p)
+    </input>
+    <output>
+      625 loops, best of 3: 1.07 ms per loop
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit is_prime(p)
+    </input>
+    <output>
+      5 loops, best of 3: 485 ms per loop
+    </output>
+  </sage>
+
+  <p>
+    Nous voyons sur cet exemple que le test de primalit&#xe9; est bien plus
+    co&#xfb;teux; quand c'est possible, on pr&#xe9;f&#xe8;rera <c>is_pseudoprime</c>.
+  </p>
+
+  <p>
+    Certains algorithmes de primalit&#xe9; fournissent un <em>certificat</em>, qui
+    peut &#xea;tre v&#xe9;rifi&#xe9; ind&#xe9;pendamment, souvent de mani&#xe8;re plus efficace
+    que le test lui-m&#xea;me. <em>Sage</em>  ne fournit pas de tel certificat dans la version
+    actuelle, mais on peut en fabriquer un avec le th&#xe9;or&#xe8;me de Pocklington:
+  </p>
+
+  <theorem>
+    <statement>
+      <p>
+        Soit <m>n > 1</m> un entier tel que <m>n-1 = F R</m>, avec <m>F \geq \sqrt{n}</m>.
+        Si pour tout facteur premier <m>p</m> de <m>F</m>, il existe <m>a</m> tel que
+        <m>a^{n-1} \equiv 1 \bmod n</m> et <m>a^{(n-1)/p}-1</m> est premier avec <m>n</m>,
+        alors <m>n</m> est premier.
+      </p>
+    </statement>
+  </theorem>
+
+  <p>
+    Soit par exemple <m>n=2^{31}-1</m>. La factorisation de <m>n-1</m> est
+    <m>2 \cdot 3^2 \cdot 7 \cdot 11 \cdot 31 \cdot 151 \cdot 331</m>.
+    On peut prendre <m>F = 151 \cdot 331</m>; <m>a=3</m> convient pour
+    les deux facteurs <m>p=151</m> et <m>p=331</m>. Il suffit ensuite de prouver
+    la primalit&#xe9; de <m>151</m> et <m>331</m>. Ce test utilise de mani&#xe8;re intensive
+    l'exponentiation modulaire.
+  </p>
+
+  <p>
+    Les <em>nombres de Carmichael</em> sont des entiers compos&#xe9;s qui sont
+    pseudo-premiers dans toutes les bases. Le petit th&#xe9;or&#xe8;me de Fermat ne
+    permet donc pas de les distinguer des nombres premiers, quel que soit le
+    nombre de bases essay&#xe9;es. Le plus petit nombre de Carmichael est
+    <m>561 = 3 \cdot 11 \cdot 17</m>. Un nombre de Carmichael a
+    au moins trois facteurs premiers. En effet, supposons que <m>n = p q</m>
+    soit un nombre de Carmichael, avec <m>p, q</m> premiers, <m>p \lt  q</m>;
+    par d&#xe9;finition des nombres de Carmichael,
+    on a pour tout <m>1 \leq a \lt  q</m> l'&#xe9;galit&#xe9;
+    <m>a^{n-1} \equiv 1</m> modulo <m>n</m>, et par suite modulo <m>q</m>,
+    ce qui implique que <m>n-1</m> est multiple de <m>q-1</m>.
+    L'entier <m>n</m> est n&#xe9;cessairement de la forme <m>q + \lambda q (q-1)</m>,
+    puisqu'il est multiple de <m>q</m> et <m>n-1</m> multiple de <m>q-1</m>, ce qui est
+    incompatible avec <m>n = p q</m> puisque <m>p \lt  q</m>.
+    Si <m>n = p q r</m>, alors il suffit que
+    <m>a^{n-1} \equiv 1 \bmod p</m> <mdash /> et de m&#xea;me pour <m>q</m> et <m>r</m>, puisque
+    par restes chinois on aura alors <m>a^{n-1} \equiv 1 \bmod n</m>.
+    Une condition suffisante est que <m>n-1</m> soit multiple de <m>p-1</m>, <m>q-1</m> et
+    <m>r-1</m>:
+  </p>
+
+  <sage>
+    <input>
+      [560 % (x-1) for x in [3,11,17]]
+    </input>
+    <output>
+      [0, 0, 0]
+    </output>
+  </sage>
+
+  <paragraphs xml:id="exo_carmichael">
+    <title>Exercice</title>
+    <p>
+      &#xc9;crire une fonction <em>Sage</em>  comptant les nombres de Carmichael
+      <m>pqr \leq n</m>, avec <m>p, q, r</m> premiers impairs distincts. Combien trouvez-vous
+      pour <m>n=10^4, 10^5, 10^6, 10^7</m>?
+      (Richard Pinch a compt&#xe9; <m>20138200</m> nombres de Carmichael inf&#xe9;rieurs &#xe0;
+      <m>10^{21}</m>.)
+    </p>
+  </paragraphs>
+  <p>
+    Enfin, pour it&#xe9;rer une op&#xe9;ration sur des nombres premiers dans un
+    intervalle, il vaut mieux utiliser la construction <c>prime_range</c>,
+    qui construit une table via un crible,
+    plut&#xf4;t qu'une boucle avec <c>next_probable_prime</c> ou
+    <c>next_prime</c>:
+  </p>
+
+  <sage>
+    <input>
+      
+    </input>
+    <output>
+      def count_primes1(n):
+         return add([1 for p in range(n+1) if is_prime(p)])
+      def count_primes2(n):
+         return add([1 for p in range(n+1) if is_pseudoprime(p)])
+      def count_primes3(n):
+         s=0; p=2
+         while p &lt;= n: s+=1; p=next_prime(p)
+         return s
+      def count_primes4(n):
+         s=0; p=2
+         while p &lt;= n: s+=1; p=next_probable_prime(p)
+         return s
+      def count_primes5(n):
+         s=0
+         for p in prime_range(n): s+=1
+         return s
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit count_primes1(10^5)
+    </input>
+    <output>
+      5 loops, best of 3: 674 ms per loop
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit count_primes2(10^5)
+    </input>
+    <output>
+      5 loops, best of 3: 256 ms per loop
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit count_primes3(10^5)
+    </input>
+    <output>
+      5 loops, best of 3: 49.2 ms per loop
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit count_primes4(10^5)
+    </input>
+    <output>
+      5 loops, best of 3: 48.6 ms per loop
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      %timeit count_primes5(10^5)
+    </input>
+    <output>
+      125 loops, best of 3: 2.67 ms per loop
+    </output>
+  </sage>
+</section>
+

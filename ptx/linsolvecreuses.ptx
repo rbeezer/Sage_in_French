@@ -1,0 +1,399 @@
+
+
+<section xml:id="linsolvecreuses">
+  <title>Matrices creuses</title>
+  <introduction>
+    <p>
+      Les matrices creuses sont tr&#xe8;s fr&#xe9;quentes en calcul scientifique:
+      le caract&#xe8;re creux
+      (<em>sparsity</em> en anglais) est une propri&#xe9;t&#xe9; recherch&#xe9;e
+      qui permet de r&#xe9;soudre des probl&#xe8;mes de grande taille, inaccessibles
+      avec des matrices pleines.
+    </p>
+
+    <p>
+      <em>Une d&#xe9;finition approximative:</em>
+      on dira
+      qu'une famille de matrices <m>\{M_n\}_n</m>
+      (de taille <m>n</m>) est un ensemble de matrices
+      creuses si le nombre de coefficients non nuls de <m>M_n</m>
+      est de l'ordre de <m>O(n)</m>.
+    </p>
+
+    <p>
+      Bien &#xe9;videmment, ces matrices sont repr&#xe9;sent&#xe9;es en machine en
+      utilisant des structures de donn&#xe9;es o&#xf9; ne sont stock&#xe9;s que les termes
+      non nuls. En tenant compte du caract&#xe8;re creux des matrices, on veut
+      bien sur gagner de la place m&#xe9;moire et donc pouvoir manipuler de
+      grandes matrices, mais aussi r&#xe9;duire fortement le c&#xf4;ut des calculs.
+    </p>
+  </introduction>
+
+  <subsection>
+    <title>Origine des syst&#xe8;mes creux</title>
+    <subsubsection>
+    <title>Probl&#xe8;mes aux limites</title>
+    <p>
+      L'origine la plus fr&#xe9;quente
+      est la discr&#xe9;tisation d'&#xe9;quations aux d&#xe9;riv&#xe9;es
+      partielles. Consid&#xe9;rons par exemple l'&#xe9;quation de Poisson (&#xe9;quation de
+      la chaleur stationnaire):
+      <me>
+        -\Delta u= f
+      </me>
+      o&#xf9; <m>u = u(x,y)</m>, <m>f = f(x,y)</m>,
+      <me>
+        \Delta u:=
+        \frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}.
+      </me>
+    </p>
+
+    <p>
+      L'&#xe9;quation est pos&#xe9;e dans le carr&#xe9; <m>[0,1]^2</m>,
+      et munie de conditions aux limites
+      <m>u = 0</m> sur le bord du carr&#xe9;. L'analogue en dimension un est le
+      probl&#xe8;me
+      <men xml:id="numlinlap1" >
+        -\frac{\partial^2u}{\partial x^2}=f,
+      </men>
+      avec <m>u(0)=u(1)=0.</m>
+    </p>
+
+    <p>
+      Une des m&#xe9;thodes les plus simples pour
+      approcher la solution de cette &#xe9;quation consiste &#xe0; utiliser la
+      m&#xe9;thode des diff&#xe9;rences finies: on d&#xe9;coupe l'intervalle <m>[0,1]</m> en
+      un nombre fini
+      <m>N</m> d'intervalles de pas <m>h</m> constant. On note <m>u_i</m> la valeur approch&#xe9;e de
+      <m>u</m> au point <m>x_i = ih</m>. On approche la
+      d&#xe9;riv&#xe9;e de <m>u</m> par <m>(u_{i+1}-u_i)/h</m> et sa d&#xe9;riv&#xe9;e seconde par
+      <me>
+        \frac{(u_{i+1}-u_i)/h-(u_{i}-u_{i-1})/h}{h}=\frac{u_{i+1}-2u_i+u_{i-1}}{h^2}.
+      </me>
+    </p>
+
+    <p>
+      On voit imm&#xe9;diatement que les <m>u_i,\ i = 1,\ldots ,N</m>,
+      qui approchent <m>u</m> aux points <m>ih</m>,
+      sont solution
+      d'un syst&#xe8;me lin&#xe9;aire n'ayant que 3 termes non nuls par
+      ligne (et dont on peut v&#xe9;rifier que la matrice est sym&#xe9;trique d&#xe9;finie positive).
+    </p>
+
+    <p>
+      En dimension 2, on peut plaquer une grille de pas <m>h</m> sur le carr&#xe9;
+      unit&#xe9; et
+      on obtient un syst&#xe8;me pentadiagonal (avec <m>4/h^2</m> sur la
+      diagonale, deux sur-diagonales et deux sous-diagonales dont les
+      coefficients sont
+      <m>-1/h^2</m>). En dimension
+      3, en proc&#xe9;dant de la m&#xea;me mani&#xe8;re dans un cube, on obtient un syst&#xe8;me
+      o&#xf9; chaque ligne poss&#xe8;de 7 coefficients non nuls. On a donc bien des
+      matrices tr&#xe8;s creuses.
+    </p>
+
+    </subsubsection>
+
+
+    <subsubsection>
+    <title>Marche al&#xe9;atoire sur un grand graphe creux</title>
+    <p>
+      On
+      consid&#xe8;re un graphe dans lequel chaque chaque sommet est reli&#xe9; &#xe0; un
+      petit nombre de sommets (petit par rapport au nombre total de
+      sommets). Par exemple, on pourra se figurer un graphe dont les
+      sommets sont les
+      pages de l'internet: chaque page ne cite qu'un petit nombre d'autres
+      pages (ce qui d&#xe9;finit les arr&#xea;tes du graphe),
+      mais c'est assur&#xe9;ment un tr&#xe8;s grand graphe.
+      Une marche al&#xe9;atoire sur le graphe est d&#xe9;crite par une matrice
+      stochastique, c'est &#xe0; dire une matrice dont chaque coefficient est
+      un r&#xe9;el compris entre 0 et 1 et dont la somme des coefficients de
+      chaque ligne vaut 1. On montre qu'une telle matrice <m>A</m> a une valeur
+      propre dominante &#xe9;gale &#xe0; un. La distribution stationnaire de la
+      marche al&#xe9;atoire est le vecteur propre <m>x</m> &#xe0; gauche associ&#xe9; &#xe0; la
+      valeur propre dominante, c'est &#xe0;
+      dire le vecteur qui v&#xe9;rifie <m>xA= x</m>. Une des applications les plus
+      spectaculaires est l'algorithme <em>Pagerank</em> de <em>Google</em>,
+      dans lequel le vecteur <m>x</m> sert &#xe0; pond&#xe9;rer les r&#xe9;sultats des
+      recherches.
+    </p>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection>
+    <title>Sage et les matrices creuses</title>
+    <p>
+      <em>Sage</em>  permet de travailler avec des matrices creuses, en sp&#xe9;cifiant
+      <c>sparse</c> <c>=</c> <c>True</c> lors de la cr&#xe9;ation de la
+      matrice. Il s'agit d'un stockage
+      sous forme de dictionnaire.
+      D'un autre cot&#xe9;, les calculs avec de
+      grandes matrices creuses, &#xe0; coefficients flottants (<c>RDF</c>, ou
+      <c>CDF</c>) sont
+      effectu&#xe9;s par <em>Sage</em>  avec la biblioth&#xe8;que <em>Scipy</em>, qui offre ses propres
+      classes de matrices creuses.
+      Dans l'&#xe9;tat actuel des choses,
+      il n'existe pas d'interface
+      entre les matrices <c>sparse</c> de <em>Sage</em>  et les matrices creuses de
+      <em>Scipy</em>. Il convient donc d'utiliser directement les objets de
+      <em>Scipy</em>.
+    </p>
+
+    <p>
+      Les classes fournies par
+      <em>Scipy</em> pour repr&#xe9;senter des matrices matrices
+      creuses sont:
+      <ul>
+        <li>
+          <p>
+            une structure sous forme de liste de listes (mais pas identique
+              &#xe0; celle utilis&#xe9;e par <em>Sage</em> ) pratique pour cr&#xe9;er et modifier des
+              matrices, les <c>lil_matrix</c>,
+          </p>
+        </li>
+
+        <li>
+          <p>
+            des structures immuables, ne stockant que les coefficients non
+              nuls, et qui sont un standard de fait en alg&#xe8;bre lin&#xe9;aire creuse
+              (formats <c>csr</c> et <c>csv</c>).
+          </p>
+        </li>
+      </ul>
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>R&#xe9;solution de syst&#xe8;mes lin&#xe9;aires</title>
+    <introduction>
+      <p>
+        Pour des syst&#xe8;mes de taille mod&#xe9;r&#xe9;e tels que ceux d&#xe9;taill&#xe9;s
+        ci-dessus (en dimension 1 et 2), on peut utiliser une m&#xe9;thode
+        directe, bas&#xe9;e sur la d&#xe9;composition <m>LU</m>. On peut se convaincre sans
+        grande difficult&#xe9; que, dans la d&#xe9;composition <m>LU</m> d'une matrice <m>A</m>
+        creuse, les facteurs <m>L</m> et <m>U</m> contiennent en g&#xe9;n&#xe9;ral plus de termes
+        non nuls &#xe0; eux deux que <m>A</m>. Il faut utiliser des
+        algorithmes de renum&#xe9;rotation des inconnues pour limiter la taille
+        m&#xe9;moire n&#xe9;cessaire, comme dans la biblioth&#xe8;que <em>SuperLU</em>
+        utilis&#xe9;e par <em>Sage</em>  de mani&#xe8;re transparente:
+      </p>
+
+      <pre>
+        from scipy.sparse.linalg.dsolve import *
+        from scipy.sparse import lil_matrix
+        from numpy import array
+        n = 200
+        n2=n*n
+        A = lil_matrix((n2, n2))
+        h2 = 1./float((n+1)^2)
+        for i in range(0,n2):
+            A[i,i]=4*h2
+            if i+1&lt;n2: A[i,i+1]=-h2
+            if i>0:    A[i,i-1]=-h2
+            if i+n&lt;n2: A[i,i+n]=-h2
+            if i-n>=0: A[i,i-n]=-h2
+        Acsc = A.tocsc()
+        B = array([1 for i in range(0,n2)])
+        solve = factorized(Acsc)#factorisation LU
+        S = solve(B) #resolution
+      </pre>
+
+      <p>
+        Apr&#xe8;s avoir cr&#xe9;&#xe9; la matrice sous forme de <c>lil_matrix</c> il faut
+        la convertir au format <c>csc</c>.
+        Ce programme n'est pas particuli&#xe8;rement performant: la construction de la
+        <c>lil_matrix</c> est lente, les structures <c>lil_matrix</c>
+        n'&#xe9;tant pas tr&#xe8;s efficaces.
+        En revanche, la conversion en une matrice <c>csc</c> et la
+        factorisation sont rapides
+        et plus encore la r&#xe9;solution qui suit.
+      </p>
+    </introduction>
+    <subsubsection>
+    <title>M&#xe9;thodes it&#xe9;ratives</title>
+    <p>
+      Le principe de ces m&#xe9;thodes est de
+      construire une suite qui
+      converge vers la solution du syst&#xe8;me <m>Ax = b</m>. Les m&#xe9;thodes it&#xe9;ratives
+      modernes utilisent
+      l'espace de Krylov <m>K_n</m>, espace vectoriel engendr&#xe9; par
+      <m>{b,Ab,A^2b\ldots  A^nb}</m>.
+      Parmi les m&#xe9;thodes les plus populaires, citons:
+      <ul>
+        <li>
+          <p>
+            la m&#xe9;thode du gradient conjugu&#xe9;: elle ne peut &#xea;tre utilis&#xe9;e que pour
+              des syst&#xe8;mes dont la matrice <m>A</m> est sym&#xe9;trique d&#xe9;finie
+              positive. Dans ce cas <m>\mathopen\<c> x\mathclose\</c>_A=
+              \sqrt{\trans{x}Ax}</m> est une norme, et l'it&#xe9;r&#xe9; 
+              <m>x_n</m> est calcul&#xe9; de sorte &#xe0; minimiser l'erreur <m>\mathopen\<c> x-x_n\mathclose\</c>_A</m> entre
+              la solution <m>x</m> et 
+              <m>x_n</m> pour <m>x_n \in K_n</m> (il existe des formules explicites, faciles
+              &#xe0; programmer, cf. par exemple<nbsp /><xref ref="MR1286939" />, <xref ref="MR1417720" />).
+          </p>
+        </li>
+
+        <li>
+          <p>
+            la m&#xe9;thode du r&#xe9;sidu minimal g&#xe9;n&#xe9;ralis&#xe9; (GMRES <ndash />generalized
+              minimal residual<ndash />): elle a
+              l'avantage de pouvoir 
+              &#xea;tre utilis&#xe9;e pour des syst&#xe8;mes lin&#xe9;aires non sym&#xe9;triques. &#xc0;
+              l'it&#xe9;ration <m>n</m> c'est la norme euclidienne du r&#xe9;sidu <m>\mathopen\|
+              Ax_n-b\mathclose\|_2</m>
+              qui est minimis&#xe9;e pour <m>x_n \in K_n</m>. On notera qu'il s'agit l&#xe0; d'un
+              probl&#xe8;me aux moindres carr&#xe9;s.
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      En pratique, ces m&#xe9;thodes ne sont efficaces que
+      <em>pr&#xe9;conditionn&#xe9;es:</em> au lieu de r&#xe9;soudre <m>Ax = b</m>, on r&#xe9;sout <m>MAx = Mb</m>
+      o&#xf9; <m>M</m> est une matrice telle que <m>MA</m> est mieux conditionn&#xe9;e que
+      <m>A</m>. L'&#xe9;tude et la d&#xe9;couverte de pr&#xe9;conditionneurs efficaces est une
+      branche actuelle et riche de d&#xe9;veloppements de l'analyse num&#xe9;rique.
+      &#xc0;<nbsp />titre d'exemple, voici la r&#xe9;solution du syst&#xe8;me &#xe9;tudi&#xe9; ci-dessus par
+      la m&#xe9;thode du gradient conjugu&#xe9; , o&#xf9; le pr&#xe9;conditioneur
+      <m>M</m>, diagonal, est l'inverse de la diagonale de <m>A</m>. C'est un
+      pr&#xe9;conditionneur simple, mais peu efficace:
+    </p>
+
+    <pre>
+      B = array([1 for i in range(0,n2)])
+      m = lil_matrix((n2, n2))
+      for i in range(0,n2):
+          m[i,i]=1./A[i,i]
+      msc = m.tocsc()
+      X = cg(A,B,M = msc)
+    </pre>
+    </subsubsection>
+  </subsection>
+
+  <subsection>
+    <title>Valeurs propres, vecteurs propres</title>
+    <subsubsection>
+    <title>La m&#xe9;thode de la puissance it&#xe9;r&#xe9;e</title>
+    <p>
+      La m&#xe9;thode de la puissance it&#xe9;r&#xe9;e est particuli&#xe8;rement adapt&#xe9;e au
+      cas de tr&#xe8;s grandes matrices creuses; en effet
+      il suffit de savoir
+      effectuer des produits matrice-vecteur (et
+      des produits scalaires) pour savoir implanter l'algorithme.
+      &#xc0; titre d'exemple, revenons aux marches al&#xe9;atoires sur un des
+      graphes creux, et calculons
+      la distribution stationnaire, par la m&#xe9;thode de la puissance it&#xe9;r&#xe9;e:
+    </p>
+
+    <pre>
+      from scipy import sparse, linsolve
+      from numpy.linalg import *
+      from numpy import array
+      from numpy.random import rand
+
+      def power(A,X):
+          '''Puissance iteree'''
+          for i in range(0,1000):
+              Y = A*X
+              Z = Y/norm(Y)
+              lam = sum(X*Y)
+              s = norm(X-Z)
+              print i,"s= "+str(s)+" lambda= "+str(lam)
+              if s&lt;1.e-3:
+                  break
+              X = Z
+          return X
+
+      n = 1000
+      m = 5
+      #fabriquer une matrice stochastique de taille n
+      # avec m coefficients non nuls par ligne.
+      A1= sparse.lil_matrix((n, n))
+
+      for i in range(0,n):
+          for j in range(0,m):
+              l = int(n*rand())
+              A1[l,i]=rand()
+
+      for i in range(0,n):
+          s = sum(A1[i,0:n])
+          A1[i,0:n] /= s
+
+      At = A1.transpose().tocsc()
+      X = array([rand() for i in range(0,n)])
+
+      # calculer la valeur propre dominante et le vecteur propre
+      # associe.  
+      Y = power(At,X)
+    </pre>
+
+    <p>
+      En ex&#xe9;cutant ce script, on pourra s'amuser &#xe0; chronom&#xe9;trer ses
+      diff&#xe9;rentes parties, et on constatera que la quasi totalit&#xe9; du temps
+      de calcul est pass&#xe9;e dans la fabrication de la matrice; la transposition
+      n'est pas tr&#xe8;s co&#xfb;teuse; les it&#xe9;rations du calcul proprement dit
+      occupent un temps n&#xe9;gligeable sur les 7,5 secondes du calcul (sur la
+      machine de test). Les stockages sous formes de listes de matrices de
+      grandes tailles ne sont pas tr&#xe8;s efficaces et ce genre de probl&#xe8;me
+      doit plut&#xf4;t &#xea;tre trait&#xe9; avec des langages compil&#xe9;s et des structures
+      de donn&#xe9;es adapt&#xe9;es.
+    </p>
+
+    </subsubsection>
+  </subsection>
+
+  <subsection>
+    <title>Th&#xe8;me de r&#xe9;flexion : r&#xe9;solution de tr&#xe8;s grands syst&#xe8;mes non
+    lin&#xe9;aires</title>
+    <p>
+      La m&#xe9;thode la puissance it&#xe9;r&#xe9;e et les m&#xe9;thodes bas&#xe9;es sur l'espace de
+      Krylov partagent un propri&#xe9;t&#xe9; pr&#xe9;cieuse: il suffit de savoir calculer
+      des produits matrice-vecteur pour pouvoir les implanter. On n'est
+      m&#xea;me pas oblig&#xe9; de conna&#xee;tre la matrice, il suffit de conna&#xee;tre
+      l'<em>action</em> de la matrice sur un vecteur. On peut donc faire calculs
+      dans des cas o&#xf9; on ne conna&#xee;t pas exactement la matrice ou des cas o&#xf9;
+      on est incapable de la calculer. Les m&#xe9;thodes de Scipy acceptent en
+      fait des <em>op&#xe9;rateurs lin&#xe9;aires</em> comme arguments.
+      Voici une application &#xe0; laquelle on pourra r&#xe9;fl&#xe9;chir (et qu'on pourra
+      impl&#xe9;menter).
+    </p>
+
+    <p>
+      Soit <m>F: \mathbb{R}^n \to \mathbb{R}^n</m>. On veut r&#xe9;soudre <m>F(x)=0.</m> La
+      m&#xe9;thode de choix est la m&#xe9;thode de Newton, o&#xf9; on calcule les it&#xe9;r&#xe9;s
+      <m>x_{n+1}= J(x_n)^{-1}.F(x_n)</m> en partant de <m>x_0</m>.
+      La matrice <m>J(x_n)</m> est la
+      jacobiennne de <m>F</m> en <m>x_n</m>, matrice des d&#xe9;riv&#xe9;es partielles de <m>F</m> en
+      <m>x_n</m>.
+      En pratique, on r&#xe9;soudra successivement <m>J(x_n)y_n = F(x_n)</m>, puis
+      <m>x_{n+1}=x_n-y_n</m>. Il faut donc r&#xe9;soudre un syst&#xe8;me lin&#xe9;aire. Si <m>F</m>
+      est un objet un peu compliqu&#xe9; &#xe0; calculer, alors ses d&#xe9;riv&#xe9;es sont en
+      g&#xe9;n&#xe9;ral encore beaucoup plus difficiles &#xe0; calculer et &#xe0; coder et ce calcul peut
+      m&#xea;me s'av&#xe9;rer pratiquement impossible.
+      On a donc recours &#xe0; la
+      d&#xe9;rivation num&#xe9;rique: si <m>e_j</m> est le vecteur de <m>\mathbb{R}^n</m>
+      partout &#xe9;gal &#xe0;<nbsp /><m>0</m> sauf sa <m>j</m>-i&#xe8;me composante &#xe9;gale &#xe0;<nbsp /><m>1</m>, alors
+      <m>(F(x+he_j)-F(x))/h</m>
+      fournit
+      une (bonne) approximation de la <m>j</m>-i&#xe8;me colonne de la matrice jacobienne.
+      Il faudra donc faire <m>n+1</m> &#xe9;valuations de <m>F</m>
+      pour obtenir <m>J</m> de mani&#xe8;re approch&#xe9;e, ce qui est tr&#xe8;s co&#xfb;teux si <m>n</m>
+      est grand. Et si on applique une m&#xe9;thode
+      it&#xe9;rative de type Krylov pour r&#xe9;soudre le syst&#xe8;me <m>J(x_n)y_n = F(x_n)</m>? On
+      remarque alors que <m>J(x_n)V \simeq (F(x_n+hV)-F(x_n))/h</m> pour <m>h</m> assez
+      petit, ce qui &#xe9;vite de calculer <em>toute</em> la matrice. Dans Scipy,
+      il suffira donc de d&#xe9;finir un op&#xe9;rateur
+      \og lin&#xe9;aire \fg
+      comme &#xe9;tant
+      l'application <m>V \to (F(x_n+hV)-F(x_n))/h</m>. Ce genre de m&#xe9;thode est
+      couramment utilis&#xe9;e pour la r&#xe9;solution de grands syst&#xe8;mes non
+      lin&#xe9;aires. La \og matrice\fg n'&#xe9;tant pas sym&#xe9;trique, on utilisera par
+      exemple
+      la m&#xe9;thode GMRES.
+    </p>
+  </subsection>
+</section>
+

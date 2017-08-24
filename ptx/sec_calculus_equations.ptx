@@ -1,0 +1,294 @@
+
+
+<section xml:id="sec_calculus_equations">
+  <title>&#xc9;quations</title>
+  <p>
+    Un leitmotiv du calcul formel est la manipulation d'objets d&#xe9;finis par des
+    &#xe9;quations, sans passer par la r&#xe9;solution de celles-ci.
+  </p>
+
+  <p>
+    Ainsi, une fonction d&#xe9;finie par une &#xe9;quation diff&#xe9;rentielle lin&#xe9;aire et des
+    conditions initiales est parfaitement pr&#xe9;cis&#xe9;e. L'ensemble des solutions
+    d'&#xe9;quations diff&#xe9;rentielles lin&#xe9;aires est clos par addition et produit (entre
+    autres) et forme ainsi une importante classe o&#xf9; l'on peut d&#xe9;cider de la nullit&#xe9;.
+    En revanche, si l'on r&#xe9;sout une telle &#xe9;quation, la solution, priv&#xe9;e de son
+    &#xe9;quation de d&#xe9;finition, tombe dans une classe plus grande o&#xf9; bien peu est
+    d&#xe9;cidable. Le <xref ref="integration">chapitre</xref> reviendra plus en d&#xe9;tail sur ces
+    consid&#xe9;rations. Cependant, dans certains cas, surtout en utilisation
+    interactive, il est utile de chercher une solution explicite, par exemple pour
+    passer &#xe0; une application num&#xe9;rique. Les principales fonctions de r&#xe9;solution sont
+    r&#xe9;sum&#xe9;es ci-dessous.
+    <md>
+      \vbox{
+
+      \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+      \noalign{\hrule}
+      \tvp\cr
+      \noalign{\hrule}
+      \tvi \amp {Type de r\'esolution}   \amp  \textrm{Syntaxe}  \amp   \cr
+      \noalign{\hrule}
+      \tvp\cr
+      \tvi\amp R\'esolution symbolique                  \amp  solve \cr
+      \tvi\amp R\'esolution (avec multiplicit\'es)        \amp  roots \cr
+      \tvi\amp R\'esolution num\'erique                   \amp  find\_root \cr
+      \tvi\amp R\'esolution d'\'equations diff\'erentielles \amp  desolve \cr
+      \tvi\amp R\'esolution de r\'ecurrences              \amp  rsolve \cr
+      \tvi\amp R\'esolution d'\'equations lin\'eaires       \amp  right\_solve, left\_solve\cr
+      \tvp\cr
+      \noalign{\hrule}
+      \tvp\cr
+      \noalign{\hrule}
+      }}
+    </md>
+  </p>
+
+  <p>
+    Pour extraire le membre de gauche (resp. de droite) d'une &#xe9;quation, on dispose
+    de la fonction <c>lhs</c> (resp. <c>rhs</c>).
+    Donnons quelques exemples d'utilisation de la fonction <c>solve</c>.
+    Soit &#xe0; r&#xe9;soudre l'&#xe9;quation d'inconnue <m>z</m> et de param&#xe8;tre
+    <m>\varphi</m> suivante :
+  </p>
+
+  <p>
+    <m>z^2-\frac{2}{\cos\varphi}z+\frac{5}{\cos^2\varphi}-4=0,  \mbox{
+    avec }  \varphi\in]-\frac{\pi}{2},\frac{\pi}{2}[</m>.
+  </p>
+
+  <sage>
+    <input>
+      z, phi = var('z, phi')
+      solve(z**2 -2 / cos(phi) * z + 5 / cos(phi) ** 2 - 4, z)
+    </input>
+  </sage>
+
+  <me>
+    \left[z = -\frac{{2 \, \sqrt{\cos\left(\varphi\right)^{2} - 1} - 1}}{\cos\left(\varphi\right)},
+            z =  \frac{{2 \, \sqrt{\cos\left(\varphi\right)^{2} - 1} + 1}}{\cos\left(\varphi\right)}\right]
+  </me>
+  <p>
+    Soit &#xe0; r&#xe9;soudre l'&#xe9;quation <m>y^6=y</m>.
+  </p>
+
+  <sage>
+    <input>
+      var('y'); solve(y^6==y, y)
+    </input>
+    <output>
+      [y == e^(2/5*I*pi), y == e^(4/5*I*pi), y == e^(-4/5*I*pi),
+       y == e^(-2/5*I*pi), y == 1, y == 0]
+    </output>
+  </sage>
+
+  <p>
+    Les solutions peuvent &#xea;tre renvoy&#xe9;es sous la forme d'un objet du type
+    dictionnaire (cf. <xref ref="sec_programmation_dictionnaires">&#xa7;</xref>) :
+  </p>
+
+  <sage>
+    <input>
+      solve(x^2-1, x, solution_dict=True)
+    </input>
+    <output>
+      [{x: -1}, {x: 1}]
+    </output>
+  </sage>
+
+  <p>
+    La commande <c>solve</c> permet &#xe9;galement de r&#xe9;soudre des syst&#xe8;mes :
+  </p>
+
+  <sage>
+    <input>
+      solve([x+y == 3, 2*x+2*y == 6],x,y)
+    </input>
+    <output>
+      [[x == -r1 + 3, y == r1]]
+    </output>
+  </sage>
+
+  <p>
+    Ce syst&#xe8;me lin&#xe9;aire &#xe9;tant ind&#xe9;termin&#xe9;, l'inconnue secondaire qui permet de
+    param&#xe9;trer l'ensemble des solutions est un r&#xe9;el d&#xe9;sign&#xe9; par <c>r1</c>,
+    <c>r2</c>, etc.
+    Si le param&#xe8;tre est implicitement un entier, il est d&#xe9;sign&#xe9; sous la forme
+    <c>z1</c>, <c>z2</c>, etc. :
+  </p>
+
+  <sage>
+    <input>
+      solve([cos(x)*sin(x) == 1/2, x+y == 0], x, y)
+    </input>
+    <output>
+      [[x == 1/4*pi + pi*z30, y == -1/4*pi - pi*z30]]
+    </output>
+  </sage>
+
+  <p>
+    Enfin, la fonction <c>solve</c> peut &#xea;tre utilis&#xe9;e pour r&#xe9;soudre des in&#xe9;quations
+    :
+  </p>
+
+  <sage>
+    <input>
+      solve(x^2+x-1>0,x)
+    </input>
+    <output>
+      [[x &lt;lt/> -1/2*sqrt(5) - 1/2], [x > 1/2*sqrt(5) - 1/2]]
+    </output>
+  </sage>
+
+  <p>
+    Il arrive que les solutions d'un syst&#xe8;me renvoy&#xe9;es par la fonction <c>solve</c>
+    soient sous formes de flottants.
+    Soit, par exemple, &#xe0; r&#xe9;soudre dans <m>\C^3</m> le syst&#xe8;me suivant :
+  </p>
+
+  <p>
+    <m>\dis\left\lbrace \begin{array}{ccc}
+    x^2yz \amp  =\amp  18, \\
+    xy^3z \amp  =\amp  24, \\
+    xyz^4 \amp  =\amp  6.
+    \end{array}   \right.</m>
+  </p>
+
+  <sage>
+    <input>
+      x, y, z = var('x, y, z')
+      solve([x^2 * y * z == 18, x * y^3 * z == 24,\
+                   x * y * z^4 == 6], x, y, z)
+    </input>
+    <output>
+      [[x == 3, y == 2, z == 1],
+      [x == (1.33721506733-2.68548987407*I)],
+              ...]
+    </output>
+  </sage>
+
+  <p>
+    <em>Sage</em>  renvoie ici 17 solutions, dont un triplet d'entiers et 16 triplets de
+    solutions complexes approch&#xe9;es. Pour obtenir une solution symbolique, on se
+    reportera au <xref ref="polynomes">chapitre</xref>.
+  </p>
+
+  <p>
+    Pour effectuer des r&#xe9;solutions num&#xe9;riques d'&#xe9;quations, on utilise la fonction
+    <c>find_root</c> qui prend en argument une fonction d'une variable ou une
+    &#xe9;galit&#xe9; symbolique, et les bornes de l'intervalle dans lequel il faut chercher
+    une solution.
+  </p>
+
+  <sage>
+    <input>
+      expr = sin(x) + sin(2 * x) + sin(3 * x)
+      solve(expr, x)
+    </input>
+    <output>
+      [sin(3*x) == -sin(2*x) - sin(x)]
+    </output>
+  </sage>
+
+  <p>
+    <em>Sage</em>  ne trouve pas de solution symbolique &#xe0; cette &#xe9;quation.
+    Deux choix sont alors possibles.
+    Soit on passe &#xe0; une r&#xe9;solution num&#xe9;rique :
+  </p>
+
+  <sage>
+    <input>
+      find_root(expr, 0.1, pi)
+    </input>
+    <output>
+      2.0943951023931957
+    </output>
+  </sage>
+
+  <p>
+    Soit on transforme au pr&#xe9;alable l'expression :
+  </p>
+
+  <sage>
+    <input>
+      f = expr.simplify_trig(); f
+    </input>
+    <output>
+      2*(2*cos(x)^2 + cos(x))*sin(x)
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      solve(f, x)
+    </input>
+    <output>
+      [x == 0, x == 2/3*pi, x == 1/2*pi]
+    </output>
+  </sage>
+
+  <p>
+    Enfin la fonction <c>roots</c> permet d'obtenir les solutions exactes d'une
+    &#xe9;quation, avec leur multiplicit&#xe9;. On peut pr&#xe9;ciser en outre l'anneau dans lequel
+    on souhaite effectuer la r&#xe9;solution ; si on choisit <c>RR</c> <m>\approx\R</m> ou
+    <c>CC</c> <m>\approx\C</m> on obtient les r&#xe9;sultats sous forme de nombres &#xe0; virgule
+    flottante : la m&#xe9;thode de r&#xe9;solution sous-jacente n'est pas pour autant une
+    m&#xe9;thode num&#xe9;rique, comme c'est le cas lorsqu'on utilise <c>find_roots</c>.
+  </p>
+
+  <p>
+    Consid&#xe9;rons l'&#xe9;quation du troisi&#xe8;me degr&#xe9; <m>x^3+2\,x+1=0</m>.
+    Cette &#xe9;quation est de discriminant n&#xe9;gatif, donc elle poss&#xe8;de une racine r&#xe9;elle
+    et deux racines complexes, que l'on peut obtenir gr&#xe2;ce &#xe0; la fonction
+    <c>roots</c> :
+  </p>
+
+  <sage>
+    <input>
+      (x^3+2*x+1).roots(x)
+    </input>
+  </sage>
+
+  <md>
+    \scriptstyle
+    \left[\left(-\frac{1}{2} \, {\left(I \, \sqrt{3} + 1\right)}
+    {\left(\frac{1}{18} \, \sqrt{3} \sqrt{59} -
+    \frac{1}{2}\right)}^{\left(\frac{1}{3}\right)} + \frac{-{\left(I \, \sqrt{3} -
+    1\right)}}{3 \, {\left(\frac{1}{18} \, \sqrt{3} \sqrt{59} -
+    \frac{1}{2}\right)}^{\left(\frac{1}{3}\right)}}, 1\right),\right.\\
+    \scriptstyle
+    \left(-\frac{1}{2} \,
+    {\left(-I \, \sqrt{3} + 1\right)} {\left(\frac{1}{18} \, \sqrt{3} \sqrt{59} -
+    \frac{1}{2}\right)}^{\left(\frac{1}{3}\right)} + \frac{-{\left(-I \, \sqrt{3} -
+    1\right)}}{3 \, {\left(\frac{1}{18} \, \sqrt{3} \sqrt{59} -
+    \frac{1}{2}\right)}^{\left(\frac{1}{3}\right)}}, 1\right),\\
+    \scriptstyle
+    \left.
+    \left({\left(\frac{1}{18} \, \sqrt{3} \sqrt{59} -
+    \frac{1}{2}\right)}^{\left(\frac{1}{3}\right)} + \frac{-2}{3 \,
+    {\left(\frac{1}{18} \, \sqrt{3} \sqrt{59} -
+    \frac{1}{2}\right)}^{\left(\frac{1}{3}\right)}}, 1\right)\right]
+  </md>
+
+  <sage>
+    <input>
+      (x^3+2*x+1).roots(x, ring=RR)
+    </input>
+  </sage>
+
+  <me>
+    [(-0.453397651516404, 1)]
+  </me>
+
+  <sage>
+    <input>
+      (x^3+2*x+1).roots(x, ring=CC)
+    </input>
+  </sage>
+
+  <md>
+    \left[ (-0.453397651516404, 1),\right.
+           (0.226698825758202 - 1.46771150871022*I, 1),\\
+    \left. (0.226698825758202 + 1.46771150871022*I, 1)\right]
+  </md>
+</section>
+

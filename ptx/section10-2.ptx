@@ -1,0 +1,805 @@
+
+
+<section>
+  <title>&#xc9;quations diff&#xe9;rentielles ordinaires d'ordre 1</title>
+  <subsection>
+    <title>Commandes de base</title>
+    <p>
+      On commence par d&#xe9;finir une variable <m>t</m> et une fonction <m>x</m> d&#xe9;pendant de cette variable<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        t = var('t')
+        x = function('x', t)
+      </input>
+    </sage>
+
+    <p>
+      On utilise ensuite<nbsp />:
+    </p>
+
+    <pre>
+      desolve(equation,variable,ics=...,ivar=...,show_method=...,
+              contrib_ode=...)
+    </pre>
+
+    <p>
+      O&#xf9;<nbsp />:
+      <ul>
+        <li>
+          <p>
+            <c>equation</c>  est   l'&#xe9;quation   diff&#xe9;rentielle.  L'&#xe9;galit&#xe9;   est
+            symbolis&#xe9;e  par  <c>==</c>.  Par  exemple l'&#xe9;quation  <m>x'=2x+t</m>  s'&#xe9;crit
+            <c>diff(x,t)==2*x+t</c><nbsp />;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>variable</c> est le nom de la variable d&#xe9;pendante, c'est-&#xe0;-dire
+              la fonction 
+            <m>x</m> dans <m>x'=2x+t</m><nbsp />;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>ics</c> est  un  argument optionnel  qui  permet d'entrer  des
+            conditions initiales. Pour  une &#xe9;quation du premier ordre,  on entre une
+            liste  [<m>t_0</m>,<m>x_0</m>],   pour  les   &#xe9;quations  du  second   ordre  c'est
+            [<m>t_0</m>,<m>x_0</m>,<m>t_1</m>,<m>x_1</m>] ou [<m>t_0</m>,<m>x_0</m>,<m>x'_0</m>]<nbsp />;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>ivar</c>  est un argument  optionnel qui permet de  pr&#xe9;ciser la
+            variable  ind&#xe9;pendante, c'est-&#xe0;-dire  <m>t</m> dans  <m>x'=2x+t</m>.  Cet argument
+            doit absolument &#xea;tre pr&#xe9;cis&#xe9;  en cas d'&#xe9;quations d&#xe9;pendant de param&#xe8;tres
+            comme par exemple <m>x'=ax+bt+c</m><nbsp />;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>show_method</c>  est un argument optionnel  fix&#xe9; &#xe0; <c>False</c>
+            par d&#xe9;faut.  Dans le  cas contraire,  il demande &#xe0;  <em>Sage</em>  de  pr&#xe9;ciser la
+            m&#xe9;thode  de  r&#xe9;solution  utilis&#xe9;e.  Les  termes  anglais  renvoy&#xe9;s  sont
+            <c>linear</c>,   <c>separable</c>,   <c>exact</c>,   <c>homogeneous</c>,
+            <c>bernoulli</c>, <c>generalized homogeneous</c>. <em>Sage</em>  renvoie alors une
+            liste  dont  le premier  argument  est la  solution  et  le deuxi&#xe8;me  la
+            m&#xe9;thode<nbsp />;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>contrib_ode</c> est un  argument optionnel  par d&#xe9;faut  fix&#xe9; &#xe0;
+            <c>False</c>. Dans le cas contraire, <c>desolve</c> pourra s'occuper des
+            &#xe9;quations de Ricatti, Lagrange, Clairaut et d'autres cas pathologiques.
+          </p>
+        </li>
+      </ul>
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>&#xc9;quations du premier ordre pouvant &#xea;tre r&#xe9;solues directement par <em>Sage</em></title>
+    <p>
+      Voici un rapide aper&#xe7;u des &#xe9;quations pouvant &#xea;tre r&#xe9;solues directement
+      par <em>Sage</em> :
+      <ul>
+        <li>
+          <title>\'Equations     lin\'eaires</title>
+          <p>
+            Il     s'agit     d'&#xe9;quations     du
+              type:
+            <me>
+              y'+P(x)y=Q(x)
+            </me>
+            avec <m>P</m> et <m>Q</m> des fonctions continues sur des
+              intervalles donn&#xe9;s.
+
+            Par exemple: <m>y'+3y=\mathrm{e}^{x}</m>.
+
+            <sage>
+              <input>
+                desolve(diff(y,x)+3*y==exp(x),y,show_method=True)
+              </input>
+              <output>
+                [1/4*(4*c + e^(4*x))*e^(-3*x), 'linear']
+              </output>
+            </sage>
+
+          </p>
+        </li>
+
+        <li>
+          <title>\'Equations  \`a  variables   s\'eparables</title>
+          <p>
+            Il  s'agit  d'&#xe9;quations  du
+              type:
+            <me>
+              P(x)=y'Q(y)
+            </me>
+            avec <m>P</m> et <m>Q</m> des fonctions continues sur des
+              intervalles donn&#xe9;s.
+
+            Par exemple: <m>yy'=x</m>.
+
+            <sage>
+              <input>
+                desolve(y*diff(y,x)==x,y,show_method=True)
+              </input>
+              <output>
+                [1/2*y(x)^2 == 1/2*x^2 + c, 'separable']
+              </output>
+            </sage>
+
+            Attention!  <em>Sage</em>  parfois  ne reconna&#xee;t  pas les  &#xe9;quations  &#xe0; variables
+            s&#xe9;parables et les traite comme des &#xe9;quations exactes.
+
+            Par exemple: <m>y'=\mathrm{e}^{x+y}</m>.
+
+            <sage>
+              <input>
+                desolve(diff(y,x)==exp(x+y),y,show_method=True)
+              </input>
+              <output>
+                [-(e^(x + y(x)) + 1)*e^(-y(x)) == c, 'exact']
+              </output>
+            </sage>
+
+          </p>
+        </li>
+
+        <li>
+          <title>\'Equations de Bernoulli</title>
+          <p>
+            Il  s'agit  d'&#xe9;quations  du
+              type:
+            <me>
+              y'+P(x)y=Q(y)y^{\alpha}
+            </me>
+            avec <m>P</m> et <m>Q</m> des fonctions continues sur des
+              intervalles donn&#xe9;s et <m>\alpha\not\in \bigl\{ 0;1 \bigr\}</m>.
+            Par exemple: <m>y'-y=xy^4</m>.
+
+            <sage>
+              <input>
+                desolve(diff(y,x)-y==x*y^4,y,show_method=True)
+              </input>
+              <output>
+                [e^x/(-1/3*(3*x - 1)*e^(3*x) + c)^(1/3), 'bernoulli']
+              </output>
+            </sage>
+
+          </p>
+        </li>
+
+        <li>
+          <title>\'Equations homog\`enes</title>
+          <p>
+            Il  s'agit  d'&#xe9;quations  du
+              type:
+            <me>
+              y'=\frac{P(x,y)}{Q(x,y)}
+            </me>
+            avec  <m>P</m>  et <m>Q</m>  des  fonctions
+              homog&#xe8;nes de m&#xea;me degr&#xe9; sur des
+              intervalles donn&#xe9;s.
+            Par exemple <m>x^2y'=y^2+xy+x^2</m>.
+
+            <sage>
+              <input>
+                desolve(x^2*diff(y,x)==y^2+x*y+x^2,y,
+              </input>
+              <output>
+                show_method=True)
+                [c*x == e^(arctan(y(x)/x)), 'homogeneous']
+              </output>
+            </sage>
+
+            Les solutions  ne sont  pas donn&#xe9;es de  mani&#xe8;re explicite.  Nous verrons
+            plus loin comment se d&#xe9;brouiller dans certains cas.
+          </p>
+        </li>
+
+        <li>
+          <title>\'Equations exactes</title>
+          <p>
+            Il  s'agit  d'&#xe9;quations  du
+              type:
+            <me>
+              \frac{\partial   f}{\partial   x}\mathrm{d}x+\frac{\partial
+                  f}{\partial y}\mathrm{d}y
+            </me>
+            avec <m>f</m>  une fonction de deux variables
+              diff&#xe9;rentiable.
+
+            Par exemple <m>y'=\frac{\cos(y)-2x}{y+x\sin(y)}</m>.
+
+            <sage>
+              <input>
+                desolve(diff(y,x)==(cos(y)-2*x)/(y+x*sin(y)),y,
+              </input>
+              <output>
+                show_method=True)
+                [x^2 - x*cos(y(x)) + 1/2*y(x)^2 == c, 'exact']
+              </output>
+            </sage>
+
+            Ici encore, les solutions ne sont pas donn&#xe9;es de mani&#xe8;re explicite.
+          </p>
+        </li>
+
+        <li>
+          <title>\'Equations de Ricatti</title>
+          <p>
+            Il  s'agit  d'&#xe9;quations  du
+              type:
+            <me>
+              y'=P(x)y^2+Q(x)y+R(x)
+            </me>
+            avec <m>P</m>, <m>Q</m> et <m>R</m> des fonctions continues sur des
+              intervalles donn&#xe9;s.
+
+
+            Par exemple: <m>y'=xy^2+\frac{1}{x}y-\frac{1}{x^2}</m>.
+
+            Il faut dans ce cas fixer l'option <c>contrib_ode</c> &#xe0; <c>True</c> pour
+            que <em>Sage</em>  cherche des solutions avec des m&#xe9;thodes plus complexes.
+
+            <sage>
+              <input>
+                desolve(diff(y,x)==x*y^2+y/x-1/x^2,y,contrib_ode=
+              </input>
+              <output>
+                True,show_method=True)
+                [[y(x) == longue expression], 'riccati']
+              </output>
+            </sage>
+
+          </p>
+        </li>
+
+        <li>
+          <title>\'Equations  de Lagrange et  de Clairaut</title>
+          <p>
+            Lorsque l'&#xe9;quation  est du
+              type <m>y=xP(y')+Q(y')</m> o&#xf9; <m>P</m> et  <m>Q</m> sont de classe <m>\mathcal C^1</m> sur
+              un certain  intervalle, on parle  d'&#xe9;quation de Lagrange.  Lorsque <m>P</m>
+              est l'identit&#xe9;, on parle d'&#xe9;quation de Clairaut.
+            Par exemple: <m>y=xy'-y'^2</m>.
+
+            <sage>
+              <input>
+                desolve(y==x*diff(y,x)-diff(y,x)^2,y,contrib_ode=
+              </input>
+              <output>
+                True,show_method=True)
+                [[y(x) == -c^2 + c*x, y(x) == 1/4*x^2], 'clairault']
+              </output>
+            </sage>
+
+          </p>
+        </li>
+      </ul>
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>&#xc9;quation lin&#xe9;aire</title>
+    <p>
+      R&#xe9;solvons par exemple <m>x'+2x=t^2-2t+3</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t)+2*x==t**2-2*t+3,x)
+      </input>
+      <output>
+        -1/4*(2*(2*t - 1)*e^(2*t) - (2*t^2 - 2*t + 1)*e^(2*t) - 4*c 
+        - 6*e^(2*t))*e^(-2*t)
+      </output>
+    </sage>
+
+    <p>
+      Ordonnons un peu tout &#xe7;a avec la commande <c>expand</c><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t)+2*x==t**2-2*t+3,x).expand()
+      </input>
+      <output>
+        c*e^(-2*t) + 1/2*t^2 - 3/2*t + 9/4
+      </output>
+    </sage>
+
+    <p>
+      C'est-&#xe0;-dire <m>x(t)=c\
+      \mathrm{e}^{-2t}+\frac{t^2}{2}-\frac{3t}{2}+\frac{9}{4}</m>.
+    </p>
+
+    <p>
+      On prendra donc l'habitude d'utiliser <c>desolve(...).expand()</c>.
+    </p>
+
+    <p>
+      Quelle est la m&#xe9;thode utilis&#xe9;e<nbsp />?
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t)+2*x==t**2-2*t+3,x,show_method=True)[1]
+      </input>
+      <output>
+        'linear'
+      </output>
+    </sage>
+
+    <p>
+      Ajoutons des conditions initiales, par exemple <m>x(0)=1</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t)+2*x==t**2-2*t+3,x,ics=[0,1]).expand()
+      </input>
+      <output>
+        1/2*t^2 - 3/2*t - 5/4*e^(-2*t) + 9/4
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="cours_edvs">
+    <title>&#xc9;quations &#xe0; variables s&#xe9;parables</title>
+    <p>
+      &#xc9;tudions l'&#xe9;quation: <m>y'\ln(y)=y\sin(t)</m>
+    </p>
+
+    <sage>
+      <input>
+        t = var('t')
+        y = function('y', t)
+        desolve(diff(y,t)*ln(y)==y*sin(t),y,show_method=True)
+      </input>
+      <output>
+        [1/2*log(y(t))^2 == c - cos(t), 'separable']
+      </output>
+    </sage>
+
+    <p>
+      <em>Sage</em>  est d'accord avec nous<nbsp />:<nbsp />c'est bien une &#xe9;quation &#xe0;
+      variables s&#xe9;parables.
+    </p>
+
+    <p>
+      Prenons l'habitude de nommer nos solutions pour pouvoir les r&#xe9;utiliser
+      par la suite:
+    </p>
+
+    <sage>
+      <input>
+        ed=desolve(diff(y,t)*ln(y)==y*sin(t),y)
+        ed
+      </input>
+      <output>
+        1/2*log(y(t))^2 == c - cos(t)
+      </output>
+    </sage>
+
+    <p>
+      Ici, <m>y</m> n'est pas donn&#xe9; de fa&#xe7;on explicite<nbsp />:<nbsp /><m>\frac{1}{2}\ln^2 \bigl(y(t)\bigr)=c-\cos(t)</m>.
+    </p>
+
+    <p>
+      On peut demander une expression de <m>y(t)</m> en utilisant <c>solve</c><nbsp />:
+    </p>
+
+    <pre>
+      solve(ed,y(t))
+    </pre>
+
+    <p>
+      mais <em>Sage</em>  n'est pas content<nbsp />:
+    </p>
+
+    <pre>
+      TypeError: Computation failed since Maxima requested additional
+      constraints(try the command 'assume(c-cos(t)>0)'before integral
+      or limit evaluation, for example)
+    </pre>
+
+    <p>
+      En effet, <m>c-\cos(t)</m> doit &#xea;tre positif. Ob&#xe9;issons &#xe0; <em>Sage</em> <nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        assume(c-cos(t)>0)
+      </input>
+      <output>
+        NameError: name 'c' is not defined
+      </output>
+    </sage>
+
+    <p>
+      En effet, nous n'avons pas d&#xe9;fini <m>c</m><nbsp />:<nbsp />c'est <em>Sage</em>  qui l'a
+      introduit. Pour acc&#xe9;der &#xe0; <m>c</m>, nous allons utiliser <c>variables()</c>
+      qui donne la liste des variables d'une expression<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        ed.variables()
+      </input>
+      <output>
+        (c, t)
+      </output>
+    </sage>
+
+    <p>
+      Seuls <m>c</m> et <m>t</m> sont consid&#xe9;r&#xe9;s comme des variables car <m>y</m> a &#xe9;t&#xe9;
+      d&#xe9;fini comme une fonction de la variable <m>t</m>.
+      On acc&#xe8;de donc &#xe0; <m>c</m> avec <c>ed.variables()[0]</c><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        c=ed.variables()[0]
+        assume(c-cos(t)>0)
+        solve(ed,y(t))
+      </input>
+      <output>
+        [y(t) == e^(-sqrt(c - cos(t))*sqrt(2)), 
+            y(t) == e^(sqrt(c - cos(t))*sqrt(2))]
+      </output>
+    </sage>
+
+    <p>
+      Pour avoir l'allure des courbes des solutions, il nous faut r&#xe9;cup&#xe9;rer le
+      membre de droite de chaque solution avec la commande <c>rhs()</c>. Par
+      exemple, pour obtenir le membre de droite de la premi&#xe8;re solution en
+      rempla&#xe7;ant <m>c</m> par 5<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        solve(ed,y(t))[0].subs_expr(c==5).rhs()
+      </input>
+      <output>
+        e^(-sqrt(-cos(t) + 5)*sqrt(2))
+      </output>
+    </sage>
+
+    <p>
+      Autre exemple, pour avoir le trac&#xe9; de la premi&#xe8;re solution avec <m>c=2</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        plot(solve(ed,y(t))[0].subs_expr(c==2).rhs(),
+      </input>
+      <output>
+        t,-3,3)
+      </output>
+    </sage>
+
+    <p>
+      et on obtient<nbsp />:
+    </p>
+
+    <p>
+      <image width="80%" source="images/" />
+    </p>
+
+    <p>
+      Pour avoir plusieurs figures, on effectue une boucle<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        P=Graphics()
+        for k in range(1,20,2):
+        P+=plot(solve(ed,y(t))[0].subs_expr(c==1+0.25*k).rhs(),
+      </input>
+      <output>
+        t,-3,3)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        P
+      </input>
+    </sage>
+
+    <p>
+      <image width="90%" source="images/" />
+    </p>
+
+    <p>
+      On aurait pu avoir l'aspect correspondant aux deux solutions en
+      effectuant une double boucle<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        P=Graphics()
+        for j in [0,1]:
+        for k in range(1,10,2):
+        P+=plot(solve(ed,y(x))[j].subs_expr(c==2+0.25*k).rhs(),
+      </input>
+      <output>
+        x,-3,3)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        P
+      </input>
+    </sage>
+
+    <p>
+      mais la diff&#xe9;rence d'&#xe9;chelle entre les solutions ne permet plus de
+      distinguer les courbes correspondant &#xe0; la premi&#xe8;re solution<nbsp />:
+    </p>
+
+    <p>
+      <image width="90%" source="images/" />
+    </p>
+
+    <paragraphs xml:id="exo_edvs">
+      <title>Exercice</title>
+      <p>
+        [&#xc9;quations diff&#xe9;rentielles &#xe0; variables s&#xe9;parables] &#xc9;tudiez les &#xe9;quations &#xe0; variables s&#xe9;parables suivantes<nbsp />:
+        <ol>
+          <li>
+            <p>
+              <m>(E_1)~:~\frac{yy'}{\sqrt{1+y^2}}=\sin(x)</m><nbsp />;
+            </p>
+          </li>
+
+          <li>
+            <p>
+              <m>(E_2)~:~y'=\frac{\sin(x)}{\cos(y)}</m>.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection>
+    <title>&#xc9;quations homog&#xe8;nes</title>
+    <p>
+      On veut r&#xe9;soudre l'&#xe9;quation homog&#xe8;ne <m>tx'=x+\sqrt{x^2+t^2}</m>. C'est bien
+      une &#xe9;quation homog&#xe8;ne car on peut l'&#xe9;crire<nbsp />:
+      <me>
+        \frac{\mathrm{d}x}{\mathrm{d}t}=\frac{x+\sqrt{x^2+t^2}}{t}=\frac{N(x,t)}{M(x,t)}.
+      </me>
+    </p>
+
+    <p>
+      Or <m>N(kx,kt)=kN(x,t)</m> et <m>M(kx,kt)=kM(x,t)</m>.
+    </p>
+
+    <p>
+      Il suffit donc d'effectuer le changement de variable v&#xe9;rifiant
+      <m>x(t)=t\cdot u(t)</m> pour tout r&#xe9;el <m>t</m> pour obtenir
+      une &#xe9;quation &#xe0; variables s&#xe9;parables.
+    </p>
+
+    <sage>
+      <input>
+        u=function('u',t)
+        x(t) = function('x',t)
+        x(t)=t*u(t)
+        d=diff(x,t)
+        DE=(t*d==x+sqrt(t**2+x**2))
+      </input>
+    </sage>
+
+    <p>
+      On effectue le changement de variables dans l'&#xe9;quation diff&#xe9;rentielle de
+      d&#xe9;part.
+    </p>
+
+    <p>
+      L'&#xe9;quation n'&#xe9;tant pas
+      d&#xe9;finie en 0, on va la r&#xe9;soudre sur <m>]0;+\infty[</m> et sur
+      <m>]-\infty;0[</m>. Travaillons d'abord sur <m>]0;+\infty[</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        assume(t>0)
+        desolve(DE,u)
+      </input>
+      <output>
+        arcsinh(u(t)) == c + integrate(abs(t)/t^2, t)
+      </output>
+    </sage>
+
+    <p>
+      On n'obtient pas <m>u</m> de mani&#xe8;re explicite. Pour y rem&#xe9;dier, on va
+      chercher une commande dans <em>Maxima</em> :<nbsp /><c>ev</c> comme
+      <em>&#xe9;valuer</em> avec l'option <c>logarc=true</c> qui indique que les
+      fonctions trigonom&#xe9;triques hyperboliques inverses seront converties &#xe0;
+      l'aide de logarithmes. Ensuite on va pouvoir exprimer <m>u</m> &#xe0; l'aide de la
+      commande <c>solve</c> de <em>Sage</em> <nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        S=desolve(DE,u)._maxima_().ev(logarc=true).sage().solve(u)
+        S
+      </input>
+      <output>
+        [u(t) == t*e^c - sqrt(u(t)^2 + 1)]
+      </output>
+    </sage>
+
+    <p>
+      Ici, <c>S</c> est une liste constitu&#xe9;e d'une &#xe9;quation ;
+      <c>S[0]</c> sera donc l'&#xe9;quation elle-m&#xea;me.
+    </p>
+
+    <p>
+      L'&#xe9;quation n'est cependant toujours pas r&#xe9;solue explicitement. Nous allons
+      aider un peu <em>Sage</em>  en lui demandant de r&#xe9;soudre
+      l'&#xe9;quation &#xe9;quivalente
+      <me>
+        \left(t \mathrm{e}^{c}-u\right)^2=u^2+1
+      </me>
+    </p>
+
+    <p>
+      Nous allons donc soustraire <c>t*e^c</c> aux deux membres de l'&#xe9;quation
+      et &#xe9;lever les deux membres r&#xe9;sultant au carr&#xe9;.
+    </p>
+
+    <p>
+      Un probl&#xe8;me subsiste car <m>c</m> n'est pas d&#xe9;clar&#xe9; comme variable. Faisons-le
+      en en profitant pour simplifier son &#xe9;criture<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        C=var('C')
+        solu=S[0].subs(c=log(C))
+        solu
+      </input>
+      <output>
+        u(t) == C*t - sqrt(u(t)^2 + 1)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        solu=((t*C-solu)^2).solve(u)
+        solu
+      </input>
+      <output>
+        [u(t) == 1/2*(C^2*t^2 - 1)/(C*t)]
+      </output>
+    </sage>
+
+    <p>
+      Il ne reste plus qu'&#xe0; revenir &#xe0; <m>x</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        x(t)=t*solu[0].rhs()
+        x(t)
+      </input>
+      <output>
+        1/2*(C^2*t^2 - 1)/C
+      </output>
+    </sage>
+
+    <p>
+      Nous obtenons bien les solutions sous forme explicite: <m>x(t)=\dfrac{(Ct)^2-1}{2C}</m>.
+    </p>
+
+    <p>
+      Il ne reste plus qu'&#xe0; tracer les solutions sur <m>]0;+\infty[</m> en faisant
+      attention &#xe0; prendre des constantes C non nulles<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        P=Graphics()
+        for k in range(-19,19,2):
+        P+=plot(x(t).subs_expr(C==k),t,0,3)
+        P
+      </input>
+    </sage>
+
+    <p>
+      <image width="73%" source="images/" />
+    </p>
+
+    <paragraphs xml:id="exo_edh">
+      <title>Exercice</title>
+      <p>
+        [&#xc9;quations diff&#xe9;rentielles homog&#xe8;nes] &#xc9;tudiez l'&#xe9;quation homog&#xe8;ne suivante<nbsp />:
+        <m>(E_5)~:~xyy'=x^2+y^2</m>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection>
+    <title>Une &#xe9;quation &#xe0; param&#xe8;tres<nbsp />:<nbsp />le mod&#xe8;le de Verhulst</title>
+    <p>
+      Le taux relatif de croissance d'une population est une fonction
+      lin&#xe9;airement d&#xe9;croissante de la population.
+    </p>
+
+    <p>
+      Pour l'&#xe9;tudier, on peut &#xea;tre amen&#xe9; &#xe0; r&#xe9;soudre une &#xe9;quation du type<nbsp />:
+      <me>
+        x'=ax-bx^2
+      </me>
+      avec <m>a</m> et <m>b</m> des param&#xe8;tres r&#xe9;els positifs.
+    </p>
+
+    <sage>
+      <input>
+        var('a,b')
+        DE=(diff(x,t)-a*x==-b*x**2)
+        sol=desolve(DE,[x,t])
+        sol
+      </input>
+      <output>
+        -(log(b*x(t) - a) - log(x(t)))/a == c + t
+      </output>
+    </sage>
+
+    <p>
+      Nous n'avons pas <m>x</m> explicitement. Essayons de l'isoler avec
+      <c>solve</c><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        Sol=solve(sol,x(t))[0]
+        Sol
+      </input>
+      <output>
+        log(x(t)) == (c + t)*a + log(b*x(t) - a)
+      </output>
+    </sage>
+
+    <p>
+      Nous n'avons toujours pas de solution explicite. Nous allons regrouper les termes &#xe0; gauche et
+      simplifier cette expression &#xe0; l'aide de <c>simplify_log()</c><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        Sol=Sol.lhs()-Sol.rhs()
+        Sol
+      </input>
+      <output>
+        -(c + t)*a - log(b*x(t) - a) + log(x(t))
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        Sol=Sol.simplify_log()
+        solve(Sol,x(t))[0].simplify()
+      </input>
+      <output>
+        x(t) == a*e^(a*c + a*t)/(b*e^(a*c + a*t) - 1)
+      </output>
+    </sage>
+  </subsection>
+</section>
+

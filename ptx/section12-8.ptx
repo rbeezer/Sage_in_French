@@ -1,0 +1,147 @@
+
+
+<section>
+  <title>&#xc9;quations diff&#xe9;rentielles</title>
+  <p>
+    \begin{correction}{exo:edvs} (<em>&#xc9;quations diff&#xe9;rentielles &#xe0; variables
+    s&#xe9;parables</em>)
+    <ol>
+      <li>
+        <p>
+          Utilisons la m&#xea;me m&#xe9;thode que dans la <xref ref="cours_edvs">section</xref>:
+
+          <sage>
+            <input>
+              x=var('x')
+              y=function('y',x)
+              ed=(desolve(y*diff(y(x),x)/sqrt(1+y^2)==sin(x),y))
+              ed
+            </input>
+            <output>
+              sqrt(y(x)^2 + 1) == c - cos(x)
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              c=ed.variables()[0]
+              assume(c-cos(x)>0)
+              sol=solve(ed,y(x))
+              sol
+            </input>
+            <output>
+              [y(x) == -sqrt(c^2 - 2*c*cos(x) + cos(x)^2 - 1), 
+               y(x) == sqrt(c^2 - 2*c*cos(x) + cos(x)^2 - 1)]
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              P=Graphics()
+              for j in [0,1]:
+              for k in range(0,20,2):
+              P+=plot(sol[j].subs_expr(c==2+0.25*k).rhs(),
+            </input>
+            <output>
+              x,-3,3)
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              P
+            </input>
+          </sage>
+
+          <image width="90%" source="images/" />
+        </p>
+      </li>
+
+      <li>
+        <p>
+          M&#xea;me m&#xe9;thode:
+
+          <sage>
+            <input>
+              ed=desolve(diff(y,x)==sin(x)/cos(y),y,
+            </input>
+            <output>
+              show_method=True)
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              ed
+            </input>
+            <output>
+              [sin(y(x)) == c - cos(x), 'separable']
+            </output>
+          </sage>
+
+          <sage>
+            <input>
+              solve(ed[0],y(x))
+            </input>
+            <output>
+              [y(x) == -arcsin(-c + cos(x))]
+            </output>
+          </sage>
+
+        </p>
+      </li>
+    </ol>
+  </p>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \begin{correction}{exo:edh} (<em>&#xc9;quations homog&#xe8;nes</em>)
+  </p>
+
+  <p>
+    On veut r&#xe9;soudre <m>xyy'=x^2+y^2</m>. On v&#xe9;rifie que cette &#xe9;quation est bien
+    homog&#xe8;ne puis on essaie de la r&#xe9;soudre.
+  </p>
+
+  <sage>
+    <input>
+      x=var('x')
+      y=function('y',x)
+      id(x)=x
+      u=function('u',x)
+      d=diff(u*id,x)
+      DE=(x*y*d==x**2+y**2).subs_expr(y==u*id)
+      assume(x>0)
+      equ=desolve(DE,u)
+      assume(equ.variables()[0]+log(x)>0)
+      solu=solve(equ,u(x))
+    </input>
+    <output>
+      [u(x) == -sqrt(c + log(x))*sqrt(2), 
+       u(x) == sqrt(c + log(x))*sqrt(2)]
+    </output>
+  </sage>
+
+  <sage>
+    <input>
+      Y=[x*solu[0].rhs(),x*solu[1].rhs()]
+      Y[0]
+    </input>
+    <output>
+      -sqrt(c + log(x))*sqrt(2)*x
+    </output>
+  </sage>
+
+  <p>
+    \end{correction}
+  </p>
+
+  <p>
+    \renewenvironment{thebibliography}[1]
+    {
+  </p>
+</section>
+

@@ -1,0 +1,904 @@
+
+
+<section xml:id="sec_calculus_analyse">
+  <title>Analyse</title>
+  <introduction>
+    <p>
+      Dans cette section, nous pr&#xe9;sentons succinctement les fonctions couramment utiles en analyse r&#xe9;elle.
+      Pour une utilisation avanc&#xe9;e ou des compl&#xe9;ments, on renvoie aux chapitres
+      suivants notamment ceux qui traitent
+      de l'int&#xe9;gration num&#xe9;rique (ch. <xref ref="integration"></xref>),
+      de la r&#xe9;solution des &#xe9;quations non lin&#xe9;aires (ch. <xref ref="cha_equat-non-line"></xref>),
+      et des &#xe9;quations diff&#xe9;rentielles (ch. <xref ref="equadiffexa"></xref>).
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec_calculus_sommes">
+    <title>Sommes et produits</title>
+    <p>
+      Pour calculer des sommes symboliques on utilise la fonction <c>sum</c>.
+      Calculons par exemple la somme des <m>n</m> premiers entiers non nuls :
+    </p>
+
+    <sage>
+      <input>
+        var('k n'); sum(k, k, 1, n).factor()
+      </input>
+    </sage>
+
+    <me>
+      \frac{1}{2} \, {\left(n + 1\right)} n
+    </me>
+    <p>
+      La fonction <c>sum</c> permet d'effectuer des simplifications &#xe0; partir du bin&#xf4;me de Newton :
+    </p>
+
+    <sage>
+      <input>
+        var('n y'); sum(binomial(n,k) * x^k * y^(n-k), k, 0, n)
+      </input>
+    </sage>
+
+    <me>
+      {\left(x + y\right)}^{n}
+    </me>
+    <p>
+      Voici d'autres exemples, dont la somme des cardinaux des parties d'un ensemble &#xe0; <m>n</m> &#xe9;l&#xe9;ments :
+    </p>
+
+    <sage>
+      <input>
+        var('k n'); sum(binomial(n,k), k, 0, n),\
+                          sum(k * binomial(n, k), k, 0, n),\
+                          sum((-1)^k*binomial(n,k), k, 0, n)
+      </input>
+    </sage>
+
+    <me>
+      \left(2^{n}, n 2^{{\left(n - 1\right)}}, 0\right)
+    </me>
+    <p>
+      Enfin, quelques exemples de sommes g&#xe9;om&#xe9;triques :
+    </p>
+
+    <sage>
+      <input>
+        var('a q'); sum(a*q^k, k, 0, n)
+      </input>
+    </sage>
+
+    <me>
+      \frac{{a q^{{\left(n + 1\right)}} - a}}{{q - 1}}
+    </me>
+    <p>
+      Pour calculer la s&#xe9;rie correspondante, il faut pr&#xe9;ciser que le module de la
+      raison est inf&#xe9;rieur &#xe0; 1 :
+    </p>
+
+    <sage>
+      <input>
+        assume(abs(q) &lt; 1)
+        sum(a*q^k, k, 0, infinity)
+      </input>
+    </sage>
+
+    <me>
+      -\frac{a}{{\left(q - 1\right)}}
+    </me>
+
+    <sage>
+      <input>
+        forget(); assume(q > 1); sum(a*q^k, k, 0, infinity)
+      </input>
+      <output>
+        ValueError: Sum is divergent.
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_calculus_somme">
+      <title>Exercice</title>
+      <p>
+        (<em>Un calcul de somme par r&#xe9;currence</em>)
+        Calculer sans utiliser l'algorithme de <em>Sage</em>  la somme des puissances
+        <m>p</m>-i&#xe8;mes des <m>n</m> premiers entiers :
+        <me>
+          S_n(p)=\sum_{k=0}^n k^p.
+        </me>
+      </p>
+
+      <p>
+        Pour calculer cette somme, on peut utiliser la formule de r&#xe9;currence suivante :
+        <me>
+          S_n(p)=\frac1{p+1}\left((n+1)^{p+1} - \sum_{k=0}^{p-1} \binom{p+1}{k}
+          S_n(k)\right) .
+        </me>
+      </p>
+
+      <p>
+        Cette relation de r&#xe9;currence s'&#xe9;tablit facilement en calculant de deux mani&#xe8;res la somme
+        t&#xe9;lescopique <m>\sum\limits_{0\leq k\leq n} (k+1)^p - k^p.</m>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_limites">
+    <title>Limites</title>
+    <p>
+      Pour calculer une limite, on utilise la commande <c>limit</c> ou son alias <c>lim</c>. Soit &#xe0; calculer les limites suivantes :
+      <me>
+        a) \lim\limits_{x\rightarrow 8 }
+        \dfrac{\sqrt[3]{x}-2}{\sqrt[3]{x+19}-3}\;;
+
+        b) \lim\limits_{x\rightarrow \frac{\pi}{4} }
+        \dfrac{\cos\left(\frac{\pi}{4}-x \right)
+        -\tan x }{1-\sin\left(\frac{\pi}{4}+x \right)}.
+      </me>
+    </p>
+
+    <sage>
+      <input>
+        limit((x**(1/3) -2) / ((x + 19)**(1/3) - 3), x = 8)
+      </input>
+      <output>
+        9/4
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        f(x) = (cos(pi/4-x)-tan(x))/(1-sin(pi/4 + x))
+        limit(f(x), x = pi/4)
+      </input>
+      <output>
+        Infinity
+      </output>
+    </sage>
+
+    <p>
+      La derni&#xe8;re r&#xe9;ponse indique que l'une des limites &#xe0; gauche ou &#xe0; droite est infinie.
+      Pour pr&#xe9;ciser le r&#xe9;sultat, on &#xe9;tudie les limites &#xe0; gauche et &#xe0; droite, en
+      utilisant l'option <c>dir</c> :
+    </p>
+
+    <sage>
+      <input>
+        limit(f(x), x = pi/4, dir='minus')
+      </input>
+      <output>
+        +Infinity
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        limit(f(x), x = pi/4, dir='plus')
+      </input>
+      <output>
+        -Infinity
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_suites">
+    <title>Suites</title>
+    <p>
+      Les fonctions pr&#xe9;c&#xe9;dentes permettent d'effectuer des &#xe9;tudes de suites. On donne
+      un exemple d'&#xe9;tude de croissance compar&#xe9;e entre une suite exponentielle et une
+      suite g&#xe9;om&#xe9;trique.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Une &#xe9;tude de suite</em>)
+        On consid&#xe8;re la suite <m>u_n=\frac{n^{100}}{100^n}</m>.
+        Calculer les 10 premiers termes de la suite.
+        Quelle est la monotonie de la suite ?
+        Quelle est la limite de la suite ?
+        &#xc0; partir de quel rang a-t-on <m>u_n\in\left]0,10^{-8}\right[</m> ?
+        <ol>
+          <li>
+            <p>
+              Pour d&#xe9;finir le terme de la suite <m>u_n</m>, on utilise une fonction symbolique.
+              On effectue le calcul des 10 premiers termes \og &#xe0; la main (en attendant d'avoir vu
+              les boucles au <xref ref="programmation">chapitre</xref>) :
+
+              <sage>
+                <input>
+                  u(n) = n^100 / 100.^n
+                  u(1);u(2);u(3);u(4);u(5);u(6);u(7);u(8);u(9);u(10)
+                </input>
+                <output>
+                  0.0100000000000000
+                  1.26765060022823e26
+                  5.15377520732011e41
+                  1.60693804425899e52
+                  7.88860905221012e59
+                  6.53318623500071e65
+                  3.23447650962476e70
+                  2.03703597633449e74
+                  2.65613988875875e77
+                  1.00000000000000e80
+                </output>
+              </sage>
+
+              On pourrait en conclure h&#xe2;tivement que <m>u_n</m> tend vers l'infini...
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Pour avoir une id&#xe9;e de la monotonie, on peut tracer la fonction &#xe0; l'aide
+              de laquelle on a d&#xe9;fini la suite <m>u_n</m> (cf. Fig. <xref ref="fig_calculus_trace"></xref>).
+
+              <sage>
+                <input>
+                  plot(u(x), x, 1, 40)
+                </input>
+              </sage>
+
+              <figure xml:id="fig_calculus_trace" >
+                <caption>Graphe de <m>x\mapsto x^{100} / 100^x</m>.</caption>
+                <image width="70%" source="images/suite.png" />
+              </figure>
+
+              On conjecture que la suite va d&#xe9;cro&#xee;tre &#xe0; partir du rang 22.
+
+              <sage>
+                <input>
+                  v(x) = diff(u(x), x); sol = solve(v(x) == 0, x); sol
+                </input>
+                <output>
+                  [x == 0, x == (268850/12381)]
+                </output>
+              </sage>
+
+              <sage>
+                <input>
+                  floor(sol[1].rhs())
+                </input>
+                <output>
+                  21
+                </output>
+              </sage>
+
+              La suite est donc croissante jusqu'au rang 21, puis d&#xe9;croissante &#xe0; partir du
+              rang 22.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              On effectue ensuite le calcul de la limite :
+
+              <sage>
+                <input>
+                  limit(u(n), n=infinity)
+                </input>
+                <output>
+                  0
+                </output>
+              </sage>
+
+              <sage>
+                <input>
+                  n0 = find_root(u(n) - 1e-8 == 0, 22, 1000); n0
+                </input>
+                <output>
+                  105.07496210187252
+                </output>
+              </sage>
+
+              La suite &#xe9;tant d&#xe9;croissante &#xe0; partir du rang 22, on en d&#xe9;duit qu'&#xe0; partir du
+              rang 106, la suite reste confin&#xe9;e &#xe0; l'intervalle <m>\left]0,10^{-8}\right[</m>.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_DL">
+    <title>D&#xe9;veloppements limit&#xe9;s (*)</title>
+    <p>
+      Pour calculer un
+      d&#xe9;veloppement limit&#xe9; d'ordre <m>n</m> au sens fort<fn>On appelle d&#xe9;veloppement limit&#xe9; en 0
+          <em>au sens fort</em> une &#xe9;galit&#xe9; de la forme <m>f(x)=P(x)+\mathcal{O}(x^{n+1})</m>
+          avec <m>P</m> polyn&#xf4;me de degr&#xe9; au plus <m>n</m>, par opposition &#xe0; la notion de
+          d&#xe9;veloppement limit&#xe9; <em>au sens faible</em> qui d&#xe9;signe une &#xe9;galit&#xe9; de la forme
+          <m>f(x)=P(x)+{o}(x^n)</m>.</fn>en <m>x_0</m>, on dispose de la fonction <c>f(x).series(x==x0, n)</c>. Si l'on ne
+      s'int&#xe9;resse qu'&#xe0; la partie r&#xe9;guli&#xe8;re du d&#xe9;veloppement limit&#xe9; &#xe0; l'ordre <m>n</m> (au
+      sens faible), on peut aussi utiliser la fonction <c>taylor(f(x), x, x0, n)</c>.
+    </p>
+
+    <p>
+      D&#xe9;terminons le d&#xe9;veloppement limit&#xe9; des fonctions suivantes :
+      <md>
+        \vtop{\openup 3mm\halign{#\amp #\amp <m>\dis #</m>\amp #\amp <m>#</m>\cr
+        a)\amp \amp  (1+\arctan x)^{\frac{1}{x}}   \amp  \`a l'ordre 3, en \amp  x_0=0 ;\cr
+        b)\amp \amp  \ln(2\sin x)                       \amp  \`a l'ordre 3, en \amp x_0=\frac{\pi}{6}.\cr
+        }}
+      </md>
+    </p>
+
+    <sage>
+      <input>
+        taylor((1+arctan(x))**(1/x), x, 0, 3)
+      </input>
+    </sage>
+
+    <p>
+      <m>\frac{1}{16} \, x^{3} e + \frac{1}{8} \, x^{2} e - \frac{1}{2} \, x
+      e + e</m>
+    </p>
+
+    <sage>
+      <input>
+        (ln(2* sin(x))).series(x==pi/6, 3)
+      </input>
+    </sage>
+
+    <p>
+      <m>{(\sqrt{3})} {(-\frac{1}{6} \, \pi + x)} + {(-2)} {(-\frac{1}{6} \,
+      \pi + x)}^{2} + \mathcal{O}\left(-\frac{1}{216} \, {\left(\pi - 6 \,
+      x\right)}^{3}\right)</m>
+    </p>
+
+    <p>
+      Pour extraire la partie r&#xe9;guli&#xe8;re d'un d&#xe9;veloppement limit&#xe9; obtenu &#xe0; l'aide de
+      <c>series</c>, on utilise la fonction <c>truncate</c> :
+    </p>
+
+    <sage>
+      <input>
+        (ln(2* sin(x))).series(x==pi/6, 3).truncate()
+      </input>
+    </sage>
+
+    <p>
+      <m>-\frac{1}{18} \, {\left(\pi - 6 \, x\right)}^{2} - \frac{1}{6} \, {\left(\pi - 6
+      \, x\right)} \sqrt{3}</m>
+    </p>
+
+    <p>
+      La commande <c>taylor</c> permet &#xe9;galement d'obtenir des d&#xe9;veloppements asymptotiques.
+      Par exemple, pour obtenir un &#xe9;quivalent au voisinage de <m>+\infty</m> de la
+      fonction {<m>(x^3+x)^{\frac{1}{3}}-(x^3-x)^{\frac{1}{3}}</m>} :
+    </p>
+
+    <sage>
+      <input>
+        taylor((x**3+x)**(1/3) - (x**3-x)**(1/3), x, infinity, 2)
+      </input>
+      <output>
+        2/3/x
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_calculus_Limite">
+      <title>Exercice</title>
+      <p>
+        (<em>Un calcul symbolique de limite</em>)
+        Soit <m>f</m> de classe <m>\mathcal{C}^3</m> au voisinage de <m>a\in\R</m>. Calculer
+        <me>
+          \lim_{h\rightarrow 0}\dfrac{1}{h^3}\left( f(a+3h)-3f(a+2h)+3f(a+h)-f(a) \right)
+        </me>
+      </p>
+
+      <p>
+        G&#xe9;n&#xe9;ralisation ?
+      </p>
+    </paragraphs>
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        [*] (<em>La formule de Machin</em>)
+        Montrer la formule suivante :
+        <me>
+          \frac{\pi}{4}=4\arctan \frac{1}{5}-\arctan \frac{1}{239}.
+        </me>
+      </p>
+
+      <p>
+        C'est &#xe0; l'aide de cette formule et du d&#xe9;veloppement d'<m>\arctan</m> en s&#xe9;rie
+        enti&#xe8;re, que l'astronome John Machin <em>(1680-1752)</em> calcula cent d&#xe9;cimales de <m>\pi</m> en 1706.
+        D&#xe9;duire de cette formule une valeur approch&#xe9;e de <m>\pi</m> en utilisant sa m&#xe9;thode.
+      </p>
+    </paragraphs>
+    <p>
+      On commence par remarquer que <m>4\arctan\frac15</m> et
+      <m>\frac{\pi}4+\arctan\frac1{239}</m> ont m&#xea;me tangente :
+    </p>
+
+    <sage>
+      <input>
+        tan(4*arctan(1/5)).simplify_trig()
+      </input>
+      <output>
+        120/119
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        tan(pi/4+arctan(1/239)).simplify_trig()
+      </input>
+      <output>
+        120/119
+      </output>
+    </sage>
+
+    <p>
+      Or les r&#xe9;els <m>4\arctan\frac15</m> et <m>\frac{\pi}4+\arctan\frac1{239}</m> appartiennent
+      tous les deux &#xe0; l'intervalle ouvert <m>]0,\pi[</m>, donc ils sont &#xe9;gaux.
+      Pour obtenir une valeur approch&#xe9;e de <m>\pi</m>, on peut proc&#xe9;der de la mani&#xe8;re
+      suivante :
+    </p>
+
+    <sage>
+      <input>
+        f = arctan(x).series(x, 10); f
+      </input>
+      <output>
+        1*x + (-1/3)*x^3 + 1/5*x^5 + (-1/7)*x^7 + 1/9*x^9 + Order(x^10)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        (16*f.subs(x==1/5) - 4*f.subs(x==1/239)).n(); pi.n()
+      </input>
+      <output>
+        3.14159268240440
+        3.14159265358979
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_calculus_formuleGauss">
+      <title>Exercice</title>
+      <p>
+        [*] (<em>Une formule due &#xe0; Gauss </em>)
+        La formule suivante n&#xe9;cessite le calcul de 20 pages de tables de factorisations
+        dans l'&#xe9;dition des oeuvres de Gauss (cf. <em>Werke</em>, ed. K&#xf6;ngl. Ges. de
+        Wiss. G&#xf6;ttingen, vol.<nbsp />2, p. 477-502) :
+        <me>
+          \frac{\pi}{4}=12\arctan \frac{1}{38}+20\arctan
+          \frac{1}{57}+ 7\arctan \frac{1}{239}+24\arctan \frac{1}{268}.
+        </me>
+        <ol>
+          <li>
+            <p>
+              On pose <m>\theta = 12\arctan \frac{1}{38}+20\arctan
+              \frac{1}{57}+ 7\arctan \frac{1}{239}+24\arctan \frac{1}{268}</m>.
+
+              V&#xe9;rifier &#xe0; l'aide de <em>Sage</em> , que <m>\tan\theta = 1</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Prouver l'in&#xe9;galit&#xe9; :  <m>\forall x\in\left[0,\frac{\pi}4\right], x\leq\tan
+              x\leq \frac4{\pi} x</m>.
+              En d&#xe9;duire la formule de Gauss.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              En approchant la fonction <m>\tan</m> par son polyn&#xf4;me de Taylor d'ordre 21 en
+              0, donner une nouvelle approximation de <m>\pi</m>.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_series">
+    <title>S&#xe9;ries (*)</title>
+    <p>
+      On peut utiliser les commandes pr&#xe9;c&#xe9;dentes pour effectuer des calculs sur les
+      s&#xe9;ries. Donnons quelques exemples.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Calcul de la somme de s&#xe9;ries de Riemann</em>)
+      </p>
+
+      <sage>
+        <input>
+          var('k'); sum(1/k^2, k, 1, infinity),\
+                          sum(1/k^4, k, 1, infinity),\
+                          sum(1/k^5, k, 1, infinity)
+        </input>
+      </sage>
+
+      <me>
+        \left(\frac{1}{6} \, \pi^{2}, \frac{1}{90} \, \pi^{4},
+        \zeta\left(5\right)\right)
+      </me>
+    </paragraphs>
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Une formule due &#xe0; Ramanujan</em>)
+        En utilisant la somme partielle des <m>12</m> premiers termes de la s&#xe9;rie suivante,
+        donnons une approximation de <m>\pi</m> et comparons-la avec la valeur donn&#xe9;e par <em>Sage</em> .
+        <me>
+          \dfrac1{\pi}=\dfrac{2\sqrt{2}}{9801}\sum_{k=0}^{+\infty}\dfrac{(4k)!\cdot(1103+26390\,k)}{(k!)^4\cdot
+          396^{4k}}.
+        </me>
+      </p>
+
+      <sage>
+        <input>
+          s = 2*sqrt(2)/9801*(sum((factorial(4*k))*(1103+26390*k)\
+               /((factorial(k)) ^ 4 * 396 ^ (4 * k)) for k in (0..11)))
+          (1 / s).n(digits=100); pi.n(digits=100)
+        </input>
+        <output>
+          3.141592653589793238462643383279502884197169399375105820974944
+             592307816406286208998628034825342121432
+          3.141592653589793238462643383279502884197169399375105820974944
+             592307816406286208998628034825342117068
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          print "%e" % (pi - 1 / s).n(digits=100)
+        </input>
+        <output>
+          -4.364154e-96
+        </output>
+      </sage>
+
+      <p>
+        On remarque que la somme partielle des 12 premiers termes donne d&#xe9;j&#xe0; 95
+        d&#xe9;cimales significatives de <m>\pi</m> !
+      </p>
+    </paragraphs>
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Convergence d'une s&#xe9;rie</em>)
+        Soit &#xe0; &#xe9;tudier la nature de la s&#xe9;rie
+        <me>
+          \sum_{n\geq0} \sin\left(\pi\sqrt{4 \, n^{2} + 1}\right).
+        </me>
+      </p>
+
+      <p>
+        Pour effectuer un d&#xe9;veloppement asymptotique du terme g&#xe9;n&#xe9;ral, on utilise la
+        <m>2\pi</m>-p&#xe9;riodicit&#xe9; de la fonction sinus pour que l'argument du sinus tende vers<nbsp /><m>0</m> :
+      </p>
+
+      <p>
+        <m>u_n= \sin\left(\pi\sqrt{4 \, n^{2} + 1}\right) =\sin\left[\pi\left(\sqrt{4 \, n^{2}
+        + 1}-2n\right)\right].</m>
+      </p>
+
+      <p>
+        On peut alors appliquer la fonction <c>taylor</c> &#xe0; cette nouvelle expression du
+        terme g&#xe9;n&#xe9;ral :
+      </p>
+
+      <sage>
+        <input>
+          var('n'); u = sin(pi*(sqrt(4*n^2+1)-2*n))
+          taylor(u, n, infinity, 3)
+        </input>
+      </sage>
+
+      <me>
+        \frac{\pi}{4 \, n} + \frac{-{\left(6 \, \pi + \pi^{3}\right)}}{384 \, n^{3}}
+      </me>
+      <p>
+        On en d&#xe9;duit <m>u_n\sim\frac{\pi}{4\,n}</m>.
+        Donc, d'apr&#xe8;s les r&#xe8;gles de comparaison
+        aux s&#xe9;ries de Riemann, la s&#xe9;rie <m>\sum\limits_{n\geq0}u_n</m> diverge.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_calculus_Asympt">
+      <title>Exercice</title>
+      <p>
+        (<em>D&#xe9;veloppement asymptotique d'une suite</em>)
+        Il est ais&#xe9; de montrer (en utilisant par exemple le th&#xe9;or&#xe8;me de la bijection
+        monotone) que pour tout <m>n\in\N</m>, l'&#xe9;quation <m>\tan x=x</m> admet une et une seule solution, not&#xe9;e<nbsp /><m>x_n</m>,
+        dans l'intervalle <m>[n\pi,n\pi+\frac{\pi}{2}[</m>.
+      </p>
+
+      <p>
+        Donner un d&#xe9;veloppement asymptotique de
+        <m>x_n</m> &#xe0; l'ordre 6 en <m>+\infty</m>.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_derivation">
+    <title>D&#xe9;rivation</title>
+    <p>
+      La fonction <c>derivative</c> (qui a pour alias <c>diff</c>) permet de d&#xe9;river
+      une expression symbolique ou une fonction symbolique.
+    </p>
+
+    <sage>
+      <input>
+        diff(sin(x^2), x)
+      </input>
+      <output>
+        2*x*cos(x^2)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        function('f',x); function('g',x); diff(f(g(x)), x)
+      </input>
+      <output>
+        D[0](f)(g(x))*D[0](g)(x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        diff(ln(f(x)), x)
+      </input>
+      <output>
+        D[0](f)(x)/f(x)
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_dpartial">
+    <title>D&#xe9;riv&#xe9;es partielles (*)</title>
+    <p>
+      La commande <c>diff</c> permet &#xe9;galement de calculer des d&#xe9;riv&#xe9;es <m>n</m>-i&#xe8;mes ou des d&#xe9;riv&#xe9;es
+      partielles.
+    </p>
+
+    <sage>
+      <input>
+        f(x,y) = x*y + sin(x^2) + e^(-x); derivative(f, x)
+      </input>
+      <output>
+        (x, y) |--> 2*x*cos(x^2) + y - e^(-x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        derivative(f, y)
+      </input>
+      <output>
+        (x, y) |--> x
+      </output>
+    </sage>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        Soit &#xe0; v&#xe9;rifier que la fonction suivante est harmonique<fn>Une fonction <m>f</m> est dite <em>harmonique</em> lorsque son Laplacien <m>\Delta
+        f=\partial_1^2f+\partial_2^2f</m> est nul.</fn>:
+      </p>
+
+      <p>
+        <m>f(x_1,x_2)=\frac{1}{2}\ln(x_1^2+x_2^2)</m> pour tout
+        <m>(x_1,x_2)\neq(0,0)</m>.
+      </p>
+
+      <sage>
+        <input>
+          var('x y'); f = ln(x**2+y**2) / 2
+          delta = diff(f,x,2)+diff(f,y,2)
+          delta.simplify_full()
+        </input>
+        <output>
+          0
+        </output>
+      </sage>
+    </paragraphs>
+    <paragraphs xml:id="exo_calculus_Laplacien">
+      <title>Exercice</title>
+      <p>
+        (<em>Expression du Laplacien en coordonn&#xe9;es polaires</em>)
+        Soit l'ouvert <m>U=\R^2\setminus\{(0,0)\}</m>, et <m>f</m> une fonction de classe <m>\mathcal{C}^2</m> d&#xe9;finie <m>U</m>.
+        On consid&#xe8;re la fonction <m>F(\rho,\theta)=f(\rho\cos\theta,\rho\sin\theta)</m>.
+        Calculer<m>\dis \frac{\partial^2 F}{\partial\rho^2}+\frac1{\rho^2}\frac{\partial^2
+        F}{\partial\theta^2}+\frac1{\rho}\frac{\partial F}{\partial\rho}</m>.
+        En d&#xe9;duire l'expression du Laplacien <m>\Delta f=\partial_1^2 f+\partial_2^2 f</m> en coordonn&#xe9;es
+        polaires.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_calculus_Peano">
+      <title>Exercice</title>
+      <p>
+        (<em>Un contre-exemple d&#xfb; &#xe0; Peano au th&#xe9;or&#xe8;me de Schwarz</em>)
+        Soit <m>f</m> l'application de <m>\R^2</m> dans <m>\R</m> d&#xe9;finie par :
+        <me>
+          f(x,y)=\begin{cases}xy\frac{x^2-y^2}{x^2+y^2 } \amp  \mbox{ si }  (x,y)\neq (0,0),\\
+          0\amp  \mbox{ si }  (x,y)= (0,0).
+          \end{cases}
+        </me>
+      </p>
+
+      <p>
+        A-t-on <m>\partial_1\partial_2f(0,0)=\partial_2\partial_1f(0,0)</m> ?
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_integration">
+    <title>Int&#xe9;gration</title>
+    <p>
+      Pour calculer une primitive ou une int&#xe9;grale, on
+      utilise la fonction <c>integrate</c> (ou son alias <c>integral</c>) :
+    </p>
+
+    <sage>
+      <input>
+        sin(x).integral(x, 0, pi/2)
+      </input>
+      <output>
+        1
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        integrate(1/(1+x^2), x)
+      </input>
+      <output>
+        arctan(x)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        integrate(1/(1+x^2), x, -infinity, infinity)
+      </input>
+      <output>
+        pi
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        integrate(exp(-x**2), x, 0, infinity)
+      </input>
+      <output>
+        1/2*sqrt(pi)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        integrate(exp(-x), x, -infinity, infinity)
+      </input>
+      <output>
+        ValueError: Integral is divergent.
+      </output>
+    </sage>
+
+    <p>
+      Pour effectuer une int&#xe9;gration num&#xe9;rique sur un intervalle, on dispose de la fonction
+      <c>integral_numerical</c> qui renvoie un <em>tuple</em> &#xe0; deux &#xe9;l&#xe9;ments, dont la
+      premi&#xe8;re composante donne une valeur approch&#xe9;e de l'int&#xe9;grale, et la deuxi&#xe8;me
+      une estimation de l'erreur effectu&#xe9;e.
+    </p>
+
+    <sage>
+      <input>
+        integral_numerical(sin(x)/x, 0, 1)
+      </input>
+      <output>
+        (0.94608307036718298, 1.0503632079297087e-14)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        g = integrate(exp(-x**2), x, 0, infinity); g, g.n()
+      </input>
+      <output>
+        (1/2*sqrt(pi), 0.886226925452758)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        approx = integral_numerical(exp(-x**2), 0, infinity)
+        approx; approx[0]-g.n()
+      </input>
+      <output>
+        (0.88622692545275683, 1.7147744360127691e-08)
+        -1.11022302462516e-15
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_calculus_BBP">
+      <title>Exercice</title>
+      <p>
+        [*] (<em>La formule BBP</em>)
+        On cherche &#xe0; &#xe9;tablir par un calcul symbolique la formule BBP (ou
+        Bailey-Borwein-Plouffe) ; cette permet de calculer le <m>n</m>-i&#xe8;me chiffre apr&#xe8;s la
+        virgule de <m>\pi</m> en base 2 (ou 16) sans avoir &#xe0; en calculer les pr&#xe9;c&#xe9;dents, et
+        en utilisant tr&#xe8;s peu de m&#xe9;moire et de temps.
+        Pour <m>N\in\N</m>, on pose
+        <m>S_N=\sum_{n=0}^N
+        \left(\frac{4}{8n+1}-\frac{2}{8n+4}-\frac{1}{8n+5}-\frac{1}{8n+6} \right)
+        \left( \frac{1}{16}\right)^n.</m>
+        <ol>
+          <li>
+            <p>
+              Soit la fonction  <m>f \colon t\longmapsto 4\sqrt{2}-8t^3-4\sqrt{2}t^4-8t^5</m>.
+              Pour <m>N\in\N</m>, exprimer  en fonction de <m>S_N</m>  l'int&#xe9;grale suivante :
+              <me>
+                I_N=\int_{0}^{1/ \sqrt{2}} f(t)\left(\sum_{n=0}^N t^{8n} \right)\dd t.
+              </me>
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Pour <m>N\in\N</m>, on pose
+              <m>\dis J=\int_{0}^{1/ \sqrt{2}} \dfrac{f(t)}{1-t^8} \dd t</m>.
+              Montrer
+              <m>\dis\lim_{N\rightarrow+\infty} S_N=J</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Montrer la formule BBP :
+              <me>
+                \sum_{n=0}^{+\infty}
+                \left(\dfrac{4}{8n+1}-\dfrac{2}{8n+4}-\dfrac{1}{8n+5}-\dfrac{1}{8n+6} \right)
+                \left( \dfrac{1}{16}\right)^n =\pi.
+              </me>
+              Cette formule   remarquable  a &#xe9;t&#xe9; obtenue le 19 septembre 1995 par Simon
+              Plouffe en collaboration avec David Bailey et Peter Borwein.
+              Gr&#xe2;ce &#xe0; une formule d&#xe9;riv&#xe9;e de la formule BBP, le <m>4\, 000\, 000\, 000\, 000\,
+              000^{\mathrm{e}}</m> chiffre de <m>\pi</m> en base 2 a &#xe9;t&#xe9; obtenu en 2001.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_tableau_analyse">
+    <title>R&#xe9;capitulatif des fonctions utiles en analyse</title>
+    <p>
+      On r&#xe9;sume les fonctions d&#xe9;crites dans les sections pr&#xe9;c&#xe9;dentes :
+      <md>
+        \vbox{
+
+        \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        \tvi \amp {Fonction}   \amp  \textrm{Syntaxe}  \amp   \cr
+        \noalign{\hrule}
+        \tvp\cr
+        \tvi\amp D\'erivation                        \amp  diff(f(x), x) \cr
+        \tvi\amp D\'eriv\'ee <m>n</m>-i\`eme                   \amp  diff(f(x), x, n) \cr
+        \tvi\amp Int\'egration                       \amp  integrate(f(x), x) \cr
+        \tvi\amp Int\'egration num\'erique             \amp  integral\_numerical(f(x), a, b) \cr
+        \tvi\amp Somme symbolique                  \amp  sum(f(i), i, imin, imax)\cr
+        \tvi\amp Limite                            \amp  limit(f(x), x=a) \cr
+        \tvi\amp Polyn\^ome de Taylor                \amp  taylor(f(x), x, a, n) \cr
+        \tvi\amp D\'eveloppement limit\'e              \amp  f.series(x==a, n) \cr
+        \tvi\amp Trac\'e d'une courbe                \amp  plot(f(x), x, a, b)\cr
+        \tvp\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        }}
+      </md>
+    </p>
+  </subsection>
+</section>
+

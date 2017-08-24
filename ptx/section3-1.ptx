@@ -1,0 +1,1004 @@
+
+
+<section>
+  <title>Courbes en 2D</title>
+  <introduction>
+    <p>
+      Une courbe plane peut &#xea;tre d&#xe9;finie de plusieurs fa&#xe7;ons : comme graphe d'une
+      fonction d'une variable, par un syst&#xe8;me d'&#xe9;quations param&#xe9;triques, par une
+      &#xe9;quation en coordonn&#xe9;es polaires, ou par une &#xe9;quation implicite. Nous pr&#xe9;sentons
+      ces quatre cas, puis donnons quelques exemples de trac&#xe9;s de donn&#xe9;es.
+    </p>
+  </introduction>
+
+  <subsection>
+    <title>Repr&#xe9;sentation graphique de fonctions</title>
+    <p>
+      Pour tracer le graphe d'une fonction symbolique ou d'une fonction <em>Python</em> sur un intervalle <m>[a,b]</m>, on dispose
+      de deux syntaxes : <c>plot(f(x), a, b)</c> ou <c>plot(f(x), x, a, b)</c>.
+    </p>
+
+    <sage>
+      <input>
+        plot(x * sin(1/x), x, -2, 2, plot_points=500)
+      </input>
+    </sage>
+
+    <figure xml:id="gr_xsin1surx" >
+      <caption>Graphe de <m>x\mapsto x\sin\frac1x</m>.</caption>
+      <image width="73%" source="images/simple_plot.png" />
+    </figure>
+
+    <p>
+      Parmi les nombreuses options de la fonction <c>plot</c>, citons :
+      <ul>
+        <li>
+          <p>
+            <c>plot_points</c>  (valeur par d&#xe9;faut : 200) : d&#xe9;termine le nombre
+            minimal de points calcul&#xe9;s ;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>xmin</c> et <c>xmax</c> : d&#xe9;termine les bornes de l'intervalle sur
+            lequel est trac&#xe9; la fonction ;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>color</c> : d&#xe9;termine la couleur du trac&#xe9;, soit par un triplet RGB, une
+            cha&#xee;ne de caract&#xe8;re (par ex. <c>'blue'</c>), ou par une couleur HTML (par ex.
+            <c>'#aaff0b'</c>) ;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>detect_poles</c>  (valeur par d&#xe9;faut : <c>False</c>) : permet de
+            tracer ou non l'asymptote verticale correspondante au p&#xf4;le d'une fonction ;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>alpha</c> permet de r&#xe9;gler la transparence du trait ;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>thickness</c> d&#xe9;termine l'&#xe9;paisseur du trait ;
+          </p>
+        </li>
+
+        <li>
+          <p>
+            <c>linestyle</c> d&#xe9;termine la nature du trait : trac&#xe9; en
+            pointill&#xe9;s (<c>:</c>), traits et pointill&#xe9;s (<c>-.</c>), trait continu
+            (<c>-</c>).
+          </p>
+        </li>
+      </ul>
+    </p>
+
+    <p>
+      Pour visualiser le trac&#xe9;, on peut placer l'objet graphique dans une variable,
+      puis utiliser la commande <c>show</c>, en pr&#xe9;cisant par exemple les valeurs
+      minimales et maximales de l'ordonn&#xe9;e (<c>g.show(ymin=-1, ymax=3)</c>) ou alors
+      en choisissant le rapport d'affinit&#xe9; (<c>g.show(aspect_ratio=1)</c> pour un
+      trac&#xe9; en rep&#xe8;re orthonorm&#xe9;).
+    </p>
+
+    <p>
+      La figure produite peut &#xea;tre export&#xe9;e gr&#xe2;ce &#xe0; la commande
+      <c>save</c> vers diff&#xe9;rents formats : <c>.png</c>,
+      <c>.ps</c>, <c>.eps</c>, <c>.svg</c> et <c>.sobj</c> :
+    </p>
+
+    <p>
+      g.save(nom, aspect_ratio=1, xmin=-1, xmax=3, ymin=-1, ymax=3)
+    </p>
+
+    <p>
+      Pour inclure une telle figure dans un document <latex /> &#xe0; l'aide de la commande
+      <c>includegraphics</c>, on choisit l'extension <c>eps</c> (PostScript encapsul&#xe9;)
+      si le document est compil&#xe9; avec <c>latex</c> et l'extension <c>pdf</c> (plut&#xf4;t
+      que <c>png</c> pour obtenir une meilleure r&#xe9;solution) si le document est compil&#xe9;
+      avec <c>pdflatex</c>.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        Tra&#xe7;ons sur un m&#xea;me graphique la fonction sinus et ses premiers polyn&#xf4;mes de Taylor en 0.
+      </p>
+    </paragraphs>
+    <pre>
+      def p(x, n): return(taylor(sin(x), x, 0, n))
+      xmax = 15 ; n = 15
+      g = plot(sin(x), x, -xmax, xmax)
+      for d in range(n):
+           g += plot(p(x, 2 * d + 1), x, -xmax, xmax,\
+             color=(1.7*d/(2*n), 1.5*d/(2*n), 1-3*d/(4*n)))
+      g.show(ymin=-2, ymax=2)
+    </pre>
+
+    <figure xml:id="gr_sinustaylor" >
+      <caption>Quelques polyn&#xf4;mes de Taylor de sinus en <m>0</m>.</caption>
+      <image width="50%" source="images/sinus_DL-1.png" />
+      <image width="50%" source="images/sinus_DL-2.png" />
+    </figure>
+
+    <p>
+      On aurait &#xe9;galement pu effectuer une animation, pour observer combien le
+      polyn&#xf4;me de Taylor de la fonction <m>\sin</m> en <m>0</m> approche de mieux en mieux cette
+      fonction lorsque le degr&#xe9; augmente.
+      Si l'on souhaite sauvegarder l'animation, il suffit de l'enregistrer
+      au format <c>gif</c>.
+    </p>
+
+    <sage>
+      <input>
+        a = animate([[sin(x), taylor(sin(x), x, 0, 2*k+1)]\
+                  for k in range(0, 14)], xmin=-14, xmax=14,\
+                  ymin=-3, ymax=3, figsize=[8, 4])
+        a.show(); a.save('chemin/animation.gif')
+      </input>
+    </sage>
+
+    <p>
+      Revenons &#xe0; la fonction <c>plot</c> pour observer, par exemple, le ph&#xe9;nom&#xe8;ne de
+      Gibbs.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        Tra&#xe7;ons la somme partielle d'ordre 20 de la s&#xe9;rie de Fourier de la fonction cr&#xe9;neau.
+      </p>
+    </paragraphs>
+    <pre>
+      f2(x) = 1; f1(x) = -1
+      f = Piecewise([[(-pi,0),f1],[(0,pi),f2]])
+      S = f.fourier_series_partial_sum(20,pi); S
+      g = plot(S, x, -8, 8, color='blue')
+      scie(x) = x - 2 * pi * floor((x + pi) / (2 * pi))
+      g += plot(scie(x) / abs(scie(x)), x, -8, 8, color='red')
+    </pre>
+
+    <p>
+      Dans le code ci-dessus, <c>f</c> est une fonction par morceaux d&#xe9;finie sur
+      <m>[-\pi;\pi]</m> &#xe0; l'aide de l'instruction <c>piecewise</c>.
+      Pour repr&#xe9;senter le prolongement de <c>f</c> par <m>2\pi</m>-p&#xe9;riodicit&#xe9;, le plus
+      simple est d'en chercher une expression valable pour tout r&#xe9;el
+      (en l'occurrence <c>scie/abs(scie)</c>).
+      La somme des 20 premiers termes de la s&#xe9;rie de Fourier vaut :
+      <md>
+        S = 4 \, \frac{\sin\left(x\right)}{\pi}
+        + \frac{4}{3} \, \frac{\sin\left(3 \, x\right)}{\pi}
+        + \frac{4}{5} \, \frac{\sin\left(5 \, x\right)}{\pi}
+        + \frac{4}{7} \, \frac{\sin\left(7 \, x\right)}{\pi} \\
+        + \frac{4}{9} \, \frac{\sin\left(9 \, x\right)}{\pi}
+        + \frac{4}{11} \, \frac{\sin\left(11 \, x\right)}{\pi}
+        + \frac{4}{13} \, \frac{\sin\left(13 \, x\right)}{\pi} \\
+        + \frac{4}{15} \, \frac{\sin\left(15 \, x\right)}{\pi}
+        + \frac{4}{17} \, \frac{\sin\left(17 \, x\right)}{\pi}
+        + \frac{4}{19} \, \frac{\sin\left(19 \, x\right)}{\pi}
+      </md>
+    </p>
+
+    <figure xml:id="gr_Gibbs" >
+      <caption>D&#xe9;composition de la fonction cr&#xe9;neaux en s&#xe9;rie de Fourier.</caption>
+      <image width="70%" source="images/fourier_1.png" />
+    </figure>
+  </subsection>
+
+  <subsection>
+    <title>Courbes param&#xe9;tr&#xe9;es</title>
+    <p>
+      Les trac&#xe9;s de courbes param&#xe9;tr&#xe9;es <m>(x=f(t),\;y=g(t))</m> sont r&#xe9;alis&#xe9;s par la
+      commande <c>parametric_plot((f(t), g(t)), (t, a, b))</c> o&#xf9; <m>[a,b]</m> est l'intervalle
+      parcouru par le param&#xe8;tre.
+    </p>
+
+    <p>
+      Repr&#xe9;sentons par exemple la courbe param&#xe9;tr&#xe9;e d'&#xe9;quations :
+      <me>
+        \left\lbrace\vcenter{\mbox{\(x(t) = \cos(t) + \frac12 \cos(7t) + \frac13
+        \sin(17t),\)} 
+        \mbox{\(y(t) = \sin(t) + \frac12 \sin(7t) + \frac13 \cos(17t).\)} }\right.
+      </me>
+    </p>
+
+    <sage>
+      <input>
+        t = var('t')
+        x = cos(t) + cos(7*t)/2 + sin(17*t)/3
+        y = sin(t) + sin(7*t)/2 + cos(17*t)/3
+        g = parametric_plot( (x, y), (t, 0, 2*pi))
+        g.show(aspect_ratio=1)
+      </input>
+    </sage>
+
+    <figure xml:id="gr_courbeparametree" >
+      <caption>Courbe <m>\left\lbrace\vcenter{ <m>x(t) = \cos(t) + \frac12 \cos(7t) + \frac13
+      \sin(17t),</m>  
+       <m>y(t) = \sin(t) + \frac12 \sin(7t) + \frac13 \cos(17t).</m>  }\right.</m></caption>
+      <image width="80%" source="images/courbe_param.png" />
+    </figure>
+  </subsection>
+
+  <subsection>
+    <title>Courbes en coordonn&#xe9;es polaires</title>
+    <p>
+      Les trac&#xe9;s de courbes en coordonn&#xe9;es polaires <m>\rho=f(\theta)</m>
+      sont r&#xe9;alis&#xe9;s par la commande <c>polar_plot(rho(theta),(theta,a,b))</c> o&#xf9; <m>[a,b]</m> est l'intervalle
+      parcouru par le param&#xe8;tre.
+    </p>
+
+    <p>
+      Repr&#xe9;sentons par exemple les concho&#xef;des de rosace d'&#xe9;quation polaire
+      <m>\rho(\theta)= 1 + e\cdot \cos n \theta</m>
+    </p>
+
+    <p>
+      lorsque <m>n = {20}/{19}</m> et <m>e\in\left\lbrace 2,1/3\right\rbrace</m>.
+    </p>
+
+    <pre>
+      t = var('t'); e, n = 2, 20/19
+      g1 = polar_plot(1+e*cos(n*t),(t,0,n*38*pi),plot_points=5000)
+      e, n = 1/3, 20/19
+      g2 = polar_plot(1+e*cos(n*t),(t,0,n*38*pi),plot_points=5000)
+      g1.show(aspect_ratio=1); g2.show(aspect_ratio=1)
+    </pre>
+
+    <figure xml:id="gr_rosace" >
+      <caption>Rosaces d'&#xe9;quation 
+      <m>\rho(\theta)= 1 + e\cdot \cos n \theta</m>.</caption>
+      <image width="50%" source="images/rosace_1.png" />
+      <image width="50%" source="images/rosace_2.png" />
+    </figure>
+
+    <paragraphs xml:id="exo_graphique_conchoides">
+      <title>Exercice</title>
+      <p>
+        Repr&#xe9;senter la famille de concho&#xef;des de Pascal d'&#xe9;quation polaire
+        <m>\rho(\theta)= a + \cos\theta</m>
+        en faisant varier le param&#xe8;tre <m>a</m>
+        de<nbsp />0<nbsp />&#xe0;<nbsp />1<nbsp />avec un pas de <m>0,1</m>.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="gr_polycomplexe">
+    <title>Courbe d&#xe9;finie par une &#xe9;quation implicite</title>
+    <p>
+      Pour repr&#xe9;senter une courbe donn&#xe9;e par une &#xe9;quation implicite, on utilise la
+      fonction <c>implicit_plot(f(x, y), (x, a, b), (y, c, d))</c> ; cependant, on peut
+      aussi utiliser la commande <c>complex_plot</c> qui permet de visualiser en
+      couleur les lignes de niveau d'une fonction &#xe0; deux variables.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        Repr&#xe9;sentons la courbe donn&#xe9;e par l'&#xe9;quation implicite suivante :
+        <me>
+          \mathcal{C}=\left\lbrace z\in\mathbb{C} \;,\; <c>\cos(z^4)</c>=1 \right\rbrace
+        </me>
+      </p>
+    </paragraphs>
+    <sage>
+      <input>
+        var('z'); g1 = complex_plot(abs(cos(z^4)) - 1,\
+                        (-3, 3), (-3, 3), plot_points=400)
+        f = lambda x, y : (abs(cos((x + I * y) ** 4)) - 1)
+        g2 = implicit_plot(f, (-3, 3), (-3, 3), plot_points=400)
+        g1.show(aspect_ratio=1); g2.show(aspect_ratio=1)
+      </input>
+    </sage>
+
+    <figure xml:id="gr_cosz4" >
+      <caption>Courbe d&#xe9;finie par l'&#xe9;quation <m>\vabs{\cos(z^4)}=1</m>.</caption>
+      <image width="50%" source="images/cosz4_1.png" />
+      <image width="50%" source="images/cosz4_2.png" />
+    </figure>
+
+    <sidebyside>
+      Voici un autre exemple de trac&#xe9; de fonction donn&#xe9;e par une &#xe9;quation complexe :
+
+      <sage>
+        <input>
+          f(z) = z^5 + z - 1 + 1/z
+          complex_plot(f,\
+                (-3, 3), (-3, 3))
+        </input>
+      </sage>
+
+      <image width="50%" source="images/poly_complexe.png" />
+    </sidebyside>
+  </subsection>
+
+  <subsection>
+    <title>Trac&#xe9; de donn&#xe9;es</title>
+    <p>
+      Pour tracer un diagramme en rectangles, on dispose de deux fonctions assez diff&#xe9;rentes.
+      Tout d'abord, la commande <c>bar_chart</c> prend en argument une liste d'entiers
+      et trace simplement des barres verticales dont la hauteur est donn&#xe9;e par les
+      &#xe9;l&#xe9;ments de la liste (dans leur ordre d'apparition dans la liste). Notons que
+      l'option <c>width</c> permet de choisir la largeur des rectangles.
+    </p>
+
+    <sage>
+      <input>
+        bar_chart([randrange(15) for i in range(20)], color='red')
+        bar_chart([x^2 for x in range(1,20)], width=0.2)
+      </input>
+    </sage>
+
+    <figure xml:id="gr_histogrammes1" >
+      <caption>Diagrammes en rectangles.</caption>
+      {
+      <image width="35%" source="images/histo1.png" />
+      <image width="35%" source="images/histo2.png" />
+      }
+    </figure>
+
+    <p>
+      En revanche, pour tracer l'histogramme des fr&#xe9;quences d'une donn&#xe9;e statistique
+      donn&#xe9;e sous forme d'une liste de flottants, on utilise la fonction <c>plot_histogram</c> :
+      les valeurs de la liste sont tri&#xe9;es et r&#xe9;parties dans des intervalles (le nombre
+      d'intervalles &#xe9;tant fix&#xe9; par la variable <c>bins</c> dont la valeur par d&#xe9;faut
+      vaut 50) ; la hauteur de la barre pour chaque intervalle &#xe9;tant &#xe9;gale &#xe0; la
+      fr&#xe9;quence correspondante.
+    </p>
+
+    <sage>
+      <input>
+        liste = [10 + floor(10*sin(i)) for i in range(100)]
+        bar_chart(liste)
+        finance.TimeSeries(liste).plot_histogram(bins=20)
+      </input>
+    </sage>
+
+    <figure>
+      {
+      \subfloat[Trac&#xe9; avec <c>bar_chart</c> ]{
+      <image width="40%" source="images/histo3.png" />
+      }
+
+      \subfloat[Trac&#xe9; avec <c>plot_histogram</c> ]{
+      <image width="40%" source="images/histo4.png" />
+      }
+      }
+    </figure>
+
+    <p>
+      Il est fr&#xe9;quent que la liste statistique &#xe0; &#xe9;tudier soit stock&#xe9;e dans
+      une feuille de calcul obtenue &#xe0; l'aide d'un tableur. Le module <c>csv</c> de
+      <em>Python</em>  permet alors d'importer les donn&#xe9;es depuis un fichier enregistr&#xe9; au format
+      <c>csv</c>. Par exemple, supposons que l'on souhaite tracer l'histogramme des
+      notes d'une classe se trouvant dans la colonne 3 du fichier nomm&#xe9; <c>ds01.csv</c>.
+      Pour extraire les notes de cette colonne, on utilise les instructions suivantes
+      (en g&#xe9;n&#xe9;ral les premi&#xe8;res lignes comportent du texte d'o&#xf9; la n&#xe9;cessit&#xe9; de g&#xe9;rer
+      les erreurs &#xe9;ventuelles lors de la conversion en flottant gr&#xe2;ce &#xe0; l'instruction
+      <c>try</c>) :
+    </p>
+
+    <sidebyside>
+      <pre>
+        import csv
+        reader = csv.reader(open("ds01.csv"))
+        notes = []; liste = []
+        for ligne in reader:
+            notes.append(ligne[3])
+        for i in notes:
+            try:
+                f = float(i)
+            except ValueError:
+                pass
+            else:
+                liste.append(f)
+        finance.TimeSeries(liste).plot_histogram(bins=20)
+      </pre>
+      <image width="35%" source="images/histo5.png" />
+    </sidebyside>
+    <p>
+      Pour tracer une liste de points reli&#xe9;s (resp.<nbsp />un nuage de points), on utilise la
+      commande <c>line(p)</c> (resp.<nbsp /><c>point(p)</c>), <c>p</c> d&#xe9;signant une liste de
+      listes &#xe0; deux &#xe9;l&#xe9;ments d&#xe9;signant abscisse et ordonn&#xe9;e des points &#xe0; tracer.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Marche al&#xe9;atoire</em>)
+        Partant d'un point origine <m>O</m> une particule se d&#xe9;place d'une
+        longueur <m>\ell</m>, &#xe0; intervalle de temps r&#xe9;gulier <m>t</m>, &#xe0; chaque fois dans une
+        direction quelconque, ind&#xe9;pendante des directions pr&#xe9;c&#xe9;dentes.
+        Repr&#xe9;sentons un exemple de trajectoire pour une telle particule.
+        Le segment rouge relie la position initiale &#xe0; la position finale.
+      </p>
+
+      <pre>
+        from random import *
+        n, l, x, y = 10000, 1, 0, 0; p = [[0, 0]]
+        for k in range(n):
+            theta = (2 * pi * random()).n(digits=5)
+            x, y = x + l * cos(theta), y + l * sin(theta)
+            p.append([x, y])
+        g1 = line([p[n], [0, 0]], color='red', thickness=2)
+        g1 += line(p, thickness=.4); g1.show(aspect_ratio=1)
+      </pre>
+
+      <figure xml:id="gr_marchealea" >
+        <caption>Marche al&#xe9;atoire</caption>
+        <image width="50%" source="images/marche_alea.png" />
+      </figure>
+    </paragraphs>
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Suites &#xe9;quir&#xe9;parties</em>)
+        &#xc9;tant donn&#xe9;e une suite r&#xe9;elle <m>(u_n)_{n\in\N^*}</m>, on construit la ligne
+        polygonale dont les sommets successifs sont les points d'affixe
+        <m>z_N=\sum_{n\infr N} e^{2i\pi u_n}</m>.
+        Si la suite est &#xe9;quir&#xe9;partie modulo 1, la ligne bris&#xe9;e ne s'&#xe9;loigne pas trop
+        rapidement de l'origine. On peut alors conjecturer la r&#xe9;gularit&#xe9; de la
+        r&#xe9;partition de la suite &#xe0; partir du trac&#xe9; de la ligne bris&#xe9;e.
+        Tra&#xe7;ons la ligne polygonale dans les cas suivants :
+        <ul>
+          <li>
+            <p>
+              <m>u_n=n\sqrt2</m> et <m>N=200</m>,
+            </p>
+          </li>
+
+          <li>
+            <p>
+              <m>u_n=n\ln(n)\sqrt2</m> et <m>N=10000</m>,
+            </p>
+          </li>
+
+          <li>
+            <p>
+              <m>u_n=\mathrm{E}(n\ln(n))\sqrt2</m> et <m>N=10000</m> (o&#xf9; E d&#xe9;signe la partie
+              enti&#xe8;re),
+            </p>
+          </li>
+
+          <li>
+            <p>
+              <m>u_n=p_n\sqrt2</m>  et <m>N=10000</m> (ici <m>p_n</m> est le <m>n</m>-&#xe8;me nombre premier).
+            </p>
+          </li>
+        </ul>
+      </p>
+
+      <p>
+        La <xref ref="gr_equirepartition">figure</xref> s'obtient de la mani&#xe8;re suivante (ici pour <m>u_n = n \sqrt{2}</m>) :
+      </p>
+
+      <pre>
+        length = 200; n = var('n')
+        u(n) = n * sqrt(2)
+        z(n) = exp(2 * I * pi * u(n))
+        vertices = [CC(0, 0)]
+        for n in range(1, length):
+            vertices.append(vertices[n - 1] + CC(z(n)))
+        line(vertices).show(aspect_ratio=1)
+      </pre>
+
+      <figure xml:id="gr_equirepartition" >
+        <caption>Suites &#xe9;quir&#xe9;parties</caption>
+        \subfloat[Cas <m>u_n=n\sqrt2</m>]{
+        <image width="50%" source="images/equirepart_0.png" />
+        }
+        \subfloat[Cas <m>u_n=n\ln(n)\sqrt2</m>]{
+        <image width="50%" source="images/equirepart_I.png" />
+        }
+
+        \subfloat[Cas <m>u_n=\mathrm{E}(n\ln(n))\sqrt2</m>]{
+        <image width="50%" source="images/equirepart_II.png" />
+        }
+        \subfloat[Cas <m>u_n=p_n\sqrt2</m>]{
+        <image width="50%" source="images/equirepart_III.png" />
+        }
+      </figure>
+
+      <p>
+        On remarque que la premi&#xe8;re courbe est particuli&#xe8;rement r&#xe9;guli&#xe8;re, ce qui
+        permet de pr&#xe9;voir que l'&#xe9;quir&#xe9;partition de <m>n\sqrt2</m> est de nature d&#xe9;terministe.
+        Dans le cas de la suite <m>u_n=n\ln(n)\sqrt2</m> l'examen des valeurs prises donne
+        l'impression d'un engendrement al&#xe9;atoire. Cependant, la courbe associ&#xe9;e est
+        remarquablement bien structur&#xe9;e.
+        La troisi&#xe8;me courbe, qui pourrait <em>a priori</em> ressembler plus &#xe0; la
+        quatri&#xe8;me, pr&#xe9;sente le m&#xea;me type de structures que la deuxi&#xe8;me.
+        Enfin, le trac&#xe9; de la quatri&#xe8;me courbe fait appara&#xee;tre la nature profond&#xe9;ment
+        diff&#xe9;rente de la r&#xe9;partition modulo <m>1/\sqrt2</m> de la suite des nombres premiers : les
+        spirales ont disparu et l'allure ressemble &#xe0; la courbe que l'on obtiendrait
+        dans le cas d'une suite de nombres al&#xe9;atoires <m>u_n</m>. Il semble donc que
+        les nombres premiers occupent tout le hasard qui leur est imparti...\fg
+      </p>
+
+      <p>
+        Pour une interpr&#xe9;tation d&#xe9;taill&#xe9;e des courbes obtenues, on se reportera au \og
+        Que sais-je ?
+        <em>Les nombres premiers</em> de G&#xe9;rald Tenenbaum et Michel Mend&#xe8;s France<nbsp /><xref ref="TMF" />.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_graphique_SuiteRec">
+      <title>Exercice</title>
+      <p>
+        (<em>Trac&#xe9; des termes d'une suite r&#xe9;currente</em>)
+        On consid&#xe8;re la suite <m>(u_n)_{n\in\N}</m> d&#xe9;finie par :
+        <me>
+          \left\lbrace\vcenter{\mbox{\(u_0=a\),} \mbox{\(
+          \forall n\in\N,\; u_{n+1}=\vabs{u_n^2-\frac{1}{4}}\).
+           } }\right.
+        </me>
+      </p>
+
+      <p>
+        Repr&#xe9;senter graphiquement le comportement de la suite en construisant une liste form&#xe9;e
+        des points <m>\big[[u_0,0] , [u_0,u_1] , [u_1,u_1] , [u_1,u_2], [u_2,u_2]
+        ,\ldots\big]</m>.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection>
+    <title>Trac&#xe9; de solution d'&#xe9;quation diff&#xe9;rentielle</title>
+    <p>
+      On peut combiner les commandes pr&#xe9;c&#xe9;dentes pour tracer des solutions d'&#xe9;quations
+      ou de syst&#xe8;mes diff&#xe9;rentiels.
+      Pour r&#xe9;soudre symboliquement une &#xe9;quation diff&#xe9;rentielle ordinaire, on utilise
+      la fonction <c>desolve</c> dont l'&#xe9;tude fait l'objet du <xref ref="equadiffexa">chapitre</xref>.
+      Pour r&#xe9;soudre num&#xe9;riquement une &#xe9;quation diff&#xe9;rentielle, <em>Sage</em>  nous fournit
+      plusieurs outils : <c>desolve_rk4</c> (qui utilise la m&#xea;me syntaxe que la
+      fonction <c>desolve</c> et qui suffit pour r&#xe9;soudre les &#xe9;quations
+      diff&#xe9;rentielles ordinaires rencontr&#xe9;es en Licence), <c>odeint</c> (qui provient
+      du module <em>SciPy</em> ) et enfin <c>ode_solver</c> (qui provient de la librairie <em>GSL</em> 
+      dont l'utilisation est d&#xe9;taill&#xe9;e dans la <xref ref="equadiff">section</xref>). Les fonctions
+      <c>desolve_rk4</c> et <c>odeint</c> renvoient une liste de points qu'il est
+      alors ais&#xe9; de tracer &#xe0; l'aide de la commande <c>line</c> ; c'est celles que nous
+      utiliserons dans cette section pour tracer des solutions num&#xe9;riques.
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>&#xc9;quation diff&#xe9;rentielle lin&#xe9;aire, du premier ordre, non r&#xe9;solue</em>)
+        Tra&#xe7;ons les courbes int&#xe9;grales de l'&#xe9;quation diff&#xe9;rentielle <m>xy'-2y=x^3</m>.
+      </p>
+    </paragraphs>
+    <pre>
+      x = var('x'); y = function('y',x)
+      DE = x*diff(y, x) == 2*y + x^3
+      desolve(DE, [y,x])             # answer : (c + x)*x^2
+      sol = []
+      for i in srange(-2, 2, 0.2):
+          sol.append(desolve(DE, [y, x], ics=[1, i]))
+          sol.append(desolve(DE, [y, x], ics=[-1, i]))
+      g = plot(sol, x, -2, 2)
+      y = var('y')
+      g += plot_vector_field((x, 2*y+x^3), (x, -2, 2), (y, -1, 1))
+      g.show(ymin=-1, ymax=1)
+    </pre>
+
+    <p>
+      Pour diminuer le temps de calcul, il serait pr&#xe9;f&#xe9;rable ici de saisir &#xe0; la
+      main la solution g&#xe9;n&#xe9;rale de l'&#xe9;quation et de cr&#xe9;er une liste de solutions
+      particuli&#xe8;res (comme cela est fait dans la correction de l'<xref ref="exo_graphique_equadiff">exercice</xref>) plut&#xf4;t que de r&#xe9;soudre plusieurs fois de suite
+      l'&#xe9;quation diff&#xe9;rentielle avec des conditions initiales diff&#xe9;rentes.
+      On aurait &#xe9;galement pu effectuer une r&#xe9;solution num&#xe9;rique de cette &#xe9;quation (&#xe0;
+      l'aide de la fonction <c>desolve_rk4</c>) pour en tracer les courbes int&#xe9;grales
+      ; il suffit pour cela de remplacer les lignes<nbsp />3 &#xe0; 8 (comprise) du script
+      pr&#xe9;c&#xe9;dent par les lignes suivantes :
+    </p>
+
+    <pre>
+      g = Graphics()             # cr\'ee un graphique vide
+      for i in srange(-1, 1, 0.1):
+          g += line(desolve_rk4(DE, y, ics=[1, i],\
+                            step=0.05, end_points=[0,2]))
+          g += line(desolve_rk4(DE, y, ics=[-1, i],\
+                            step=0.05, end_points=[-2,0]))
+    </pre>
+
+    <figure xml:id="gr_eqdiff1" >
+      <caption>Trac&#xe9; des courbes int&#xe9;grales de  <m>xy'-2y=x^3</m>.</caption>
+      \subfloat[R&#xe9;solution
+      symbolique]{
+      <image width="50%" source="images/eq_diff1.png" />
+      }
+      \subfloat[R&#xe9;solution
+      num&#xe9;rique]{
+      <image width="55%" source="images/eq_diff1_num.png" />
+      }
+    </figure>
+
+    <p>
+      Comme on le voit sur l'exemple pr&#xe9;c&#xe9;dent, la fonction <c>desolve_rk4</c> prend
+      en argument une &#xe9;quation diff&#xe9;rentielle (ou le membre de droite <m>f</m> de l'&#xe9;quation
+      &#xe9;crite sous forme r&#xe9;solue <m>y'=f(y,t)</m>), le nom de la fonction inconnue, la condition
+      initiale, le pas et l'intervalle de r&#xe9;solution. L'argument optionnel
+      <c>output</c> permet de pr&#xe9;ciser la sortie de la fonction : la valeur par d&#xe9;faut
+      <c>'list'</c> renvoie une liste (ce qui est utile si on veut superposer des
+      graphiques comme dans notre exemple), <c>'plot'</c> affiche le trac&#xe9; de la
+      solution et <c>'slope_field'</c> y ajoute le trac&#xe9; des pentes des courbes
+      int&#xe9;grales.
+    </p>
+
+    <paragraphs xml:id="exo_graphique_equadiff">
+      <title>Exercice</title>
+      <p>
+        Tracer les courbes int&#xe9;grales de l'&#xe9;quation <m>x^2y'-y=0</m>.
+      </p>
+    </paragraphs>
+    <p>
+      Donnons &#xe0; pr&#xe9;sent un exemple d'utilisation de la fonction <c>odeint</c> du
+      module <em>SciPy</em> .
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>&#xc9;quation diff&#xe9;rentielle non lin&#xe9;aire, r&#xe9;solue, du premier ordre</em>)
+        Tra&#xe7;ons les courbes int&#xe9;grales de l'&#xe9;quation
+        <m>y'(t) + \cos( y(t) \cdot t) =0</m>.
+      </p>
+    </paragraphs>
+    <pre>
+      import scipy; from scipy import integrate
+      f = lambda y, t: - cos(y * t)
+      t = srange(0, 5, 0.1); p = Graphics()
+      for k in srange(0, 10, 0.15):
+            y = integrate.odeint(f, k, t)
+            p += line(zip(t, flatten(y)))
+      t = srange(0, -5, -0.1); q = Graphics()
+      for k in srange(0, 10, 0.15):
+            y = integrate.odeint(f, k, t)
+            q += line(zip(t, flatten(y)))
+      y = var('y')
+      v = plot_vector_field((1, -cos(x * y)), (x,-5,5), (y,-2,11))
+      g = p + q + v; g.show()
+    </pre>
+
+    <p>
+      La fonction <c>odeint</c> prend en argument le second membre de l'&#xe9;quation
+      diff&#xe9;rentielle (&#xe9;crite sous forme r&#xe9;solue), une ou plusieurs conditions
+      initiales, et enfin l'intervalle de r&#xe9;solution ; elle renvoie ensuite un tableau
+      du type <c>numpy.ndarray</c> que l'on aplatit &#xe0; l'aide de la commande
+      <c>flatten</c><fn>On aurait pu utiliser &#xe9;galement la fonction <c>ravel</c> de \numpy
+      qui &#xe9;vite de cr&#xe9;er un nouvel objet liste et donc optimise l'utilisation de la m&#xe9;moire.</fn>d&#xe9;j&#xe0; vue au <xref ref="sec_programmation_operationssurleslistes">&#xa7;</xref>
+      et que l'on r&#xe9;unit avec le tableau <c>t</c>
+      gr&#xe2;ce &#xe0; la commande <c>zip</c> avant d'effectuer le trac&#xe9; de la solution approch&#xe9;e.
+      Pour ajouter le champ des vecteurs tangents aux courbes int&#xe9;grales, on a utilis&#xe9;
+      la commande <c>plot_vector_field</c>.
+    </p>
+
+    <figure xml:id="gr_equadiff1" >
+      <caption>Trac&#xe9; des courbes int&#xe9;grales de 
+      <m>y'(t) + \cos( y(t) \cdot t) =0</m>.</caption>
+      <image width="90%" source="images/equa_diff3.png" />
+    </figure>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>Mod&#xe8;le proie-pr&#xe9;dateur de Lokta-Volterra</em>)
+        On souhaite repr&#xe9;senter graphiquement l'&#xe9;volution d'une population de proies et
+        de pr&#xe9;dateurs &#xe9;voluant suivant un syst&#xe8;me d'&#xe9;quation du type Lokta-Volterra :
+        <me>
+          \left\{\vcenter{\mbox{\(\frac{du}{dt} =  a u -   b u v\),} 
+
+          \mbox{\(\frac{dv}{dt} = -c v + d b u v\).} }\right.
+        </me>
+        o&#xf9;
+        <m>u</m> d&#xe9;signe le nombre de proies (par ex. des lapins),
+        <m>v</m> le nombre de pr&#xe9;dateurs (par ex. des renards).
+        De plus, <m>a</m>, <m>b</m>, <m>c</m>, <m>d</m> sont des param&#xe8;tres qui d&#xe9;crivent l'&#xe9;volution des
+        populations :
+        <m>a</m> caract&#xe9;rise la croissance naturelle du nombre de lapins en l'absence de
+        renards,
+        <m>b</m> la d&#xe9;croissance du nombre de lapins due &#xe0; la pr&#xe9;sence de pr&#xe9;dateurs,
+        <m>c</m> la d&#xe9;croissance du nombre de renards en l'absence de proies,
+        enfin <m>d</m> indique combien il faut de lapins pour qu'apparaisse un nouveau renard.
+      </p>
+    </paragraphs>
+    <pre>
+      import scipy; from scipy import integrate
+      a, b, c, d = 1., 0.1, 1.5, 0.75
+      def dX_dt(X, t=0):   # Renvoie l'augmentation des populations
+          return [ a*X[0] -   b*X[0]*X[1] ,
+                  -c*X[1] + d*b*X[0]*X[1] ]
+      t = srange(0, 15, .01)                     # \'echelle de temps
+      X0 = [10, 5]  # conditions initiales : 10 lapins et 5 renards
+      X = integrate.odeint(dX_dt, X0, t)     # r\'esolution num\'erique
+      lapins, renards =  X.T         # raccourcis de  X.transpose()
+      p = line(zip(t, lapins), color='red') # trac\'e du nb de lapins
+      p += text("Lapins",(12,37), fontsize=10, color='red')
+      p += line(zip(t, renards), color='blue')# idem pr les renards
+      p += text("Renards",(12,7), fontsize=10, color='blue')
+      p.axes_labels(["temps", "population"]); p.show(gridlines=True)
+
+      ### Deuxi\`eme graphique :
+      n = 11;  L = srange(6, 18, 12 / n); R = srange(3, 9, 6 / n)
+      CI = zip(L, R)                # liste des conditions initiales
+      def g(x,y):
+          v = vector(dX_dt([x, y]))  # pour un trac\'e plus lisible,
+          return v/v.norm()          # on norme le champ de vecteurs
+      x, y = var('x, y')
+      q = plot_vector_field(g(x, y), (x, 0, 60), (y, 0, 36))
+      for j in range(n):
+          X = integrate.odeint(dX_dt, CI[j], t)        # r\'esolution
+          q += line(X, color=hue(.8-float(j)/(1.8*n))) #  graphique
+      q.axes_labels(["lapins","renards"]); q.show()
+    </pre>
+
+    <figure xml:id="gr_LoktaVolterra" >
+      <caption>&#xc9;tude d'un syst&#xe8;me proies-pr&#xe9;dateurs.</caption>
+      \subfloat{
+      <image width="45%" source="images/Lokta_Volterra_1.png" />
+      }
+
+      \subfloat{
+      <image width="45%" source="images/Lokta_Volterra_2.png" />
+      }
+    </figure>
+
+    <paragraphs xml:id="exo_graphique_ProiePredateur">
+      <title>Exercice</title>
+      <p>
+        (<em>Mod&#xe8;le proie-pr&#xe9;dateur</em>)
+        R&#xe9;&#xe9;crire le script pr&#xe9;c&#xe9;dent en utilisant <c>desolve_system_rk4</c> &#xe0; la place
+        de <c>odeint</c>.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_graphique_SystAutonome">
+      <title>Exercice</title>
+      <p>
+        (<em>Un syst&#xe8;me diff&#xe9;rentiel autonome</em>)
+        Tracer les courbes int&#xe9;grales du syst&#xe8;me diff&#xe9;rentiel suivant :
+        <me>
+          \left\{\vcenter{\mbox{\( \dot{x} = y\),} 
+          \mbox{\(\dot{y} = 0.5 y-x-y^3 \).} }\right.
+        </me>
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_graphique_magnus">
+      <title>Exercice</title>
+      <p>
+        (<em>&#xc9;coulement autour d'un cylindre
+        avec effet Magnus</em>)
+        On superpose &#xe0; un &#xe9;coulement simple autour d'un cylindre de rayon <m>a</m>, un vortex
+        de param&#xe8;tre <m>\alpha</m>, ce qui modifie la composante orthoradiale de vitesse.
+        On se place dans un rep&#xe8;re centr&#xe9; sur le cylindre, et on travaille en
+        coordonn&#xe9;es cylindriques dans le plan <m>z=0</m>, autrement dit en coordonn&#xe9;es
+        polaires.
+        Les composantes de la vitesse sont alors :
+        <me>
+          v_r = v_{0}\cos(\theta)\left(1-\frac{a^2}{r^2}\right);
+           \text{ et } 
+          v_{\theta} = -v_{0}\sin(\theta)\left(1+\frac{a^2}{r^2}\right)+2\frac{\alpha  a
+          v_{0}}r.
+        </me>
+      </p>
+
+      <p>
+        Les lignes de courant (confondues avec les trajectoires, car l'&#xe9;coulement est
+        stationnaire) sont parall&#xe8;les &#xe0; la vitesse.
+        On cherche une expression param&#xe9;tr&#xe9;e des lignes de champs ; il faut alors
+        r&#xe9;soudre le syst&#xe8;me diff&#xe9;rentiel :
+        <me>
+          \dfrac{dr}{dt} = v_r
+          \text{ et } 
+          \dfrac{d\theta}{dt}  = \dfrac{v_{\theta}}r.
+        </me>
+      </p>
+
+      <p>
+        On utilise des coordonn&#xe9;es non dimensionn&#xe9;es, c'est-&#xe0;-dire rapport&#xe9;es &#xe0; <m>a</m>, rayon du
+        cylindre, ce qui revient &#xe0; supposer <m>a=1</m>.
+        Tracer les lignes de courant de cet &#xe9;coulement pour
+        <m>\alpha\in\{0.1; 0.5; 1; 1.25\}</m>.
+      </p>
+
+      <p>
+        L'utilisation de l'effet Magnus a &#xe9;t&#xe9; propos&#xe9; pour mettre au point des syst&#xe8;mes
+        de propulsion compos&#xe9;s de gros cylindres verticaux en rotation capables de
+        produire une pouss&#xe9;e longitudinale lorsque le vent est sur le c&#xf4;t&#xe9; du navire (ce fut le
+        cas du navire Baden-Baden mis au point par Anton Flettner qui traversa
+        l'Atlantique en 1926).
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection>
+    <title>D&#xe9;velopp&#xe9;e d'une courbe</title>
+    <p>
+      On donne &#xe0; pr&#xe9;sent un exemple de trac&#xe9; de d&#xe9;velopp&#xe9;e d'un arc param&#xe9;tr&#xe9; (on
+      rappelle que la d&#xe9;velopp&#xe9;e est l'enveloppe des normales ou, de mani&#xe8;re
+      &#xe9;quivalente, le lieu des centres de courbure de la courbe).
+    </p>
+
+    <paragraphs>
+      <title>Exemple</title>
+      <p>
+        (<em>D&#xe9;velopp&#xe9;e de la parabole</em>)
+        Trouvons l'&#xe9;quation de la d&#xe9;velopp&#xe9;e de la parabole <m>\mathcal{P}</m> d'&#xe9;quation <m>y={x^2}/4</m>
+        et tra&#xe7;ons sur un m&#xea;me graphique la parabole <m>\mathcal{P}</m>, quelques normales &#xe0; <m>\mathcal{P}</m> et sa
+        d&#xe9;velopp&#xe9;e.
+      </p>
+    </paragraphs>
+    <p>
+      Pour d&#xe9;terminer un syst&#xe8;me d'&#xe9;quations param&#xe9;triques de l'enveloppe d'une
+      famille de droites <m>\Delta_t</m> d&#xe9;finies par des &#xe9;quations cart&#xe9;siennes de la forme
+      <m>\alpha(t) x+\beta(t) y = \gamma(t)</m>,
+      on exprime le fait que la droite <m>\Delta_t</m> est tangente &#xe0; l'enveloppe en <m>(x(t),y(t))</m> :
+      <me>
+        \left\lbrace \begin{array}{rclcc}
+         \alpha(t) x+\beta(t) y = \gamma(t), \amp \hspace{2cm}\amp (1)\\
+         \alpha(t) x'+\beta(t) y' = 0. \amp  \amp (2)
+        \end{array} \right.
+      </me>
+    </p>
+
+    <p>
+      On d&#xe9;rive l'&#xe9;quation <m>(1)</m> et en combinant avec <m>(2)</m>, on obtient le syst&#xe8;me :
+      <me>
+        \left\lbrace \begin{array}{rclcc}
+         \alpha(t) x+\beta(t) y = \gamma(t), \amp \hspace{2cm}\amp (1)\\
+         \alpha'(t) x+\beta'(t) y = \gamma'(t). \amp  \amp (3)
+        \end{array} \right.
+      </me>
+    </p>
+
+    <p>
+      Dans notre cas, la normale <m>(N_t)</m> &#xe0; la parabole <m>\mathcal{P}</m> en <m>M(t,{t^2}/4)</m>
+      a pour vecteur normal <m>\vv{v}=(1,t/2)</m> (qui est le vecteur tangent &#xe0; la
+      parabole) ; elle a donc pour &#xe9;quation :
+      <me>
+        \begin{pmatrix}x-t\\y-t^2/4
+        \end{pmatrix} 
+        \cdot
+        \begin{pmatrix}1\\t/2
+        \end{pmatrix} 
+        =0
+        \iff
+        x+\frac t2 y=t+\frac{t^3}8
+      </me>
+      autrement dit, <m>(\alpha(t),\beta(t),\gamma(t))=(1,t/2,t+t^3/8)</m>.
+      On peut alors r&#xe9;soudre le syst&#xe8;me pr&#xe9;c&#xe9;dent avec la fonction <c>solve</c> :
+    </p>
+
+    <pre>
+      x, y, t = var('x, y, t')
+      alpha(t) = 1; beta(t) = t / 2; gamma(t) = t + t^3 / 8
+      env = solve([alpha(t) * x + beta(t) * y == gamma(t),\
+          diff(alpha(t), t) * x + diff(beta(t), t) * y == \
+          diff(gamma(t), t)], [x,y])
+    </pre>
+    <me>
+      \left[\left[x = -\frac{1}{4} \, t^{3}, y = \frac{3}{4} \, t^{2} +
+      2\right]\right]
+    </me>
+    <p>
+      D'o&#xf9; une repr&#xe9;sentation param&#xe9;trique de l'enveloppe des normales :
+      <me>
+        \left\lbrace \begin{array}{l}
+         x(t)=-\frac{t^3}{4},\\
+        y(t)= 2 +\frac34 t^2.
+        \end{array} \right.
+      </me>
+    </p>
+
+    <p>
+      On peut alors effectuer le trac&#xe9; demand&#xe9;, en tra&#xe7;ant quelques normales &#xe0; la
+      parabole (plus pr&#xe9;cis&#xe9;ment, on trace des segments <m>[M,M+18\vv{n}]</m> o&#xf9;
+      <m>M(u,u^2/4)</m> est un point de <m>\mathcal{P}</m> et <m>\vv{n}=(-u/2,1)</m> un vecteur
+      normal &#xe0; <m>\mathcal{P}</m>):
+    </p>
+
+    <pre>
+      f(x) = x^2 / 4
+      p = plot(f, -8, 8, rgbcolor=(0.2,0.2,0.4)) # trace la parabole
+      for u in srange(0, 8, 0.1): # trace des normales \`a la parabole
+          p += line([[u, f(u)], [-8*u, f(u) + 18]], thickness=.3)
+          p += line([[-u, f(u)], [8*u, f(u) + 18]], thickness=.3)
+      p += parametric_plot((env[0][0].rhs(),env[0][1].rhs()),
+          (t, -8, 8),color='red')              # trace la d\'evelopp\'ee
+      p.show(xmin=-8, xmax=8, ymin=-1, ymax=12, aspect_ratio=1)
+    </pre>
+
+    <figure xml:id="gr_parabole" >
+      <caption>La d&#xe9;velopp&#xe9;e de la parabole.</caption>
+      <image width="80%" source="images/parabole.png" />
+    </figure>
+
+    <p>
+      Comme nous l'avons rappel&#xe9; initialement, la d&#xe9;velopp&#xe9;e d'une courbe est aussi le
+      lieu de ses centres de courbures. &#xc0; l'aide de la fonction <c>circle</c> tra&#xe7;ons
+      quelques cercles osculateurs &#xe0; la parabole.
+      On rappelle que le centre de courbure <m>\Omega</m> en un point <m>M_t=(x(t), y(t))</m> de
+      la courbe, a pour coordonn&#xe9;es :
+      <me>
+        x_{\Omega}=x+-y' \dfrac{x'^2+y'^2 }{x'y''-x''y'},\qquad\text{ et } \qquad
+         y_{\Omega}=y+x' \dfrac{x'^2+y'^2 }{x'y''-x''y'}.
+      </me>
+      et que le rayon de courbure en <m>M_t</m> vaut :
+      <me>
+        R=\dfrac{(x'^2+y'^2)^{\frac{3}{2}}}{x'y''-x''y'}.
+      </me>
+    </p>
+
+    <pre>
+      var('t'); p = 2
+      x(t) = t; y(t) = t^2 / (2 * p)
+      f(t) = [x(t), y(t)]
+      df(t) = [x(t).diff(t), y(t).diff(t)]
+      d2f(t) = [x(t).diff(t, 2), y(t).diff(t, 2)]
+      T(t) = [df(t)[0] / df(t).norm(), df[1](t) / df(t).norm()]
+      N(t) = [-df(t)[1] / df(t).norm(), df[0](t) / df(t).norm()]
+      R(t) =  (df(t).norm())^3 / \
+              (df(t)[0] * d2f(t)[1] -df(t)[1] * d2f(t)[0])
+      Omega(t) = [f(t)[0] + R(t)*N(t)[0], f(t)[1] + R(t)*N(t)[1]]
+      g = parametric_plot(f(t), t, -8, 8, color='green', thickness=2)
+      for u in srange(.4, 4, .2):
+          g += line([f(t = u), Omega(t = u)], color='red', alpha = .5)
+          g += circle(Omega(t = u), R(t = u), color='blue')
+      g.show(aspect_ratio=1, xmin=-12, xmax=7, ymin=-3, ymax=12)
+    </pre>
+
+    <figure xml:id="gr_parabole2" >
+      <caption>Cercles osculateurs &#xe0; la parabole.</caption>
+      <image width="80%" source="images/courbure.png" />
+    </figure>
+
+    <p>
+      Le <xref ref="table_graph">tableau</xref> r&#xe9;sume les fonctions utilis&#xe9;es dans cette section. On y
+      signale de plus la commande <c>text</c> qui permet de placer une cha&#xee;ne de
+      caract&#xe8;re dans un graphique, ainsi que la commande <c>polygon</c> qui
+      permet de tracer des polygones.
+    </p>
+
+    <figure xml:id="table_graph" >
+      <caption>R&#xe9;capitulatif des fonctions graphiques.</caption>
+      <md>
+        \vbox{
+
+        \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        \tvi \amp {Type de trac\'e}   \amp  \textrm{Fonction}  \amp   \cr
+        \noalign{\hrule}
+        \tvp\cr
+        \tvi\amp  Courbe repr\'esentative d'une fonction         \amp  plot\cr
+        \tvi\amp  Courbe param\'etr\'ee                            \amp  parametric\_plot \cr
+        \tvi\amp  Courbe d\'efinie par une \'equation polaire      \amp  polar\_plot \cr
+        \tvi\amp  Courbe d\'efinie par une \'equation implicite    \amp  implicit\_plot \cr
+        \tvi\amp  Lignes de niveau d'une fonction complexe     \amp  complex\_plot \cr
+        \tvi\amp  Objet graphique vide                         \amp  Graphics() \cr
+        \tvi\amp  Courbes int\'egrales d'\'equation diff\'erentielle \amp  odeint, desolve\_rk4\cr
+        \tvi\amp  Diagramme en b\^atonnets                       \amp  bar\_chart \cr
+        \tvi\amp  Diagramme des fr\'equence d'une s\'erie statistique \amp  plot\_histogram \cr
+        \tvi\amp  Trac\'e d'une ligne bris\'ee                     \amp  line \cr
+        \tvi\amp  Trac\'e d'un nuage de points                   \amp  points \cr
+        \tvi\amp  Cercle                                       \amp  circle \cr
+        \tvi\amp  Polygone                                     \amp  polygon \cr
+        \tvi\amp  Texte                                        \amp  text \cr
+        \tvp\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        }}
+      </md>
+    </figure>
+  </subsection>
+</section>
+

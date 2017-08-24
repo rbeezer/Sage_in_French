@@ -1,0 +1,28 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="premierspas">
+  <title>Premiers pas avec <em>Sage</em></title>
+  <introduction>
+    <p>
+      Ce chapitre d'introduction pr&#xe9;sente la {tournure d'esprit}
+      du logiciel math&#xe9;matique <em>Sage</em> . Les autres chapitres de cette partie
+      d&#xe9;veloppent les notions de base de <em>Sage</em>  :
+      effectuer des calculs num&#xe9;riques ou symboliques en analyse,
+      op&#xe9;rer sur des vecteurs et des matrices,
+      &#xe9;crire des programmes, manipuler des listes de donn&#xe9;es,
+      construire des graphes, etc.
+      Les parties suivantes de cet ouvrage approfondissent les branches des
+      math&#xe9;matiques dans lesquelles l'informatique fait preuve d'une grande
+      efficacit&#xe9;.
+    </p>
+  </introduction>
+  <xi:include  href="section1-1.ptx" />
+  <xi:include  href="section1-2.ptx" />
+  <xi:include  href="section1-3.ptx" />
+  <xi:include  href="section1-4.ptx" />
+  <xi:include  href="section1-5.ptx" />
+  <xi:include  href="premierspas_classes.ptx" />
+  <xi:include  href="premierspas_classeselementaires.ptx" />
+  <xi:include  href="premierspas_autresclasses.ptx" />
+</chapter>
+

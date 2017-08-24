@@ -1,0 +1,450 @@
+
+
+<section xml:id="sec_polynomes_multivaries">
+  <title>Polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es</title>
+  <introduction>
+    <p>
+      Int&#xe9;ressons-nous maintenant aux polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es, ou <mdash /> anglicisme commun dans le domaine du calcul formel <mdash /> <em>multivari&#xe9;s</em>. Nous verrons appara&#xee;tre des difficult&#xe9;s nouvelles mais aussi une plus grande richesse math&#xe9;matique, li&#xe9;es en premier lieu au fait que l'anneau <m>K[x_1, \dots, x_n]</m> n'est pas principal.
+      La th&#xe9;orie des bases de Gr&#xf6;bner fournit des outils pour contourner cette limitation. Au final, on dispose de m&#xe9;thodes puissantes, quoique co&#xfb;teuses en temps de calcul, pour &#xe9;tudier les syst&#xe8;mes polynomiaux, avec d'innombrables applications qui couvrent des domaines vari&#xe9;s.
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec_polynomes_manneaux">
+    <title>Anneaux de polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es</title>
+    <p>
+      \paragraph{Les anneaux <m>A[x_1, \dots, x_n]</m>.}
+    </p>
+
+    <p>
+      Avant de pouvoir construire des polyn&#xf4;mes, il nous faut d&#xe9;finir une famille d'ind&#xe9;termin&#xe9;es vivant toutes dans un m&#xea;me anneau. Comme en une seule variable, on peut &#xe9;crire :
+    </p>
+
+    <sage>
+      <input>
+        R = PolynomialRing(QQ, 'x,y,z')
+        x, y, z = R.gens()  # renvoie le n-uplet des ind\'etermin\'ees
+      </input>
+    </sage>
+
+    <p>
+      ou en abr&#xe9;g&#xe9; <c>R.&lt;x,y,z> = QQ[]</c>. Le constructeur <c>PolynomialRing</c> permet aussi de cr&#xe9;er une famille d'ind&#xe9;termin&#xe9;es de m&#xea;me nom, avec des indices entiers. Placer le <m>n</m>-uplet renvoy&#xe9; par <c>gens</c> lui-m&#xea;me dans la variable <c>x</c> permet alors d'acc&#xe9;der naturellement &#xe0; l'ind&#xe9;termin&#xe9;e <m>x_i</m> par <c>x[i]</c> :
+    </p>
+
+    <sage>
+      <input>
+        R = PolynomialRing(QQ, 'x', 10)
+        x = R.gens()
+        sum(x[i] for i in xrange(5))
+      </input>
+      <output>
+        x0 + x1 + x2 + x3 + x4
+      </output>
+    </sage>
+
+    <p>
+      Pour obtenir une famille d'ind&#xe9;termin&#xe9;es plus compliqu&#xe9;e <mdash /> ici, index&#xe9;e par les nombres premiers <mdash /> on passe &#xe0; <c>PolynomialRing</c> une liste fabriqu&#xe9;e par compr&#xe9;hension (voir <xref ref="sec_programmation_operationssurleslistes">&#xa7;</xref>) :
+    </p>
+
+    <sage>
+      <input>
+        R = PolynomialRing(QQ, ['x%d'%n for n in primes(40)])
+        R.inject_variables()
+      </input>
+      <output>
+        Defining x2, x3, x5, x7, x11, x13, x17, x19, x23, x29, x31, x37
+      </output>
+    </sage>
+
+    <p>
+      La m&#xe9;thode <c>inject_variables</c> initialise des variables Python <c>x2</c>, <c>x3</c>, ... contenant chacune le g&#xe9;n&#xe9;rateur correspondant de<nbsp /><c>R</c>.
+    </p>
+
+    <p>
+      \begin{cmdtable}{Polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es}{poly:mpoly}
+
+  
+
+        \toprule
+        Construction d'anneaux de polyn&#xf4;mes 
+
+        \midrule
+
+      anneau <m>A[x,y]</m> &amp; <c>PolynomialRing(A, 'x,y')</c><em>ou</em>  <c>A['x,y']</c>
+    </p>
+
+    <p>
+      anneau <m>A[x_0, \dots, x_{n-1}]</m> &amp; <c>PolynomialRing(A, 'x', n)</c>
+    </p>
+
+    <p>
+      anneau <m>A[x_0, x_1, \dots, y_0, y_1, \dots ]</m> &amp; |InfinitePolynomialRing(A, ['x','y'])|
+    </p>
+
+    <p>
+      <m>n</m>-uplet des g&#xe9;n&#xe9;rateurs &amp; <c>R.gens()</c>
+    </p>
+
+    <p>
+      1\ier, 2\ieme, ... g&#xe9;n&#xe9;rateur &amp; <c>R.0</c>, <c>R.1</c>, ...
+    </p>
+
+    <p>
+      ind&#xe9;termin&#xe9;es de <m>R = A[x,y][z][\dots]</m> &amp; <c>R.variable_names_recursive()</c>
+    </p>
+
+    <p>
+      conversion <m>A[x_1,x_2,y] \to A[x_1,x_2][y]</m> &amp; <c>p.polynomial(y)</c>
+    </p>
+
+    <p>
+      \toprule
+        Acc&#xe8;s aux coefficients 
+
+        \midrule
+
+      support, coefficients non nuls &amp; <c>p.exponents()</c>, <c>p.coefficients()</c>
+    </p>
+
+    <p>
+      coefficient d'un mon&#xf4;me &amp; <c>p[x^2*y]</c><em>ou</em>  <c>p[2,1]</c>
+    </p>
+
+    <p>
+      degr&#xe9; total &amp; <c>p.degree()</c>
+    </p>
+
+    <p>
+      degr&#xe9; en <m>x</m> &amp; <c>p.degree(x)</c>
+    </p>
+
+    <p>
+      degr&#xe9;s partiels &amp; <c>p.degrees()</c>
+    </p>
+
+    <p>
+      \toprule
+        Op&#xe9;rations de base 
+
+        \midrule
+
+      transformation des coefficients &amp; <c>p.map_coefficients(f)</c>
+    </p>
+
+    <p>
+      d&#xe9;riv&#xe9;e partielle <m>\mathrm d/\mathrm d x</m> &amp; <c>p.derivative(x)</c>
+    </p>
+
+    <p>
+      &#xe9;valuation <m>p(x,y)\mathnormal{\divides}_{x=a, y=b}</m> &amp; <c>p.subs(x=a, y=b)</c>
+    </p>
+
+    <p>
+      homog&#xe9;nisation &amp; <c>p.homogenize()</c>
+      \end{cmdtable}
+    </p>
+
+    <p>
+      \paragraph{Les anneaux <m>A[(x_n, y_n, \dots)_{n\in\N}]</m>.}
+    </p>
+
+    <p>
+      Il arrive cependant que l'on ne sache pas, au d&#xe9;but d'un calcul, combien de variables seront n&#xe9;cessaires. Cela rend l'utilisation de <c>PolynomialRing</c> assez p&#xe9;nible : il faut commencer &#xe0; calculer dans un premier domaine, puis l'&#xe9;tendre et convertir tous les &#xe9;l&#xe9;ments &#xe0; chaque fois que l'on souhaite introduire une nouvelle variable.
+    </p>
+
+    <p>
+      Les anneaux de polyn&#xf4;mes en une infinit&#xe9; d'ind&#xe9;termin&#xe9;es sont une structure de donn&#xe9;es plus souple, con&#xe7;ue pour pallier ce probl&#xe8;me. Leurs &#xe9;l&#xe9;ments peuvent contenir des variables prises dans une ou plusieurs familles infinies d'ind&#xe9;termin&#xe9;es : chaque g&#xe9;n&#xe9;rateur de l'anneau correspond non pas &#xe0; une seule variable, mais &#xe0; une famille de variables index&#xe9;es par les entiers naturels<fn>En contrepartie de cette souplesse, ces anneaux sont moins efficaces que les anneaux de polyn&#xf4;mes habituels.</fn>.
+      En voici un exemple d'utilisation :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x,y> = InfinitePolynomialRing(ZZ)
+        p = mul(x[k] - y[k] for k in range(2)); p
+      </input>
+      <output>
+        x_1*x_0 - x_1*y_0 - x_0*y_1 + y_1*y_0
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p + x[100]
+      </input>
+      <output>
+        x_100 + x_1*x_0 - x_1*y_0 - x_0*y_1 + y_1*y_0
+      </output>
+    </sage>
+
+    <p>
+      On peut revenir &#xe0; un anneau usuel de polyn&#xf4;mes gr&#xe2;ce &#xe0; la m&#xe9;thode <c>polynomial</c>, qui renvoie l'image d'un &#xe9;l&#xe9;ment d'un <c>InfinitePolynomialRing</c> dans un anneau suffisamment grand pour contenir tous les &#xe9;l&#xe9;ments de l'anneau &#xe0; une infinit&#xe9; de variables manipul&#xe9;s jusque-l&#xe0;.
+    </p>
+
+    <p>
+      \paragraph{Repr&#xe9;sentation r&#xe9;cursive.}
+    </p>
+
+    <p>
+      Enfin, la <em>repr&#xe9;sentation r&#xe9;cursive</em> consiste &#xe0; coder les polyn&#xf4;mes, disons, en<nbsp /><m>x</m> et<nbsp /><m>y</m>, comme des polyn&#xf4;mes en<nbsp /><m>y</m> dont les coefficients sont des polyn&#xf4;mes en<nbsp /><m>x</m>. Les conversions entre <m>A[x,y]</m> et <m>A[x][y]</m> fonctionnent comme on s'y attend :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(QQ); y = polygen(QQ[x], 'y')
+        p = x^3 + x*y + y + y^2; p
+      </input>
+      <output>
+        y^2 + (x + 1)*y + x^3
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        q = QQ['x,y'](p); q
+      </input>
+      <output>
+        x^3 + x*y + y^2 + y
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        QQ['x']['y'](q)
+      </input>
+      <output>
+        y^2 + (x + 1)*y + x^3
+      </output>
+    </sage>
+
+    <p>
+      De plus, la m&#xe9;thode <c>polynomial</c> des polyn&#xf4;mes multivari&#xe9;s permet d'isoler une variable, un peu comme la m&#xe9;thode <c>collect</c> des expressions :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x,y,z,t> = QQ[]; p = (x+y+z*t)^2
+        p.polynomial(t).reverse() # le polyn\^ome r\'eciproque de p en t
+      </input>
+      <output>
+        (x^2 + 2*x*y + y^2)*t^2 + (2*x*z + 2*y*z)*t + z^2
+      </output>
+    </sage>
+
+    <p>
+      Pourquoi introduire sp&#xe9;cifiquement des anneaux de polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es, au lieu de se contenter de repr&#xe9;senter ces derniers comme des &#xe9;l&#xe9;ments d'anneaux de polyn&#xf4;mes en une ind&#xe9;termin&#xe9;e <q> embo&#xee;t&#xe9;s </q> ? Bien qu'utile &#xe0; l'occasion, la repr&#xe9;sentation r&#xe9;cursive n'est pas bien adapt&#xe9;e pour manipuler les syst&#xe8;mes polynomiaux, ce qui est une des raisons d'&#xea;tre des polyn&#xf4;mes multivari&#xe9;s.
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_mpoly">
+    <title>Polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es</title>
+    <p>
+      Tout comme les polyn&#xf4;mes en une variable sont de classe <c>Polynomial</c>, ceux en plusieurs variables sont de classe <c>MPolynomial</c><fn>Mais contrairement &#xe0; <c>Polynomial</c>, cette classe n'est pas accessible directement depuis la ligne de commande : il faut utiliser son nom complet. Par exemple, on peut tester si un objet est de type polyn&#xf4;me multivari&#xe9; par
+      <c>isinstance(p, sage.{\allowbreak}rings.{\allowbreak}polynomial.{\allowbreak}multi_{\allowbreak}polynomial.{\allowbreak}MPolynomial)</c>.</fn>.
+      Pour les anneaux de base les plus usuels (comme <m>\Z</m>, <m>\Q</m> ou <m>\F_q</m>), ils s'appuient sur le logiciel Singular, un syst&#xe8;me de calcul formel sp&#xe9;cialis&#xe9; dans les calculs rapides sur les polyn&#xf4;mes. Dans les autres cas, <em>Sage</em>  se rabat sur une impl&#xe9;mentation g&#xe9;n&#xe9;rique beaucoup plus lente.
+    </p>
+
+    <p>
+      Les polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es sont toujours cod&#xe9;s en repr&#xe9;sentation creuse<fn>La repr&#xe9;sentation r&#xe9;cursive fournit cependant une forme de polyn&#xf4;mes multivari&#xe9;s partiellement denses. Dans la repr&#xe9;sentation en m&#xe9;moire d'un polyn&#xf4;me de <m>A[x][y]</m>, chaque coefficient de<nbsp /><m>y^k</m> occupe un espace proportionnel &#xe0; son degr&#xe9; en<nbsp /><m>x</m>, &#xe0; quoi il faut ajouter une place proportionnelle au degr&#xe9; en<nbsp /><m>y</m> pour le polyn&#xf4;me lui-m&#xea;me.</fn>.
+      Pourquoi ce choix ? Tout d'abord, un polyn&#xf4;me dense &#xe0;<nbsp /><m>n</m> variables de degr&#xe9; total<nbsp /><m>d</m> compte <m>\binom{n+d}{d}</m> mon&#xf4;mes : pour <m>n=d=10</m>, cela fait 184 756 coefficients &#xe0; stocker ! Par ailleurs, m&#xea;me quand les polyn&#xf4;mes sont denses, les supports (les positions des mon&#xf4;mes non nuls) rencontr&#xe9;s en pratique ont des formes vari&#xe9;es. Or, si par exemple un polyn&#xf4;me &#xe0; <m>n</m> variables dense jusqu'au degr&#xe9; total<nbsp /><m>d-1</m> est repr&#xe9;sent&#xe9; par un tableau rectangulaire <m>d \times \dots \times d</m>, pour<nbsp /><m>d</m> grand, seul un coefficient sur <m>n!</m> environ est non nul. Au contraire, la repr&#xe9;sentation par dictionnaire s'adapte &#xe0; la forme du support.
+    </p>
+
+    <p>
+      \paragraph{Op&#xe9;rations de base.}
+    </p>
+
+    <p>
+      Les op&#xe9;rations arithm&#xe9;tiques <c>+</c>, <c>-</c> et <c>*</c>, de m&#xea;me que les m&#xe9;thodes <c>dict</c>, <c>coefficients</c>, et bien d'autres, s'utilisent comme leurs analogues en une seule variable. Parmi les petites diff&#xe9;rences, l'op&#xe9;rateur crochets <c>[]</c> d'extraction d'un coefficient accepte comme param&#xe8;tre soit un mon&#xf4;me, soit son <em>exposant</em>, c'est-&#xe0;-dire le <m>n</m>-uplet des puissances correspondantes des variables :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x,y,z> = QQ[]; p = y^2*x^2 + 3*y*x^2 + 2*y*z + x^3 + 6
+        p[x^2*y] == p[(2,1,0)] == p[2,1,0] == 3
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <p>
+      De m&#xea;me, l'&#xe9;valuation n&#xe9;cessite de donner une valeur &#xe0; chacune des variable ou de pr&#xe9;ciser celles &#xe0; substituer :
+    </p>
+
+    <sage>
+      <input>
+        p.subs(x = 1, z = x^2+1)
+      </input>
+      <output>
+        2*x^2*y + y^2 + 5*y + 7
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p(0, 3, -1)
+      </input>
+      <output>
+        0
+      </output>
+    </sage>
+
+    <p>
+      et le degr&#xe9; se d&#xe9;cline en degr&#xe9; total et degr&#xe9;s partiels :
+    </p>
+
+    <sage>
+      <input>
+        print "total : %s ; en x : %s ; partiels : %s" % \
+        (p.degree(), p.degree(x), p.degrees())
+      </input>
+      <output>
+        total : 4 ; en x : 3 ; partiels : (3, 2, 1)
+      </output>
+    </sage>
+
+    <p>
+      D'autres constructions subissent des adaptations &#xe9;videntes, par exemple, la m&#xe9;thode <c>derivative</c> prend en param&#xe8;tre la variable par rapport &#xe0; laquelle d&#xe9;river.
+    </p>
+
+    <p>
+      Enfin, la m&#xe9;thode <c>homogenize</c> calcule l'homog&#xe9;nis&#xe9; d'un polyn&#xf4;me, soit en restant dans l'anneau parent, soit en l'&#xe9;tendant par une variable d'homog&#xe9;nisation :
+    </p>
+
+    <sage>
+      <input>
+        p.homogenize(x)
+      </input>
+      <output>
+        7*x^4 + 3*x^3*y + x^2*y^2 + 2*x^2*y*z
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.homogenize()
+      </input>
+      <output>
+        x^2*y^2 + x^3*h + 3*x^2*y*h + 2*y*z*h^2 + 6*h^4
+      </output>
+    </sage>
+
+    <p>
+      \paragraph{It&#xe9;ration.}
+    </p>
+
+    <p>
+      On a fr&#xe9;quemment besoin d'appliquer une transformation aux coefficients d'un polyn&#xf4;me, par exemple pour calculer le conjugu&#xe9; d'un polyn&#xf4;me &#xe0; coefficients complexes. La m&#xe9;thode <c>map_coefficients</c> est l&#xe0; pour cela. Appliqu&#xe9;e &#xe0; un polyn&#xf4;me<nbsp /><m>p \in A[x_1, \dots, x_n]</m> avec comme param&#xe8;tre une fonction<nbsp /><m>f: A \to A</m>, elle renvoie le polyn&#xf4;me obtenu en appliquant<nbsp /><m>f</m> &#xe0; chacun des coefficients de<nbsp /><m>p</m>. Le plus souvent, <m>f</m> est une fonction anonyme introduite par la construction <c>lambda</c> (voir <xref ref="sec_programmation_operationssurleslistes">&#xa7;</xref>) :
+    </p>
+
+    <sage>
+      <input>
+        QQi.&lt;i_> = QQ[i]  # i d\'esigne le i de SR, i_ celui de QQi
+        R.&lt;x, y> = QQi[]; p = (x + i_*y)^3; p
+      </input>
+      <output>
+        x^3 + (3*I)*x^2*y - 3*x*y^2 + (-I)*y^3
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.map_coefficients(lambda z: z.conjugate())
+      </input>
+      <output>
+        x^3 + (-3*I)*x^2*y - 3*x*y^2 + (I)*y^3
+      </output>
+    </sage>
+
+    <p>
+      Sur cet exemple, on aurait aussi pu &#xe9;crire <c>p.map_coefficients(conjugate)</c>, car <c>conjugate(z)</c> a le m&#xea;me effet que <c>z.conjugate</c> pour <m>z \in \QQ[i]</m>. Appeler explicitement une m&#xe9;thode de l'objet<nbsp /><c>z</c> est plus s&#xfb;r : ainsi, le code fonctionne avec tous les objets dot&#xe9;s d'une m&#xe9;thode <c>conjugate()</c>, et seulement ceux-l&#xe0;.
+    </p>
+
+    <p>
+      \paragraph{Arithm&#xe9;tique.}
+    </p>
+
+    <p>
+      Au-del&#xe0; des op&#xe9;rations syntaxiques et arithm&#xe9;tiques &#xe9;l&#xe9;mentaires, les fonctions disponibles dans <em>Sage</em>  sont en g&#xe9;n&#xe9;ral limit&#xe9;es aux polyn&#xf4;mes sur un corps, et parfois sur<nbsp /><m>\Z</m> ou <m>\Z/n\Z</m>. Pour la suite de ce chapitre, et sauf mention explicite du contraire, nous nous placerons donc sur un corps.
+    </p>
+
+    <p>
+      La division euclidienne des polyn&#xf4;mes n'a de sens qu'en une variable. En <em>Sage</em> , la m&#xe9;thode <c>quo_rem</c> et les op&#xe9;rateurs associ&#xe9;s <c>//</c> et |
+      restent pourtant d&#xe9;finis pour les polyn&#xf4;mes multivari&#xe9;s. La <q> division avec reste </q> qu'ils calculent v&#xe9;rifie
+      |(p//q)*q + (p
+      et co&#xef;ncide avec la division euclidienne lorsque<nbsp /><m>p</m> et<nbsp /><m>q</m> ne d&#xe9;pendent que d'une variable, mais ce n'est pas elle-m&#xea;me une division euclidienne et elle n'a rien de canonique. Elle s'av&#xe8;re tout de m&#xea;me utile lorsque la division est exacte ou lorsque le diviseur est un mon&#xf4;me. Dans les autres cas, on pr&#xe9;f&#xe8;rera &#xe0; <c>quo_rem</c> et ses variantes la m&#xe9;thode <c>mod</c>,
+      qui r&#xe9;duit un polyn&#xf4;me modulo un id&#xe9;al, en tenant compte du choix d'ordre monomial de l'anneau :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x,y> = QQ[]; p = x^2 + y^2; q = x + y
+        print("(%s)*(%s) + (%s) == %s" % (p//q, q, p%q, p//q*q+p%q))
+      </input>
+      <output>
+        (-x + y)*(x + y) + (2*x^2) == x^2 + y^2
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.mod(q)  # n'est PAS \'equivalent \`a p%q
+      </input>
+      <output>
+        2*y^2
+      </output>
+    </sage>
+
+    <p>
+      Les m&#xe9;thodes <c>divides</c>, <c>gcd</c>, <c>lcm</c> ou encore <c>factor</c> ont le m&#xea;me sens qu'en une seule variable. Faute de division euclidienne, m&#xea;me les premi&#xe8;res ne sont pas disponibles sur un corps quelconque ; mais elles fonctionnent sur un certain nombre de corps usuels, par exemple les corps de nombres :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x,y> = QQ[exp(2*I*pi/5)][]
+        (x^10 + y^5).gcd(x^4 - y^2)
+      </input>
+      <output>
+        x^2 + y
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        (x^10 + y^5).factor()
+      </input>
+      <output>
+        (x^2 + (a^2)*y) * (x^2 + (a)*y) * (x^2 + (a^3)*y) *
+        (x^2 + (-a^3 - a^2 - a - 1)*y) * (x^2 + y)
+      </output>
+    </sage>
+
+    <p>
+      Notons que <em>Sage</em>  refuse de factoriser sur les corps finis compos&#xe9;s, &#xe0; moins que l'on ne l'autorise &#xe0; utiliser des m&#xe9;thodes non rigoureuses avec <c>proof=False</c> :
+    </p>
+
+    <sage>
+      <input>
+        k.&lt;a> = GF(9); R.&lt;x,y,z> = k[]
+        (a*x^2*z^2 + x*y*z - y^2).factor(proof=False)
+      </input>
+      <output>
+        (a) * (x*z + (-a - 1)*y) * (x*z + (-a)*y)
+      </output>
+    </sage>
+
+    <p>
+      Il s'agit l&#xe0; d'un m&#xe9;canisme g&#xe9;n&#xe9;ral, utilis&#xe9; par plusieurs autres fonctions sur les polyn&#xf4;mes en plusieurs variables. Dans la plupart des cas, les m&#xe9;thodes heuristiques ne servent qu'&#xe0; gagner du temps (parfois beaucoup !) par rapport aux m&#xe9;thodes prouv&#xe9;es. On peut activer leur utilisation par d&#xe9;faut pour les op&#xe9;rations sur les polyn&#xf4;mes avec <c>proof.polynomial(False)</c>, ou dans tout <em>Sage</em>  par <c>proof.all(False)</c>.
+    </p>
+
+    <p>
+      \UndefineShortVerb{\|}
+    </p>
+
+    <p>
+      \begin{savequote}
+      <em>Mathematics is the art of reducing any problem to linear algebra.</em>
+      \qauthor{ William Stein}
+      \end{savequote}
+    </p>
+  </subsection>
+</section>
+

@@ -1,0 +1,224 @@
+
+
+<section xml:id="sec_combinatoire_constructions">
+  <title>Constructions</title>
+  <introduction>
+    <p>
+      Nous allons voir maintenant comment construire de nouveaux ensembles &#xe0;
+      partir de briques de base. En fait, nous avons d&#xe9;j&#xe0; commenc&#xe9; &#xe0; le
+      faire lors de la construction de <m>\mathcal P(\mathcal P(\mathcal
+      P(\{1,2,3,4\})))</m> dans la section pr&#xe9;c&#xe9;dente, ou pour construire des
+      ensembles de cartes en <xref ref="sec_combinatoire_exemples">&#xa7;</xref>.
+    </p>
+
+    <p>
+      Consid&#xe9;rons un produit cart&#xe9;sien un peu cons&#xe9;quent:
+    </p>
+
+    <sage>
+      <input>
+        C = CartesianProduct(Compositions(8), Permutations(20)); C
+      </input>
+      <output>
+        Cartesian product of Compositions of 8, Standard permutations of 20
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        C.cardinality()
+      </input>
+      <output>
+        311411457046609920000
+      </output>
+    </sage>
+
+    <p>
+      Il ne serait &#xe9;videmment pas envisageable de construire la liste de
+      tous les &#xe9;l&#xe9;ments de ce produit
+      cart&#xe9;sien.
+    </p>
+
+    <p>
+      Pour l'instant, la construction <c>CartesianProduct</c> ignore les
+      propri&#xe9;t&#xe9;s alg&#xe9;briques de ses arguments. Cela est partiellement
+      corrig&#xe9; avec Sage 4.4.4, avec la construction
+      <c>cartesian_product</c>. &#xc0; terme, les deux constructions seront
+      fusionn&#xe9;es et, dans l'exemple suivant, <m>H</m> sera &#xe0; la fois muni des
+      op&#xe9;rations combinatoires usuelles, mais aussi de sa structure de
+      groupe produit:
+    </p>
+
+    <sage>
+      <input>
+        G = DihedralGroup(4)
+        H = cartesian_product([G,G])
+      </input>
+    </sage>
+
+    <p>
+      Nous construisons maintenant la r&#xe9;union de deux ensembles existants disjoints:
+    </p>
+
+    <sage>
+      <input>
+        C = DisjointUnionEnumeratedSets(
+        [ Compositions(4), Permutations(3)] )
+        C
+      </input>
+      <output>
+        Union of Family (Compositions of 4, Standard permutations of 3)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        C.cardinality()
+      </input>
+      <output>
+        14
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        C.list()
+      </input>
+      <output>
+        [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3],
+           [2, 1, 1], [2, 2], [3, 1], [4],
+           [1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+      </output>
+    </sage>
+
+    <p>
+      On peut faire une union de plus de deux ensembles disjoints, voire
+      m&#xea;me d'une infinit&#xe9; d'entre eux. Nous allons construire l'ensemble de
+      toutes les permutations, vu comme la r&#xe9;union de tous les ensembles
+      <m>P_n</m> des permutations de taille <m>n</m>. On commence par construire la
+      famille infinie <m>F = (P_n)_{n\in \N}</m>:
+    </p>
+
+    <sage>
+      <input>
+        F = Family(NonNegativeIntegers(), Permutations); F
+      </input>
+      <output>
+        Lazy family (Permutations(i))_{i in Non negative integers}
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        F.keys()
+      </input>
+      <output>
+        Non negative integers
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        F[1000]
+      </input>
+      <output>
+        Standard permutations of 1000
+      </output>
+    </sage>
+
+    <p>
+      On peut maintenant construire la r&#xe9;union disjoint <m>\bigcup_{n\in \N} P_n</m>:
+    </p>
+
+    <sage>
+      <input>
+        U = DisjointUnionEnumeratedSets(F); U
+      </input>
+      <output>
+        Disjoint union of
+          Lazy family (Permutations(i))_{i in Non negative integers}
+      </output>
+    </sage>
+
+    <p>
+      C'est un ensemble infini:
+    </p>
+
+    <sage>
+      <input>
+        U.cardinality()
+      </input>
+      <output>
+        +Infinity
+      </output>
+    </sage>
+
+    <p>
+      ce qui n'emp&#xea;che pas d'it&#xe9;rer &#xe0; travers ses &#xe9;l&#xe9;ments, quoiqu'il
+      faille bien entendu interrompre le calcul &#xe0; un moment donn&#xe9;:
+    </p>
+
+    <sage>
+      <input>
+        for p in U:
+        print p
+      </input>
+      <output>
+        []
+          [1]
+          [1, 2]
+          [2, 1]
+          [1, 2, 3]
+          [1, 3, 2]
+          [2, 1, 3]
+          [2, 3, 1]
+          [3, 1, 2]
+          ...
+      </output>
+    </sage>
+
+    <p>
+      Note: on aurait pu construire l'ensemble ci-dessus directement avec:
+    </p>
+
+    <sage>
+      <input>
+        U = Permutations(); U
+      </input>
+      <output>
+        Standard permutations
+      </output>
+    </sage>
+  </introduction>
+
+  <subsection>
+    <title>R&#xe9;sum&#xe9;</title>
+    <p>
+      En r&#xe9;sum&#xe9;, <em>Sage</em>  fournit une biblioth&#xe8;que d'ensembles &#xe9;num&#xe9;r&#xe9;s usuels,
+      qui peuvent &#xea;tre combin&#xe9;s entre eux par les constructions usuelles, ce
+      qui donne une bo&#xee;te &#xe0; outils flexible, quoique encore loin d'&#xea;tre
+      aboutie.
+      Il est de plus possible de rajouter en quelques lignes de
+      nouvelles briques dans <em>Sage</em>  (voir le code de
+      <c>FiniteEnumeratedSets().example()</c>). Cela est rendu possible
+      par l'uniformit&#xe9; des interfaces et le fait que <em>Sage</em>  soit bas&#xe9; sur un
+      langage orient&#xe9; objet. D'autre part, on peut manipuler des ensembles
+      tr&#xe8;s grands, voire infinis, gr&#xe2;ce aux strat&#xe9;gies d'&#xe9;valuation
+      paresseuse (it&#xe9;rateurs, ...).
+    </p>
+
+    <p>
+      Il n'y a rien de magique: en arri&#xe8;re-boutique, <em>Sage</em>  se contente
+      d'appliquer les r&#xe8;gles de calculs usuelles (par exemple, la
+      cardinalit&#xe9; de <m>E\times E</m> vaut <m><c>E</c>^2</m>); la valeur ajout&#xe9;e provient
+      de la possibilit&#xe9; de manipuler des constructions compliqu&#xe9;es. La
+      situation est &#xe0; rapprocher de l'analyse o&#xf9;, pour diff&#xe9;rencier une
+      formule, <em>Sage</em>  se contente d'appliquer les r&#xe8;gles usuelles de
+      diff&#xe9;rentiation des fonctions usuelles et de leur compositions, et o&#xf9;
+      la valeur ajout&#xe9;e vient de la possibilit&#xe9; de manipuler des formules
+      compliqu&#xe9;es. En ce sens, <em>Sage</em>  implante un <em>calculus</em> sur les
+      ensembles &#xe9;num&#xe9;r&#xe9;s finis.
+    </p>
+  </subsection>
+</section>
+

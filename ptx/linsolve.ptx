@@ -1,0 +1,61 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="linsolve">
+  <title>Alg&#xe8;bre lin&#xe9;aire num&#xe9;rique</title>
+  <introduction>
+    <p>
+      On traite ici les aspects num&#xe9;riques de l'alg&#xe8;bre lin&#xe9;aire,
+      l'alg&#xe8;bre lin&#xe9;aire symbolique
+      &#xe9;tant pr&#xe9;sent&#xe9;e au <xref ref="linalg">chapitre</xref>. Pour des textes en fran&#xe7;ais
+      sur les m&#xe9;thodes et l'analyse num&#xe9;rique de l'alg&#xe8;bre lin&#xe9;aire, on
+      pourra consulter les
+      livres de M.<nbsp />Schatzman<nbsp /><nbsp /><xref ref="MR1200897" />, de P.<nbsp />Ciarlet<nbsp /><nbsp /><xref ref="MR680778" />
+      ou ceux plus sp&#xe9;cialis&#xe9;s de
+      Lascaux-Th&#xe9;odor<nbsp /><nbsp />[<a knowl="MR1231568.knowl">MR1231568</a>, <a knowl="MR1286939.knowl">MR1286939</a>].
+      Le livre de Golub
+      et Van<nbsp />Loan<nbsp /><nbsp /><xref ref="MR1417720" />, en anglais, est une v&#xe9;ritable bible.
+    </p>
+
+    <p>
+      L'alg&#xe8;bre lin&#xe9;aire num&#xe9;rique joue un r&#xf4;le pr&#xe9;pond&#xe9;rant dans ce qu'il est
+      convenu d'appeler le <em>calcul scientifique</em>, appellation impropre
+      pour d&#xe9;signer des probl&#xe8;mes dont l'&#xe9;tude math&#xe9;matique rel&#xe8;ve de
+      l'analyse num&#xe9;rique: r&#xe9;solution approch&#xe9;e de syst&#xe8;mes d'&#xe9;quations
+      diff&#xe9;rentielles, r&#xe9;solution approch&#xe9;e d'&#xe9;quations aux d&#xe9;riv&#xe9;es
+      partielles, optimisation, traitement du signal, etc.
+    </p>
+
+    <p>
+      La r&#xe9;solution num&#xe9;rique de la plupart de ces probl&#xe8;mes, m&#xea;me lin&#xe9;aires,
+      est
+      fond&#xe9;e
+      sur des algorithmes form&#xe9;s de boucles imbriqu&#xe9;es; au plus
+      profond de ces boucles, il y a tr&#xe8;s souvent la r&#xe9;solution d'un syst&#xe8;me
+      lin&#xe9;aire.
+      On utilise souvent la m&#xe9;thode de Newton pour r&#xe9;soudre des syst&#xe8;mes
+      alg&#xe9;briques non lin&#xe9;aires: l&#xe0; encore il faut r&#xe9;soudre des syst&#xe8;mes lin&#xe9;aires.
+      La performance et la
+      robustesse des
+      m&#xe9;thodes d'alg&#xe8;bre lin&#xe9;aire num&#xe9;rique sont donc strat&#xe9;giques.
+    </p>
+
+    <p>
+      Ce chapitre comporte trois sections: dans la premi&#xe8;re, on
+      s'efforce de sensibiliser le lecteur &#xe0; l'influence de l'inexactitude
+      des calculs en alg&#xe8;bre lin&#xe9;aire; la deuxi&#xe8;me section
+      (<xref ref="linsolvepleines">&#xa7;</xref>) traite, sans &#xea;tre exhaustive, des
+      probl&#xe8;mes les plus classiques
+      (r&#xe9;solution de syst&#xe8;mes, calcul de valeurs propres, moindres carr&#xe9;s);
+      dans la troisi&#xe8;me section (<xref ref="linsolvecreuses">&#xa7;</xref>) on
+      montre comment
+      r&#xe9;soudre certains probl&#xe8;mes si on fait l'hypoth&#xe8;se que les matrices
+      sont creuses. Cette derni&#xe8;re partie se veut plus une initiation
+      &#xe0; des m&#xe9;thodes qui font partie d'un domaine de recherche actif qu'un
+      guide d'utilisation.
+    </p>
+  </introduction>
+  <xi:include  href="section4-1.ptx" />
+  <xi:include  href="linsolvepleines.ptx" />
+  <xi:include  href="linsolvecreuses.ptx" />
+</chapter>
+

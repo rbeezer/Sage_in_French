@@ -1,0 +1,26 @@
+
+
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude" >
+  <title>\bibname</title>
+  <p>
+    mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}
+    \list{ biblabel{ arabic\c@enumiv}}
+    {\settowidth\labelwidth{ biblabel{#1}}
+    \leftmargin\labelwidth
+    \advance\leftmargin\labelsep
+     openbib@code
+    \usecounter{enumiv}
+  </p>
+
+  <p>
+    }
+    \sloppy
+    \clubpenalty4000
+     clubpenalty \clubpenalty
+    \widowpenalty4000
+    \sfcode`\. m}
+    {
+    \endlist}
+  </p>
+</chapter>
+

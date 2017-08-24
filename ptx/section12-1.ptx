@@ -1,0 +1,1089 @@
+
+
+<section>
+  <title>Analyse et alg&#xe8;bre avec <em>Sage</em></title>
+  <introduction>
+    <p>
+      \begin{correction}{exo:calculus:somme} (<em>Un calcul de somme par r&#xe9;currence</em>)
+    </p>
+
+    <pre>
+      var('n k'); p = 4; s = [n + 1]
+      for k in (1..p):
+          s = s + [factor((((n + 1)^(k + 1) - sum(binomial(k + 1, j)*s[j]
+                   for j in (0..k - 1))) / (k + 1)))]
+      s
+    </pre>
+
+    <p>
+      On obtient ainsi :
+      <md>
+        <mrow>\sum_{k=0}^n k  = \frac{1}{2} \, {\left(n + 1\right)} n,
+        \amp \qquad\sum_{k=0}^n k^2= \frac{1}{6} \, {\left(n + 1\right)} {\left(2 \, n + 1\right)} n,</mrow>
+        <mrow>\sum_{k=0}^n k^3= \frac{1}{4} \, {\left(n + 1\right)}^{2} n^{2},
+        \amp \qquad\sum_{k=0}^n k^4= \frac{1}{30} \, {\left(n + 1\right)} {\left(2 \, n + 1\right)} {\left(3
+        \, n^{2} + 3 \, n - 1\right)} n.</mrow>
+      </md>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:Limite} (<em>Un calcul symbolique de limite</em>)
+      Pour r&#xe9;pondre &#xe0; la question, on va utiliser une fonction symbolique, dont on
+      va calculer le polyn&#xf4;me de Taylor en 0 &#xe0; l'ordre 3.
+    </p>
+
+    <sage>
+      <input>
+        var('x h a'); f = function('f', x)
+        g(x) = taylor(f, x, a, 3)
+        phi(h) = (g(a+3*h)-3*g(a+2*h)+3*g(a+h)-g(a))/h**3
+        phi(h).expand()
+      </input>
+    </sage>
+
+    <p>
+      <m>D[0, 0, 0]\left(f\right)\left(a\right)</m>.
+    </p>
+
+    <p>
+      La fonction <m>g</m> diff&#xe8;re de <m>f</m> d'un reste qui est n&#xe9;gligeable devant
+      <m>h^3</m>, donc la fonction <m>\varphi</m> diff&#xe8;re du quotient &#xe9;tudi&#xe9; d'un reste qui est
+      <m>o(1)</m> ; donc <m>\varphi</m> a pour limite en z&#xe9;ro la limite cherch&#xe9;e.
+      En conclusion,
+      <me>
+        \lim_{h\rightarrow 0}\dfrac{1}{h^3}\big( f(a+3h)-3f(a+2h)+3f(a+h)-f(a)
+        \big) = f^{'''}(a).
+      </me>
+    </p>
+
+    <p>
+      Cette formule permet notamment d'effectuer un calcul approch&#xe9; de la d&#xe9;riv&#xe9;e tierce
+      de <m>f</m> en <m>a</m> sans effectuer aucune d&#xe9;rivation.
+    </p>
+
+    <p>
+      On peut supposer que la formule se g&#xe9;n&#xe9;ralise sous la forme suivante :
+      <me>
+        {\lim_{h\rightarrow 0}\;\dfrac{1}{h^n}\left(\sum_{k=0}^n
+        \binom{n}{k}\,(-1)^{n-k}\,g(a+k h) \right) = f^{(n)}(a)}.
+      </me>
+    </p>
+
+    <p>
+      Pour tester cette formule pour de plus grandes valeurs de <m>n</m>, on peut alors
+      facilement adapter ce qui pr&#xe9;c&#xe8;de :
+    </p>
+
+    <sage>
+      <input>
+        n = 7; var('x h a'); f = function('f', x)
+        g(x) = taylor(f, x, a, n)
+        phi(h) = sum(binomial(n,k)*(-1)^(n-k)*g(a+k*h)
+      </input>
+      <output>
+        for k in (0..n))/h**n
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        phi(h).expand()
+      </input>
+    </sage>
+
+    <p>
+      <m>D[0, 0, 0, 0, 0, 0, 0]\left(f\right)\left(a\right).</m>\end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:formuleGauss} (<em>Une formule due &#xe0; Gauss</em>)
+      <ol>
+        <li>
+          <p>
+            On utilise successivement les fonctions <c>trig_expand()</c> et
+            <c>trig_simplify</c> :
+
+            <sage>
+              <input>
+                theta = 12 * arctan(1/38) + 20 * arctan(1/57)
+              </input>
+              <output>
+                + 7 * arctan(1/239) + 24 * arctan(1/268)
+              </output>
+            </sage>
+
+            <sage>
+              <input>
+                x = tan(theta)
+                y = x.trig_expand()
+                y.trig_simplify()
+              </input>
+              <output>
+                1
+              </output>
+            </sage>
+
+          </p>
+        </li>
+
+        <li>
+          <p>
+            La fonction tangente est convexe sur l'intervalle
+            <m>I=\left[0,\frac{\pi}4\right]</m>, donc sa courbe repr&#xe9;sentative est en-dessous de
+            sa corde ;
+            autrement dit <m>\forall x\in I,  0\leq x\leq\frac4{\pi}</m>.
+
+            <sage>
+              <input>
+                M = 12*(1/38)+20*(1/57)+ 7*(1/239)+24*(1/268)
+                M
+              </input>
+              <output>
+                37735/48039
+              </output>
+            </sage>
+
+            On en d&#xe9;duit :
+            <md>
+              <mrow>\theta \amp =  12\arctan \frac{1}{38}+20\arctan
+              \frac{1}{57}+ 7\arctan \frac{1}{239}+24\arctan \frac{1}{268}</mrow>
+              <mrow>\amp \leq  12 \cdot \frac{1}{38}+20
+              \cdot \frac{1}{57}+ 7 \cdot \frac{1}{239}+24 \cdot \frac{1}{268}</mrow>
+              <mrow>\amp =\frac4{\pi}\cdot\frac{37735}{48039} \leq \frac4{\pi} \lt  \frac{\pi}2.</mrow>
+            </md>
+            Donc <m>\theta\in I</m> ;
+            or <m>\tan\theta=1=\tan\frac{\theta}4</m> et <m>\tan</m> est
+            injective sur <m>I</m>.
+
+            On en conclut  <m>\theta = \frac{\pi}4</m>.
+          </p>
+        </li>
+
+        <li>
+          <p>
+
+            <sage>
+              <input>
+                x = var('x')
+                f(x) = taylor(arctan(x), x, 0, 21)
+                approx = 4 * (12 * f(1/38) + 20 * f(1/57)
+              </input>
+              <output>
+                + 7 * f(1/239) + 24 * f(1/268))
+              </output>
+            </sage>
+
+            <sage>
+              <input>
+                approx.n(digits = 50); pi.n(digits = 50)
+              </input>
+              <output>
+                3.1415926535897932384626433832795028851616168852864
+                3.1415926535897932384626433832795028841971693993751
+              </output>
+            </sage>
+
+            <sage>
+              <input>
+                approx.n(digits = 50) - pi.n(digits = 50)
+              </input>
+              <output>
+                9.6444748591132486785420917537404705292978817080880e-37
+              </output>
+            </sage>
+
+          </p>
+        </li>
+      </ol>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:Asympt} (<em>D&#xe9;veloppement asymptotique d'une suite</em>)
+      L'encadrement de <m>x_n</m> permet d'affirmer <m>x_n\sim \pi n</m>, soit <m>x_n = \pi n +o(n)</m>.
+    </p>
+
+    <p>
+      On injecte alors cette &#xe9;galit&#xe9; dans l'&#xe9;quation suivante :
+      <me>
+        x_n = \pi n + \frac{\pi}2 -\arctan\left(\dfrac1x\right).
+      </me>
+    </p>
+
+    <p>
+      On r&#xe9;injecte ensuite les d&#xe9;veloppements asymptotiques de <m>x_n</m> ainsi obtenus dans
+      cette &#xe9;quation, bis repetita... (m&#xe9;thode des raffinements successifs).
+    </p>
+
+    <p>
+      Sachant qu'&#xe0; chaque &#xe9;tape, un d&#xe9;veloppement d'ordre <m>p</m> permet d'obtenir un
+      d&#xe9;veloppement &#xe0; l'ordre <m>p+2</m>, on peut obtenir en quatre &#xe9;tapes un d&#xe9;veloppement
+      d'ordre 6.
+      En anticipant sur la <xref ref="programmation">section</xref>, on peut effectuer ces quatre &#xe9;tapes &#xe0;
+      l'int&#xe9;rieur d'une boucle.
+    </p>
+
+    <pre>
+      var('n'); phi = lambda x: n*pi +pi/2 - arctan(1/x); x = pi * n
+      for i in range(4): x = taylor(phi(x), n, oo, 2 * i); x
+    </pre>
+
+    <p>
+      Au final, on obtient :
+      <md>
+        x_n = \frac{1}{2} \, \pi + \pi n - \frac{1}{\pi n} + \frac{1}{2} \, \frac{1}{\pi
+        n^{2}} - \frac{1}{12} \, \frac{{(3 \, \pi^{2} + 8)}}{\pi^{3} n^{3}} +
+        \frac{1}{8} \, \frac{{(\pi^{2} + 8)}}{\pi^{3} n^{4}}\\
+        - \frac{1}{240} \,
+        \frac{{(15 \, \pi^{4} + 240 \, \pi^{2} + 208)}}{\pi^{5} n^{5}} + \frac{1}{96} \,
+        \frac{{(3 \, \pi^{4} + 80 \, \pi^{2} + 208)}}{\pi^{5} n^{6}} +o\left(
+        \frac1{n^6}\right)
+      </md>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:Laplacien} (<em>Expression du Laplacien en coordonn&#xe9;es polaires</em>)
+    </p>
+
+    <sage>
+      <input>
+        x, y, r, t = var('x, y, r, t'); f = function('f',x,y)
+        F = f(x = r*cos(t), y = r*sin(t))
+        d = (diff(F,r,2) + diff(F,t,2)/r**2 + diff(F,r)/r)
+        d.simplify_full()
+      </input>
+      <output>
+        D[0, 0](f)(r, t) + D[1, 1](f)(r, t)
+      </output>
+    </sage>
+
+    <p>
+      On en d&#xe9;duit :
+      <me>
+        { \frac{\partial^2 F}{\partial\rho^2}+\frac1{\rho^2}\frac{\partial^2
+        F}{\partial\theta^2}+\frac1{\rho}\frac{\partial F}{\partial\rho}
+        =\Delta f}.
+      </me>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:Peano} (<em>Un contre-exemple d&#xfb; &#xe0; P&#xe9;ano au th&#xe9;or&#xe8;me de Schwarz</em>)
+      Les applications partielles en <m>(0,0)</m> sont identiquement nulles ; on en d&#xe9;duit,
+      sans calculs, <m>\partial_1f(0,0)=\partial_2f(0,0)=0</m>.
+      On calcule alors les valeurs des d&#xe9;riv&#xe9;es partielles secondes en <m>(0,0)</m>:
+    </p>
+
+    <sage>
+      <input>
+        f(x, y) = x * y * (x**2 - y**2) / (x**2 + y**2)
+        D1f(x, y) = diff(f(x,y), x)
+        limit((D1f(0,h) - 0) / h, h=0)
+      </input>
+      <output>
+        -1
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        D2f(x, y) = diff(f(x,y), y)
+        limit((D2f(h,0) - 0) / h, h=0)
+      </input>
+      <output>
+        1
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        g = plot3d(f(x, y), (x, -3, 3), (y, -3, 3))
+      </input>
+    </sage>
+
+    <p>
+      On en d&#xe9;duit <m>\dis \partial_1\partial_2f(0,0)=1</m> et <m>\dis
+      \partial_2\partial_1f(0,0)=-1</m>.
+      Donc cette fonction fournit un contre-exemple au th&#xe9;or&#xe8;me de Schwarz.
+    </p>
+
+    <figure xml:id="solutions_peano" >
+      <caption>La surface de Peano.</caption>
+      <image width="60%" source="images/3d_peano_redim.png" />
+    </figure>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:BBP} (<em>Formule de Simon Plouffe</em>)
+      <ol>
+        <li>
+          <p>
+            On commence par comparer
+
+            <m>\dis u_n =\int_{0}^{1/ \sqrt{2}} f(t)\cdot
+            t^{8n} \,\mathrm{d}t</m>  et  <m>v_n=\left(\frac{4}{8n+1}-\frac{2}{8n+4}-\frac{1}{8n+5}-\frac{1}{8n+6}
+            \right) \left( \frac{1}{16}\right)^n</m>.
+
+            <sage>
+              <input>
+                var('n')
+                v(n) = (4/(8*n+1)-2/(8*n+4)-1/(8*n+5)-1/(8*n+6))*1/16^n
+                assume(8*n+1>0)
+                u(n) = integrate((4*sqrt(2)-8*t^3-4*sqrt(2)*t^4-8*t^5)\
+                                        * t^(8*n), t, 0, 1/sqrt(2))
+                (u(n)-v(n)).simplify_full()
+              </input>
+              <output>
+                0
+              </output>
+            </sage>
+
+            On en d&#xe9;duit <m>u_n=v_n</m>.
+            Par lin&#xe9;arit&#xe9; de l'int&#xe9;grale, on obtient:
+            <me>
+              I_N =\int_{0}^{1/ \sqrt{2}} f(t)\cdot\left(\sum_{n=0}^N t^{8n} \right)\,\mathrm{d}t
+              =\sum_{n=0}^N u_n
+              =\sum_{n=0}^N v_n
+              = S_N
+              .
+            </me>
+          </p>
+        </li>
+
+        <li>
+          <p>
+            La s&#xe9;rie enti&#xe8;re <m>\left(\sum\limits_{n\supr0} t^{8n}\right)</m> a pour rayon de
+            convergence 1, donc elle converge normalement sur le segment
+            <m>\left[0,\frac1{\sqrt2}\right]</m>.
+            Sur ce segment, on peut donc intervertir l'int&#xe9;grale et la limite :
+            <me>
+              <md>
+              \lim_{N\to\infty} S_N \amp =\lim_{N\to\infty} \int_{0}^{1/ \sqrt{2}}
+              f(t)\cdot\left(\sum_{n=0}^{N} t^{8n} \right)\,\mathrm{d}t \\
+              \amp = \int_{0}^{1/ \sqrt{2}} f(t)\cdot\left(\sum_{n=0}^{\infty} t^{8n} \right)\,\mathrm{d}t \\
+              \amp = \int_{0}^{1/ \sqrt{2}} f(t)\cdot \dfrac{1}{1-t^8}  \,\mathrm{d}t.
+              </md>
+            </me>
+            Donc <m>\dis\lim_{N\rightarrow+\infty} S_N=J</m>.
+          </p>
+        </li>
+
+        <li>
+          <p>
+            On proc&#xe8;de ensuite au calcul de <m>J</m> :
+
+            <sage>
+              <input>
+                J = integrate((4*sqrt(2)-8*t^3-4*sqrt(2)*t^4-8*t^5)\
+                                    / (1-t^8), t, 0, 1/sqrt(2))
+                J.simplify_full()
+              </input>
+            </sage>
+
+            <m>\pi + 2 \, \log\left(\sqrt{2} - 1\right) + 2 \, \log\left(\sqrt{2}
+            + 1\right)</m>Pour simplifier cette expression, on va utiliser une astuce : <em>Sage</em>  ne sait
+            pas factoriser une somme de logarithmes ;
+            en revanche il sait d&#xe9;velopper le logarithme d'un produit.
+            Il nous suffit donc de passer &#xe0; l'exponentielle.
+
+            <sage>
+              <input>
+                ln(exp(J).simplify_log())
+              </input>
+              <output>
+                pi
+              </output>
+            </sage>
+
+            En d&#xe9;finitive, on obtient la formule demand&#xe9;e :
+            <me>
+              {\; \sum_{n=0}^{+\infty}
+              \left(\dfrac{4}{8n+1}-\dfrac{2}{8n+4}-\dfrac{1}{8n+5}-\dfrac{1}{8n+6} \right)
+              \left( \dfrac{1}{16}\right)^n =\pi\;}.
+            </me>
+            &#xc0; l'aide de cette formule, donnons de nouveau une valeur approch&#xe9;e de<nbsp /><m>\pi</m>:
+
+            <sage>
+              <input>
+                l = sum(v(n) for n in (0..40)); l.n(digits=60)
+              </input>
+              <output>
+                3.14159265358979323846264338327950288419716939937510581474759
+              </output>
+            </sage>
+
+            <sage>
+              <input>
+                pi.n(digits=60)
+              </input>
+              <output>
+                3.14159265358979323846264338327950288419716939937510582097494
+              </output>
+            </sage>
+
+            <sage>
+              <input>
+                print "%e" % (l-pi).n(digits=60)
+              </input>
+              <output>
+                -6.227358e-54
+              </output>
+            </sage>
+
+          </p>
+        </li>
+      </ol>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:sinus} (<em>Approximation polynomiale du sinus</em>)
+      On munit l'espace vectoriel <m>\mathcal{C}^{\infty}([-\pi,\pi])</m> du produit scalaire
+      <m>\langle f\,|\,g\rangle=\int_{-\pi}^{\pi} fg</m>.
+      Le polyn&#xf4;me cherch&#xe9; est la projection orthogonale de la fonction sinus sur le
+      sous-espace vectoriel <m>\R_5[X]</m>.
+      La d&#xe9;termination de ce polyn&#xf4;me se ram&#xe8;ne &#xe0; la r&#xe9;solution d'un syst&#xe8;me lin&#xe9;aire
+      : en effet, <m>P</m> est le projet&#xe9; du sinus si et seulement si la fonction <m>(P-\sin)</m> est
+      orthogonale &#xe0; chacun des vecteurs de la base canonique de <m>\R_5[X]</m>.
+      Voici le code <em>Sage</em>  :
+    </p>
+
+    <pre>
+      var('X'); ps = lambda f,g : integral(f * g, X, -pi, pi)
+      n = 5; Q = sin(X)
+      var('a a0 a1 a2 a3 a4 a5'); a= [a0, a1, a2, a3, a4, a5]
+      P = sum(a[k] * X^k for k in (0..n))
+      equ = [ps(P - Q, X^k) for k in (0..n)]
+      sol = solve(equ, a)
+      P = sum(sol[0][k].rhs() * X^k for k in (0..n))
+      g = plot(P,X,-4,4,color='red') + plot(Q,X,-4,4,color='blue')
+    </pre>
+
+    <p>
+      Le polyn&#xf4;me cherch&#xe9; est donc :
+      <md>
+        P=\frac{105}{8} \, \frac{{\left(\pi^{4} - 153 \, \pi^{2} + 1485\right)}
+        X}{\pi^{6}}
+        - \frac{315}{4} \, \frac{{\left(\pi^{4} - 125 \, \pi^{2} + 1155\right)}
+        X^{3}}{\pi^{8}}  \\
+        + \frac{693}{8} \, \frac{{\left(\pi^{4} - 105 \, \pi^{2} + 945\right)}
+        X^{5}}{\pi^{10}}.
+      </md>
+    </p>
+
+    <p>
+      On peut ensuite tracer la fonction sinus et son projet&#xe9; orthogonal pour appr&#xe9;cier
+      la qualit&#xe9; de cette approximation polynomiale (cf.<nbsp />fig. <xref ref="solutions_sinus"></xref>).
+    </p>
+
+    <figure xml:id="solutions_sinus" >
+      <caption>Approximation du sinus par la m&#xe9;thode des moindres carr&#xe9;s.</caption>
+      <image width="60%" source="images/approx_sinus.png" />
+    </figure>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:gauss} (<em>Le probl&#xe8;me de Gauss</em>)
+      On prouve tout d'abord formellement les relations demand&#xe9;es. S'ensuivra
+      l'application num&#xe9;rique.
+      On commence par d&#xe9;finir les vecteurs <m>\vv{r_i}</m> :
+    </p>
+
+    <pre>
+      var('p e theta1 theta2 theta3')
+      r(theta) = p / (1-e * cos(theta))
+      r1 = r(theta1); r2 = r(theta2); r3 = r(theta3)
+      R1 = vector([r1 * cos(theta1), r1 * sin(theta1), 0])
+      R2 = vector([r2 * cos(theta2), r2 * sin(theta2), 0])
+      R3 = vector([r3 * cos(theta3), r3 * sin(theta3), 0])
+    </pre>
+
+    <p>
+      <m>\bullet</m>
+      On v&#xe9;rifie que <m>\vv S+e\cdot\left(\vv\imath\wedge\vv D\right)</m> est le vecteur nul :
+    </p>
+
+    <pre>
+      D = R1.cross_product(R2) + R2.cross_product(R3) + R3.cross_product(R1)
+      i = vector([1, 0, 0])
+      S = (r1 - r3) * R2 + (r3 - r2) * R1 +   (r2 - r1) * R3
+      V =  S + e * i.cross_product(D)
+      map(lambda x:x.simplify_full(), V) # r\'ep. : [0, 0, 0]
+    </pre>
+
+    <p>
+      D'o&#xf9; la relation demand&#xe9;e.
+      On en d&#xe9;duit :
+      <m>e=\frac{\norme{\vv S}}{\norme{ \vv \imath \wedge \vv S}}
+      =\frac{\norme{\vv S}}{\norme{ \vv S}},</m>
+      puisque <m>\vv D</m> est normal au plan de l'orbite, et donc &#xe0; <m>\vv\imath</m>.
+    </p>
+
+    <p>
+      <m>\bullet</m>
+      On v&#xe9;rifie ensuite que <m>\vv S\wedge\vv D</m> est colin&#xe9;aire &#xe0; <m>\vv\imath</m> :
+    </p>
+
+    <pre>
+      map(lambda x:x.simplify_full(), S.cross_product(D))
+    </pre>
+
+    <p>
+      En effet, le r&#xe9;sultat renvoy&#xe9; montre que les deuxi&#xe8;me et troisi&#xe8;me composantes
+      sont nulles.
+    </p>
+
+    <p>
+      <m>\bullet</m>
+      De m&#xea;me, on v&#xe9;rifie que <m>-p\cdot\vv S+e\cdot\left(\vv\imath\wedge\vv N\right)</m> est le vecteur nul :
+    </p>
+
+    <pre>
+      N = r3 * R1.cross_product(R2)\
+        + r1 * R2.cross_product(R3)\
+        + r2 * R3.cross_product(R1)
+      W =  p * S + e * i.cross_product(N)
+      print map(lambda x:x.simplify_full(), W)  # r\'ep. : [0, 0, 0]
+    </pre>
+
+    <p>
+      D'o&#xf9; la relation demand&#xe9;e.
+      On en d&#xe9;duit :
+      <me>
+        p=e\dfrac{\norme{ \vv \imath \wedge \vv N}}{\norme{\vv S}}
+        =e\dfrac{\norme{\vv N}}{\norme{ \vv S}}
+        =\dfrac{\norme{\vv N}}{\norme{ \vv D}},
+      </me>
+      puisque <m>\vv N</m> est normal au plan de l'orbite, et donc &#xe0; <m>\vv\imath</m>.
+    </p>
+
+    <p>
+      <m>\bullet</m>
+      D'apr&#xe8;s le formulaire sur les coniques, on a <m>a=\frac{p}{1-e^2}</m>.
+    </p>
+
+    <p>
+      <m>\bullet</m>
+      On passe &#xe0; pr&#xe9;sent &#xe0; l'application num&#xe9;rique demand&#xe9;e :
+    </p>
+
+    <pre>
+      R1=vector([0,1.,0]);R2=vector([2.,2.,0]);R3=vector([3.5,0,0])
+      r1 = R1.norm(); r2 = R2.norm(); r3 = R3.norm()
+      D = R1.cross_product(R2) + R2.cross_product(R3) \
+        + R3.cross_product(R1)
+      S = (r1 - r3) * R2 + (r3 - r2) * R1 + (r2 - r1) * R3
+      V =  S + e * i.cross_product(D)
+      N = r3 * R1.cross_product(R2) + r1 * R2.cross_product(R3) \
+        + r2 * R3.cross_product(R1)
+      W =  p * S + e * i.cross_product(N)
+      e = S.norm() / D.norm()
+      p = N.norm() / D.norm()
+      a = p/(1-e^2)
+      c = a * e
+      b = sqrt(a^2 - c^2)
+      X = S.cross_product(D)
+      i = X / X.norm()
+      phi = atan2(i[1],i[0]) * 180 / pi.n()
+      print "%.3f %.3f %.3f %.3f %.3f %.3f" % (a, b, c, e, p, phi)
+    </pre>
+
+    <p>
+      En conclusion, on trouve :
+      <me>
+        a \approx 2.36,
+        b \approx 1.33,
+        c \approx 1.95,
+        e \approx 0.827,
+        p \approx 0.745,
+        \phi\approx 17.917.
+      </me>
+    </p>
+
+    <p>
+      L'inclinaison du grand axe par rapport &#xe0; l'axe des abscisses vaut
+      <m>17.92\degres</m>.
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:sev} (<em>Bases de sous-espaces vectoriels</em>)
+      <ol>
+        <li>
+          <p>
+            L'ensemble <m>\mathcal{S}</m> des solutions du syst&#xe8;me lin&#xe9;aire homog&#xe8;ne
+            associ&#xe9; &#xe0; <m>A</m> est un sous-espace vectoriel de <m>\R^5</m>, dont on obtient la dimension et une base gr&#xe2;ce &#xe0; la
+            fonction <c>right_kernel</c> :
+
+            <sage>
+              <input>
+                A = matrix(QQ, [[2, -3, 2, -12, 33],
+              </input>
+              <output>
+                [ 6, 1, 26, -16, 69],
+                                      [10, -29, -18, -53, 32],
+                                      [2, 0, 8, -18, 84]])
+              </output>
+            </sage>
+
+            <sage>
+              <input>
+                A.right_kernel()
+              </input>
+              <output>
+                Vector space of degree 5 and dimension 2 over Rational Field
+                Basis matrix:
+                [     1      0  -7/34   5/17   1/17]
+                [     0      1  -3/34 -10/17  -2/17]
+              </output>
+            </sage>
+
+            <m>\mathcal{S}</m> est donc le plan vectoriel
+            engendr&#xe9; par les deux vecteurs pr&#xe9;c&#xe9;dents.
+          </p>
+        </li>
+
+        <li>
+          <p>
+            On extrait de la famille g&#xe9;n&#xe9;ratrice donn&#xe9;e une base du sous-espace
+            recherch&#xe9; de la mani&#xe8;re suivante.
+            On r&#xe9;duit la matrice <m>A</m> (form&#xe9;e par les colonnes des <m>u_i</m>)  par rapport aux lignes
+            jusqu'&#xe0; la forme d'Hermite :
+
+            <sage>
+              <input>
+                H = A.echelon_form()
+              </input>
+            </sage>
+
+            <me>
+              \left(\begin{array}{rrrrr}
+              {1} \amp  0 \amp  4 \amp  0 \amp  -3  \\
+              0 \amp  {1} \amp  2 \amp  0 \amp  7  \\
+              0 \amp  0 \amp  0 \amp  {1} \amp  -5  \\
+              0 \amp  0 \amp  0 \amp  0 \amp  0
+              \end{array} \right)
+            </me>
+            Soit <m>F=\mathrm{Vect}(u_1,u_2,u_3,u_4,u_5)</m> la famille des vecteurs colonnes de
+            <m>A</m>.  C'est un sous-espace vectoriel de <m>\R^4</m>.
+            Sur <m>H</m>, on observe que les pivots sont dans les colonnes 1, 2 et 4.
+            Plus pr&#xe9;cis&#xe9;ment, on a :
+            <me>
+              \left\lbrace\vcenter{\mbox{\((u_1,u_2,u_4)\) est une famille libre,} 
+              \mbox{\(u_3=4u_1+2u_2\),} 
+              \mbox{\(u_5=-3u_1+7u_2-5u_4\).} }\right.
+            </me>
+            Donc <m>F=\mathrm{Vect}(u_1,u_2,u_3,u_4,u_5)=\mathrm{Vect}(u_1,u_2,u_4)</m> est engendr&#xe9; par la
+            famille <m>(u_1,u_2,u_4)</m> ; or cette famille est libre ; donc <m>(u_1,u_2,u_4)</m>  est une
+            base de<nbsp /><m>F</m>.
+            On aurait &#xe9;galement pu utiliser, plus directement, la fonction
+            <c>column_space</c> :
+
+            <sage>
+              <input>
+                A.column_space()
+              </input>
+              <output>
+                Vector space of degree 4 and dimension 3 over Rational Field
+                Basis matrix:
+                [       1        0        0 1139/350]
+                [       0        1        0    -9/50]
+                [       0        0        1   -12/35]
+              </output>
+            </sage>
+
+          </p>
+        </li>
+
+        <li>
+          <p>
+            On cherche &#xe0; pr&#xe9;sent des &#xe9;quations du sous-espace engendr&#xe9;.
+            Pour cela, on r&#xe9;duit la matrice <m>A</m> augment&#xe9;e d'un second membre, en indiquant &#xe0;
+            <em>Sage</em>  qu'on travaille dans un anneau de polyn&#xf4;mes &#xe0; quatre indetermin&#xe9;es :
+
+            <sage>
+              <input>
+                S.&lt;x,y,z,t>=QQ[]
+                C = matrix(S, 4,1,[x,y,z,t])
+                B = block_matrix([A,C], ncols=2)
+                C = B.echelon_form()
+                C[3,5]*350
+              </input>
+            </sage>
+
+            <me>
+              -1139\,x + 63\,y + 120\,z + 350\,t
+            </me>
+            On en d&#xe9;duit que <m>F</m> est l'hyperplan de <m>\R^4</m> d'&#xe9;quation
+
+            <m>-1139\,x + 63\,y + 120\,z + 350\,t = 0</m>.On aurait &#xe9;galement pu obtenir cette &#xe9;quation en calculant le noyau &#xe0;
+            droite de <m>A</m>, qui donne les coordonn&#xe9;es des formes lin&#xe9;aires
+            d&#xe9;finissant <m>F</m> (ici il n'y en a qu'une) :
+
+            <sage>
+              <input>
+                K = A.kernel(); K
+              </input>
+              <output>
+                Vector space of degree 4 and dimension 1 over Rational Field
+                Basis matrix:
+                [        1  -63/1139 -120/1139 -350/1139]
+              </output>
+            </sage>
+
+            L'hyperplan d&#xe9;fini par cette forme lin&#xe9;aire a pour base les quatre vecteurs
+            suivants :
+
+            <sage>
+              <input>
+                matrix(K.0).right_kernel()
+              </input>
+              <output>
+                Vector space of degree 4 and dimension 3 over Rational Field
+                Basis matrix:
+                [       1        0        0 1139/350]
+                [       0        1        0    -9/50]
+                [       0        0        1   -12/35]
+              </output>
+            </sage>
+
+          </p>
+        </li>
+      </ol>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:calculus:EqMatricielle} (<em>Une &#xe9;quation matricielle</em>)
+      On commence par d&#xe9;finir les matrices <m>A</m> et <m>C</m> :
+    </p>
+
+    <sage>
+      <input>
+        A = matrix(QQ, [[-2, 1, 1], [8, 1, -5], [4, 3, -3]])
+        C = matrix(QQ, [[1, 2, -1], [2, -1, -1], [-5, 0, 3]])
+      </input>
+    </sage>
+
+    <p>
+      L'&#xe9;quation <m>A=BC</m> est une &#xe9;quation lin&#xe9;aire, donc l'ensemble des solutions est
+      un sous-espace affine de <m>\mathcal{M}_{3}(\R)</m>.
+      On cherche donc une solution particuli&#xe8;re de notre &#xe9;quation.
+    </p>
+
+    <sage>
+      <input>
+        B = C.solve_left(A); B
+      </input>
+    </sage>
+
+    <me>
+      \left(\begin{array}{rrr}
+      0 \amp  -1 \amp  0 \\
+      2 \amp  3 \amp  0 \\
+      2 \amp  1 \amp  0
+      \end{array} \right)
+    </me>
+    <p>
+      Ensuite, on d&#xe9;termine la forme g&#xe9;n&#xe9;rale des solutions de l'&#xe9;quation homog&#xe8;ne,
+      autrement dit, le noyau &#xe0; gauche de <m>C</m>.
+    </p>
+
+    <sage>
+      <input>
+        C.left_kernel()
+      </input>
+      <output>
+        Vector space of degree 3 and dimension 1 over Rational Field
+        Basis matrix:
+        [1 2 1]
+      </output>
+    </sage>
+
+    <p>
+      Enfin, on donne la forme g&#xe9;n&#xe9;rale des solutions de notre &#xe9;quation :
+    </p>
+
+    <sage>
+      <input>
+        var('x y z'); v = matrix([[1, 2, 1]])
+        B = B+(x*v).stack(y*v).stack(z*v); B
+      </input>
+    </sage>
+
+    <me>
+      \left(\begin{array}{rrr}
+      x \amp  2 \, x - 1 \amp  x \\
+      y + 2 \amp  2 \, y + 3 \amp  y \\
+      z + 2 \amp  2 \, z + 1 \amp  z
+      \end{array} \right)
+    </me>
+    <p>
+      On peut effectuer une v&#xe9;rification rapide :
+    </p>
+
+    <sage>
+      <input>
+        A == B*C
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <p>
+      En conclusion, l'ensemble des solutions est un sous-espace affine de dimension<nbsp />3:
+      <me>
+        \left\lbrace\left(
+        \begin{array}{rrr}
+        x     \amp     2\,x - 1 \amp    x\\
+        y + 2 \amp     2\,y + 3 \amp    y\\
+        z + 2 \amp     2\,z + 1 \amp    z
+        \end{array} 
+        \right)
+         \Big|  (x,y,z)\in\R^3
+        \right\rbrace.
+      </me>
+    </p>
+
+    <p>
+      \end{correction}
+    </p>
+  </introduction>
+
+  <subsection>
+    <title>Graphiques</title>
+    <p>
+      \begin{correction}{exo:graphique:conchoides} (<em>Concho&#xef;des de Pascal</em>)
+    </p>
+
+    <pre>
+      t = var('t'); liste = [a + cos(t) for a in srange(0, 10, 0.1)]
+      g = polar_plot(liste, (t, 0, 2 * pi)); g.show(aspect_ratio=1)
+    </pre>
+
+    <figure>
+      \subfloat[Concho&#xef;des de Pascal.]{
+      <image width="50%" source="images/conchoide.png" />
+      }
+
+      \subfloat[&#xc9;tude d'une suite r&#xe9;currente.]{
+      <image width="50%" source="images/suite_rec.png" />
+      }
+    </figure>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:graphique:SuiteRec} (<em>Trac&#xe9; des termes d'une suite r&#xe9;currente</em>)
+    </p>
+
+    <pre>
+      f = lambda x: abs(x**2 - 1/4)
+      def liste_pts(u0, n):
+          u = u0; liste = [[u0,0]]
+          for k in range(n):
+              v, u = u, f(u)
+              liste.extend([[v,u], [u,u]])
+          return(liste)
+      g = line(liste_pts(1.1, 8), rgbcolor = (.9,0,0))
+      g += line(liste_pts(-.4, 8), rgbcolor = (.01,0,0))
+      g += line(liste_pts(1.3, 3), rgbcolor = (.5,0,0))
+      g += plot(f, -1, 3, rgbcolor = 'blue')
+      g += plot(x, -1, 3, rgbcolor = 'green')
+      g.show(aspect_ratio=1, ymin = -.2, ymax = 3)
+    </pre>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:graphique:equadiff} (<em>&#xc9;quation diff&#xe9;rentielle lin&#xe9;aire, du premier ordre, non r&#xe9;solue</em>)
+    </p>
+
+    <pre>
+      x = var('x'); y = function('y',x); DE = x^2 * diff(y, x) -  y == 0
+      desolve(DE, [y,x])   # r\'ep. : c*e^(-1/x)
+      g = plot([c*e^(-1/x) for c in srange(-8, 8, 0.4)], (x, -3, 3))
+      y = var('y'); g += plot_vector_field((x^2, y), (x,-3,3), (y,-5,5))
+      g.show(ymin = -5, ymax = 5)
+    </pre>
+
+    <figure xml:id="solutions_eqdiff2" >
+      <caption>Courbes int&#xe9;grales de  <m>x^2y'-y=0</m>.</caption>
+      <image width="80%" source="images/eq_diff2.png" />
+    </figure>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:graphique:ProiePredateur} (<em>Mod&#xe8;le proie-pr&#xe9;dateur</em>)
+    </p>
+
+    <pre>
+      from sage.calculus.desolvers import desolve_system_rk4
+      f = lambda x, y:[a*x-b*x*y,-c*y+d*b*x*y]
+      x,y,t = var('x y t')
+      a, b, c, d = 1., 0.1, 1.5, 0.75
+      P = desolve_system_rk4(f(x,y),[x,y],
+             ics=[0,10,5],ivar=t,end_points=15)
+      Ql = [ [i,j] for i,j,k in P]
+      p = line(Ql,color='red')
+      p += text("Lapins",(12,37),fontsize=10,color='red')
+      Qr = [ [i,k] for i,j,k in P]
+      p += line(Qr,color='blue')
+      p += text("Renards",(12,7),fontsize=10,color='blue')
+      p.axes_labels(["temps","population"])
+      p.show(gridlines=True)
+      ### Deuxi\`eme graphique
+      n = 10;  L = srange(6, 18, 12 / n); R = srange(3, 9, 6 / n)
+      def g(x,y):
+          v = vector(f(x, y))
+          return v/v.norm()
+      q = plot_vector_field(g(x, y), (x, 0, 60), (y, 0, 36))
+      for j in range(n):
+          P = desolve_system_rk4(f(x,y),[x,y],
+                 ics=[0,L[j],R[j]],ivar=t,end_points=15)
+          Q = [ [j,k] for i,j,k in P]
+          q += line(Q, color=hue(.8-j/(2*n)))
+      q.axes_labels(["nombre de lapins","nombre de renards"])
+      q.show()
+    </pre>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <p>
+      \begin{correction}{exo:graphique:SystAutonome} (<em>Un syst&#xe8;me diff&#xe9;rentiel autonome</em>)
+    </p>
+
+    <figure xml:id="solutions_systemeautonome" >
+      <caption>Un syst&#xe8;me diff&#xe9;rentiel autonome.</caption>
+      <image width="80%" source="images/syst_autonome.png" />
+    </figure>
+
+    <pre>
+      import scipy; from scipy import integrate
+      def dX_dt(X, t=0):
+          return [X[1], 0.5*X[1] - X[0] - X[1]**3]
+
+      t = srange(0, 40, 0.01);  x0 = srange(-2, 2, 0.1)
+      y0 = 2.5
+      CI = [[i, y0] for i in x0] + [[i, -y0] for i in x0]
+
+      def g(x,y):
+          v = vector(dX_dt([x, y]))
+          return v/v.norm()
+
+      x, y = var('x, y')
+      q = plot_vector_field(g(x, y), (x, -3, 3), (y, -y0, y0))
+      for j in xrange(len(CI)):
+          X = integrate.odeint(dX_dt, CI[j], t)
+          q += line(X, color=(1.7*j/(4*n),1.5*j/(4*n),1-3*j/(8*n)))
+
+      X = integrate.odeint(dX_dt, [0.01,0], t)
+      q += line(X, color = 'red')
+      q.show()
+    </pre>
+
+    <p>
+      \end{correction}
+    </p>
+
+    <figure xml:id="solutions_magnus" >
+      <caption>Effet Magnus.</caption>
+      \subfloat[Cas <m>\alpha=0.1</m>.]{
+      <image width="50%" source="images/effet_Magnus0.png" />
+      }
+
+      \subfloat[Cas <m>\alpha=0.5</m>.]{
+      <image width="60%" source="images/effet_Magnus1.png" />
+      }
+
+
+      \subfloat[Cas <m>\alpha=1</m>.]{
+      <image width="70%" source="images/effet_Magnus2.png" />
+      }
+
+      \subfloat[Cas <m>\alpha=1.25</m>.]{
+      <image width="70%" source="images/effet_Magnus3.png" />
+      }
+    </figure>
+
+    <p>
+      \begin{correction}{exo:graphique:magnus} (<em>&#xc9;coulement autour d'un cylindre avec effet Magnus</em>)
+      Pour r&#xe9;soudre cet exercice, on peut par exemple utiliser la fonction <c>odeint</c>
+      de <em>SciPy</em>  :
+    </p>
+
+    <pre>
+      import scipy
+      from scipy import integrate
+      # Intervalle de temps :
+      t = srange(0, 40, 0.01)
+      # Conditions initiales en cart\'esiennes :
+      n = 35; CI_cart = [[4, .2 * i] for i in range(n)]
+      # Conditions initiales en polaires :
+      CI = map(lambda x:[sqrt(x[0]**2+x[1]**2),\
+           pi - arctan(x[1] / x[0])], CI_cart)
+      # Choix du param\`etre alpha :
+      alpha = [0.1, 0.5, 1, 1.25]
+      for i in range(len(alpha)):
+          # D\'efinition du syt\`eme diff\'erentiel :
+          def dX_dt(X, t=0):
+              return [cos(X[1]) * (1 - 1 / X[0]^2),\
+              -sin(X[1]) * (1 / X[0] + 1 / X[0]^3) \
+              + 2 * alpha[i] / X[0]^2]
+          # trac\'e du disque :
+          q = circle((0, 0), 1, fill=True, rgbcolor='purple')
+          for j in range(n):
+              # r\'esolution du syt\`eme autonome :
+              X = integrate.odeint(dX_dt, CI[j], t)
+              # passage en cart\'esiennes :
+              Y = [[u[0] * cos(u[1]), u[0] * sin(u[1])] for u in X]
+              # trac\'e stock\'e dans la variable q
+              q += line(Y, xmin = -4, xmax = 4, color='blue')
+          # Trac\'e final :
+          q.show(aspect_ratio = 1, axes = False)
+          q.save('effet_Magnus'+str(i)+'.pdf',\
+                  aspect_ratio = 1, axes = False)
+    </pre>
+
+    <p>
+      \end{correction}
+    </p>
+  </subsection>
+</section>
+

@@ -1,0 +1,234 @@
+
+
+<section>
+  <title>&#xc9;quations d'ordre 2</title>
+  <subsection>
+    <title>&#xc9;quations lin&#xe9;aires &#xe0; coefficients constants</title>
+    <p>
+      R&#xe9;solvons maintenant une &#xe9;quation du second ordre lin&#xe9;aire &#xe0;
+      coefficients constants, par exemple:
+      <me>
+        x''+3x=t^2-7t+31.
+      </me>
+    </p>
+
+    <p>
+      On utilise la m&#xea;me syntaxe que pour les &#xe9;quations d'ordre 1, la d&#xe9;riv&#xe9;e
+      seconde de <m>x</m> par rapport &#xe0; <m>t</m> s'obtenant avec <c>diff(x,t,2)</c>.
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t,2)+3*x==t^2-7*t+31,x).expand()
+      </input>
+      <output>
+        k1*sin(sqrt(3)*t) + k2*cos(sqrt(3)*t) + 1/3*t^2 - 7/3*t 
+           + 91/9
+      </output>
+    </sage>
+
+    <p>
+      c'est-&#xe0;-dire<nbsp />: <m>k_{1} \sin\left(\sqrt{3} t\right) + k_{2} \cos\left(\sqrt{3} t\right) + \frac{1}{3} \, t^{2} - \frac{7}{3} \, t + \frac{91}{9}</m>.
+      Ajoutons des conditions initiales, par exemple <m>x(0)=1</m> et <m>x'(0)=2</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t,2)+3*x==t^2-7*t+31,x,ics=[0,1,2])
+      </input>
+      <output>
+        .expand()
+           1/3*t^2+13/9*sqrt(3)*sin(sqrt(3)*t)-7/3*t 
+           -82/9*cos(sqrt(3)*t)+91/9
+      </output>
+    </sage>
+
+    <p>
+      ou bien <m>x(0)=1</m> et <m>x(-1)=0</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(x,t,2)+3*x==t^2-7*t+31,x,ics=[0,1,-1,0])
+      </input>
+      <output>
+        .expand()
+           1/3*t^2-7/3*t-82/9*sin(sqrt(3)*t)*cos(sqrt(3))/sin(sqrt(3))
+           +115/9*sin(sqrt(3)*t)/sin(sqrt(3))-82/9*cos(sqrt(3)*t)+91/9
+      </output>
+    </sage>
+
+    <p>
+      C'est-&#xe0;-dire <m>\frac{1}{3} \, t^{2} - \frac{7}{3} \, t + \frac{-82 \, \sin\left(\sqrt{3} t\right) \cos\left(\sqrt{3}\right)}{9 \, \sin\left(\sqrt{3}\right)} + \frac{115 \, \sin\left(\sqrt{3} t\right)}{9 \, \sin\left(\sqrt{3}\right)} - \frac{82}{9} \, \cos\left(\sqrt{3} t\right) + \frac{91}{9}</m>
+    </p>
+  </subsection>
+
+  <subsection>
+    <title><em>Sage</em>  mis en d&#xe9;faut<nbsp />?</title>
+    <p>
+      &#xc9;tudions la c&#xe9;l&#xe8;bre &#xe9;quation de la chaleur.
+      La temp&#xe9;rature <m>z</m> se r&#xe9;partit dans une tige rectiligne homog&#xe8;ne de
+      longueur <m>\ell</m> selon l'&#xe9;quation<nbsp />:
+      <me>
+        \frac{\partial^2z}{\partial x^2}(x,t)=C \frac{\partial z}{\partial t}(x,t).
+      </me>
+    </p>
+
+    <p>
+      On &#xe9;tudiera cette &#xe9;quation pour<nbsp />:
+      <me>
+        \forall t\in\R^+, z(0,t)=0 z(\ell,t)=0\forall x\in\;]0;\ell[, z(x,0)=1
+      </me>
+    </p>
+
+    <p>
+      Attention<nbsp />! On sort ici du domaine des &#xe9;quations diff&#xe9;rentielles
+      ordinaires (EDO) pour &#xe9;tudier une &#xe9;quation aux
+      d&#xe9;riv&#xe9;es partielles (EDP).
+      On va chercher des solutions ne s'annulant pas sous la forme:
+      <me>
+        z(x,t)=f(x)g(t)
+      </me>
+    </p>
+
+    <p>
+      C'est la m&#xe9;thode de s&#xe9;paration des variables.
+    </p>
+
+    <sage>
+      <input>
+        var('x,t')
+        z=function('z',x,t)
+        f=function('f',x)
+        g=function('g',t)
+        z=f*g
+        eq=(diff(z,x,2)==diff(z,t))
+        eq
+      </input>
+      <output>
+        g(t)*D[0, 0](f)(x) == f(x)*D[0](g)(t)
+      </output>
+    </sage>
+
+    <p>
+      L'&#xe9;quation devient donc:
+      <me>
+        g(t)\cdot\dfrac{\mathrm{d}^2f(x)}{\mathrm{d}
+          x^2}=f(x)\cdot \dfrac{\mathrm{d} g(t)}{\mathrm{d} t}.
+      </me>
+    </p>
+
+    <p>
+      Divisons par <m>f(x)g(t)</m> suppos&#xe9; non nul<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        eqn=eq/(f(x)*g(t))
+        eqn
+      </input>
+      <output>
+        D[0, 0](f)(x)/f(x) == D[0](g)(t)/g(t)
+      </output>
+    </sage>
+
+    <p>
+      On obtient alors une &#xe9;quation o&#xf9; chaque membre ne d&#xe9;pend que d'une
+      variable<nbsp />:
+      <me>
+        \frac{1}{f(x)}\cdot
+        \frac{\mathrm{d}^2f(x)}{\mathrm{d}x^2}=\frac{1}{g(t)}\cdot \frac{\mathrm{d}g(t)}{\mathrm{d}t}
+      </me>
+    </p>
+
+    <p>
+      Chaque membre ne peut donc qu'&#xea;tre constant. S&#xe9;parons les &#xe9;quations et
+      introduisons une constante <m>k</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        k=var('k')
+        eq1=eqn.lhs()==k
+        eq2=eqn.rhs()==k
+      </input>
+    </sage>
+
+    <p>
+      R&#xe9;solvons s&#xe9;par&#xe9;ment les &#xe9;quations en commen&#xe7;ant par la deuxi&#xe8;me<nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        g(t)=desolve(eq2,[g,t])
+      </input>
+      <output>
+        c*e^(k*t)
+      </output>
+    </sage>
+
+    <p>
+      donc <m>g(t)=c \mathrm{e}^{kt}</m> avec <m>c</m> une constante r&#xe9;elle.
+    </p>
+
+    <p>
+      Pour la premi&#xe8;re, nous n'y arrivons pas directement:
+    </p>
+
+    <sage>
+      <input>
+        desolve(eq1,[f,x])
+      </input>
+      <output>
+        TypeError: Computation failed since Maxima requested additional
+        constraints(try the command 'assume(k>0)' before integral or 
+        limit evaluation,for example):Is k positive, negative, or zero?
+      </output>
+    </sage>
+
+    <p>
+      Utilisons <c>assume</c><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        assume(k>0)
+        desolve(eq1,[f,x])
+      </input>
+    </sage>
+
+    <p>
+      Le message est le m&#xea;me...
+      Insistons alors en prenant un param&#xe8;tre sous la forme
+      <m>-k^2-1</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(y(x),x,2)==(-k**2-1)*y,[y,x])
+      </input>
+      <output>
+        k1*sin(sqrt(k^2 + 1)*x) + k2*cos(sqrt(k^2 + 1)*x)
+      </output>
+    </sage>
+
+    <p>
+      C'est mieux<nbsp />! Et avec <m>k^2+1</m><nbsp />:
+    </p>
+
+    <sage>
+      <input>
+        desolve(diff(y(x),x,2)==(k**2+1)*y,[y,x])
+      </input>
+      <output>
+        k1*e^(I*sqrt(-k^2 - 1)*x) + k2*e^(-I*sqrt(-k^2 - 1)*x)
+      </output>
+    </sage>
+
+    <p>
+      Ce n'est pas faux mais ce n'est pas encore optimis&#xe9;. <em>Sage</em>  peut
+      donc parfois appara&#xee;tre comme un peu jeune...
+    </p>
+  </subsection>
+</section>
+

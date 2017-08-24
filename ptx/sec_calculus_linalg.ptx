@@ -1,0 +1,277 @@
+
+
+<section xml:id="sec_calculus_linalg">
+  <title>Calcul matriciel (*)</title>
+  <introduction>
+    <p>
+      Dans cette section, on d&#xe9;crit les fonctions de base utiles en alg&#xe8;bre lin&#xe9;aire :
+      op&#xe9;rations sur les vecteurs, puis sur les matrices. Pour plus de d&#xe9;tails, on
+      renvoie au <xref ref="linalg">chapitre</xref> pour le calcul matriciel symbolique et au
+      <xref ref="linsolve">chapitre</xref> pour le calcul matriciel num&#xe9;rique.
+    </p>
+  </introduction>
+
+  <subsection xml:id="sec_calculus_syslineaires">
+    <title>R&#xe9;solution de syst&#xe8;mes lin&#xe9;aires</title>
+    <p>
+      Pour r&#xe9;soudre un syst&#xe8;me lin&#xe9;aire, on peut utiliser la fonction <c>solve</c> d&#xe9;j&#xe0; rencontr&#xe9;e.
+    </p>
+
+    <paragraphs xml:id="exo_calculus_sinus">
+      <title>Exercice</title>
+      <p>
+        [*] (<em>Approximation polynomiale du sinus</em>)
+        D&#xe9;terminer le polyn&#xf4;me de degr&#xe9; au plus 5 qui r&#xe9;alise la meilleure
+        approximation, au sens des moindres carr&#xe9;s, de la fonction sinus sur
+        l'intervalle <m>[-\pi,\pi]</m> :
+        <me>
+          \alpha_5=\min\left\lbrace\int_{-\pi}^{\pi} <c>\sin x -P(x)</c>^2 \,\mathrm{d} x \;\Big|
+          \; P\in\R_5[X] \right\rbrace .
+        </me>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_vecteurs">
+    <title>Calcul vectoriel</title>
+    <p>
+      Les fonctions de base utiles pour la manipulation des vecteurs sont r&#xe9;sum&#xe9;es
+      dans le tableau suivant :
+      <md>
+        \vbox{
+
+        \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        \tvi \amp {Fonction}   \amp  \textrm{Syntaxe}  \amp   \cr
+        \noalign{\hrule}
+        \tvp\cr
+        \tvi\amp  D\'eclaration d'un vecteur  \amp   vector\cr
+        \tvi\amp  Produit vectoriel         \amp  cross\_product \cr
+        \tvi\amp  Produit scalaire          \amp  dot\_product \cr
+        \tvi\amp  Norme d'un vecteur        \amp  norm \cr
+        \tvp\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        }}
+      </md>
+    </p>
+
+    <p>
+      On peut se servir des fonctions pr&#xe9;c&#xe9;dentes pour traiter l'exercice suivant.
+    </p>
+
+    <paragraphs xml:id="exo_calculus_gauss">
+      <title>Exercice</title>
+      <p>
+        (<em>Le probl&#xe8;me de Gauss</em>)
+        On consid&#xe8;re un satellite en orbite autour de la Terre et on suppose
+        que l'on conna&#xee;t trois points de son orbite : <m>A_1</m>, <m>A_2</m> et <m>A_3</m>.
+        On souhaite d&#xe9;terminer &#xe0; partir de ces trois points les param&#xe8;tres
+        de l'orbite de ce satellite.
+      </p>
+
+      <p>
+        On note <m>O</m> le centre de la Terre. Les points <m>O</m>, <m>A_1</m>, <m>A_2</m> et <m>A_3</m> sont &#xe9;videmment
+        situ&#xe9;s dans un m&#xea;me plan, &#xe0; savoir le plan de l'orbite du satellite.
+        L'orbite du satellite est une ellipse dont <m>O</m> est un foyer. On peut
+        choisir un rep&#xe8;re <m>(O; \vv\imath,\vv\jmath)</m> de telle sorte que l'&#xe9;quation polaire de
+        l'ellipse en coordonn&#xe9;es polaires soit dans ce rep&#xe8;re
+        <m>r = \frac{p}{1-e\cos\theta}</m> o&#xf9; <m>e</m> d&#xe9;signe l'excentricit&#xe9; de l'ellipse
+        et <m>p</m> son param&#xe8;tre.
+        On notera <m>\vv{r_i} = \vv{OA_i}</m> et <m>r_i=\norme{\vv{r_i}}</m> pour
+        <m>i\in\{1;2;3\}</m>.
+        On consid&#xe8;re alors les trois vecteurs suivants qui se d&#xe9;duisent de la
+        connaissance de <m>A_1</m>, <m>A_2</m> et <m>A_3</m> :
+        <md>
+          <mrow>\vv{D} \amp = \vv{r_1}\wedge\vv{r_2} + \vv{r_2}\wedge\vv{r_3} +
+          \vv{r_3}\wedge\vv{r_1},</mrow>
+          <mrow>\vv{S} \amp = (r_1-r_3)\cdot\vv{r_2} + (r_3-r_2)\cdot\vv{r_1} +
+          (r_2-r_1)\cdot\vv{r_3},</mrow>
+          <mrow>\vv{N} \amp = r_3\cdot\left(\vv{r_1}\wedge\vv{r_2}\right) +
+                    r_1\cdot\left(\vv{r_2}\wedge\vv{r_3}\right) +
+                    r_2\cdot\left(\vv{r_3}\wedge\vv{r_1}\right).</mrow>
+        </md>
+        <ol>
+          <li>
+            <p>
+              Montrer que <m>\vv{\imath}\wedge\vv D = -\frac1e \vv S</m>
+              et en d&#xe9;duire l'excentricit&#xe9; <m>e</m> de l'ellipse.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Montrer que <m>\vv{\imath}</m> est colin&#xe9;aire au vecteur
+              <m>\vv S \wedge\vv D</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Montrer que  <m>\vv{\imath}\wedge\vv N = \frac pe \vv S</m>
+              et en d&#xe9;duire le param&#xe8;tre <m>p</m> de l'ellipse.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Exprimer le demi-grand axe <m>a</m> de l'ellipse en fonction du param&#xe8;tre <m>p</m> et
+              de l'excentricit&#xe9; <m>e</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              <em>Application num&#xe9;rique :</em>
+                 dans le plan rapport&#xe9; &#xe0; un rep&#xe8;re orthonorm&#xe9; direct, on consid&#xe8;re les points suivants :
+              <me>
+                A_1\left(\begin{matrix}0\\1
+                \end{matrix} \right),
+
+                A_2\left(\begin{matrix}2\\2
+                \end{matrix} \right),
+
+                A_3\left(\begin{matrix}3.5\\0
+                \end{matrix} \right),
+
+                O\left(\begin{matrix}0\\0
+                \end{matrix} \right).
+              </me>
+              D&#xe9;terminer num&#xe9;riquement les caract&#xe9;ristiques de l'unique ellipse dont <m>O</m> est un foyer et qui passe
+              par les trois points <m>A_1</m>, <m>A_2</m> et <m>A_3</m>.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_calculus_matrices">
+    <title>Calcul matriciel</title>
+    <p>
+      Pour d&#xe9;finir une matrice, on utilise l'instruction
+      <c>matrix</c> en pr&#xe9;cisant &#xe9;ventuellement l'anneau (ou le corps)
+      de base :
+    </p>
+
+    <pre>
+      A = matrix(QQ,[[1,2],[3,4]]); A
+    </pre>
+    <me>
+      \begin{pmatrix}1\amp 2\\3\amp 4
+      \end{pmatrix}
+    </me>
+    <p>
+      Pour trouver une solution particuli&#xe8;re &#xe0; l'&#xe9;quation matricielle <m>Ax=b</m> (resp.
+      <m>xA=b</m>), on utilise la fonction la fonction <c>solve_right</c> (resp.
+      <c>solve_left</c>).
+      Pour trouver <em>toutes</em> les solutions d'une &#xe9;quation
+      matricielle, il faut ajouter &#xe0; une solution particuli&#xe8;re la forme g&#xe9;n&#xe9;rale de
+      l'&#xe9;quation homog&#xe8;ne associ&#xe9;e. Pour r&#xe9;soudre une &#xe9;quation homog&#xe8;ne de la forme
+      <m>A x=0</m> (resp. <m>x A=0</m>), on utilisera la fonction <c>right_kernel</c>
+      (resp. <c>left_kernel</c>), comme dans l'exercice qui suit ce tableau
+      r&#xe9;capitulatif :
+      <md>
+        \vbox{
+
+        \offinterlineskip\halign{#\amp #\hfil \amp {\ttfamily #}\hfil\amp #\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        \tvi \amp {Fonction}   \amp  \textrm{Syntaxe}  \amp   \cr
+        \noalign{\hrule}
+        \tvp\cr
+        \tvi\amp  D\'eclaration d'une matrice                \amp  matrix\cr
+        \tvi\amp  R\'esolution d'une \'equation matricielle    \amp  solve\_right, solve\_left \cr
+        \tvi\amp  Noyau \`a droite, \`a gauche                 \amp  right\_kernel, left\_kernel\cr
+        \tvi\amp  R\'eduction sous forme \'echelonn\'ee en ligne \amp  echelon\_form\cr
+        \tvi\amp  Sous-espace engendr\'e par les colonnes    \amp  column\_space\cr
+        \tvi\amp  Sous-espace engendr\'e par les lignes      \amp  row\_space\cr
+        \tvi\amp  Concat\'enation de matrices                \amp  matrix\_block\cr
+        \tvp\cr
+        \noalign{\hrule}
+        \tvp\cr
+        \noalign{\hrule}
+        }}
+      </md>
+    </p>
+
+    <paragraphs xml:id="exo_calculus_sev">
+      <title>Exercice</title>
+      <p>
+        (<em>Bases de sous-espaces vectoriels</em>)
+        <ol>
+          <li>
+            <p>
+              D&#xe9;terminer une base de l'espace des solutions du syst&#xe8;me lin&#xe9;aire homog&#xe8;ne
+              associ&#xe9; &#xe0; la matrice<nbsp />:
+              <me>
+                A=\left(\begin{array}{rrrrr}
+                2 \amp  -3 \amp  2 \amp  -12 \amp  33  \\
+                6 \amp  1 \amp  26 \amp  -16 \amp  69   \\
+                10 \amp  -29 \amp  -18 \amp  -53 \amp  32   \\
+                2 \amp  0 \amp  8 \amp  -18 \amp  84
+                \end{array} \right).
+              </me>
+            </p>
+          </li>
+
+          <li>
+            <p>
+              D&#xe9;terminer une base de l'espace <m>F</m> engendr&#xe9;  par les colonnes de <m>A</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Caract&#xe9;riser <m>F</m> par une ou plusieurs &#xe9;quations.
+            </p>
+          </li>
+        </ol>
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_calculus_EqMatricielle">
+      <title>Exercice</title>
+      <p>
+        (<em>Une &#xe9;quation matricielle</em>)
+        On rappelle le lemme de factorisation des applications lin&#xe9;aires.
+        {Soient <m>E,F,G</m> des <m>\K</m>-espaces vectoriels de dimension finie.}
+        {Soient <m>u\in\mathcal{L}(E,F)</m> et <m>v\in\mathcal{L}(E,G)</m>.}
+        {Alors les assertions suivantes sont &#xe9;quivalentes :}
+      </p>
+
+      <p>
+        { <em>i)</em> il existe <m>w\in\mathcal{L}(F,G)</m> tel que <m>v=w\circ u</m>,}
+      </p>
+
+      <p>
+        { <em>ii)</em> <m>\mathrm{Ker}(u)\subset \mathrm{Ker}(v)</m>.}
+      </p>
+
+      <p>
+        On cherche toutes les solutions &#xe0; ce probl&#xe8;me dans un cas concret.
+        Soient
+        <me>
+          A= \left(\begin{matrix}-2\amp 1\amp 1\\
+          8\amp 1\amp -5\\
+          4\amp 3\amp -3
+          \end{matrix} \right)
+           \text{ et } 
+          C= \left(\begin{matrix}1\amp 2\amp -1\\
+          2\amp -1\amp -1\\
+          -5\amp 0\amp 3
+          \end{matrix} \right).
+        </me>
+      </p>
+
+      <p>
+        D&#xe9;terminer toutes les solutions <m>B\in\mathcal{M}_{3}(\R)</m> de l'&#xe9;quation
+        <m>A=BC</m>.
+      </p>
+    </paragraphs>
+  </subsection>
+</section>
+

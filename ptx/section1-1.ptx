@@ -1,0 +1,143 @@
+
+
+<section>
+  <title>Le logiciel <em>Sage</em></title>
+  <subsection>
+    <title>Un outil pour les math&#xe9;matiques</title>
+    <p>
+      <em>Sage</em>  est un logiciel qui implante des algorithmes math&#xe9;matiques
+      dans des domaines vari&#xe9;s.
+      En premier lieu, le syst&#xe8;me op&#xe8;re sur diff&#xe9;rentes sortes de nombres :
+      les nombres entiers ou rationnels, les approximations
+      num&#xe9;riques des r&#xe9;els et des complexes, avec une pr&#xe9;cision variable,
+      et les entiers modulaires des corps finis.
+      L'utilisateur peut tr&#xe8;s rapidement utiliser <em>Sage</em>  comme n'importe quelle
+      calculette scientifique &#xe9;ventuellement graphique.
+    </p>
+
+    <p>
+      Les coll&#xe9;giens apprennent le calcul alg&#xe9;brique pour r&#xe9;soudre
+      des &#xe9;quations affines, d&#xe9;velopper, simplifier, et parfois factoriser
+      des expressions. <em>Sage</em>  effectue directement ces calculs dans le
+      cadre bien plus complet des polyn&#xf4;mes et des fractions rationnelles.
+    </p>
+
+    <p>
+      L'analyse consiste &#xe0; &#xe9;tudier les fonctions trigonom&#xe9;triques et les autres
+      fonctions usuelles comme la racine carr&#xe9;e, les puissances,
+      l'exponentielle, le logarithme. <em>Sage</em>  reconna&#xee;t ces expressions, et effectue
+      d&#xe9;rivations, int&#xe9;grations et calculs de limites ;
+      il simplifie aussi les sommes, d&#xe9;veloppe en s&#xe9;ries,
+      r&#xe9;sout certaines &#xe9;quations diff&#xe9;rentielles, etc.
+    </p>
+
+    <p>
+      Le logiciel <em>Sage</em>  implante les r&#xe9;sultats de l'alg&#xe8;bre lin&#xe9;aire sur
+      les vecteurs, les matrices et les sous-espaces vectoriels. Le syst&#xe8;me
+      permet aussi d'aborder, d'illustrer et de traiter de diff&#xe9;rentes fa&#xe7;ons
+      les probabilit&#xe9;s, les statistiques et les questions de d&#xe9;nombrement.
+    </p>
+
+    <p>
+      Ainsi les domaines math&#xe9;matiques trait&#xe9;s par <em>Sage</em>  sont multiples,
+      de la th&#xe9;orie des groupes &#xe0; l'analyse num&#xe9;rique.
+      Il peut repr&#xe9;senter graphiquement les r&#xe9;sultats obtenus
+      sous la forme d'une image, d'un volume, ou d'une animation.
+    </p>
+
+    <p>
+      Utiliser un m&#xea;me logiciel pour aborder ces diff&#xe9;rents aspects des
+      math&#xe9;matiques lib&#xe8;re le math&#xe9;maticien, quel que soit son niveau,
+      des probl&#xe8;mes de transfert de donn&#xe9;es entre les logiciels et
+      de l'apprentissage des syntaxes de plusieurs langages informatiques.
+      <em>Sage</em>  s'efforce d'&#xea;tre homog&#xe8;ne entre ces diff&#xe9;rents domaines.
+    </p>
+  </subsection>
+
+  <subsection>
+    <title>Acc&#xe8;s &#xe0; <em>Sage</em></title>
+    <p>
+      Le logiciel <em>Sage</em>  est libre ; ses auteurs n'imposent aucune restriction &#xe0;
+      la diffusion, &#xe0; l'installation et m&#xea;me &#xe0; la modification de <em>Sage</em> 
+      d&#xe8;s l'instant que le code source reste libre. Si <em>Sage</em>  &#xe9;tait un livre,
+      il pourrait &#xea;tre emprunt&#xe9; et photocopi&#xe9; sans limite dans toutes
+      les biblioth&#xe8;ques !
+      Cette licence est en harmonie avec les buts d'enseignement et de recherche
+      pour faciliter la diffusion des connaissances.
+    </p>
+
+    <p>
+      William Stein, un enseignant-chercheur am&#xe9;ricain, commence
+      le d&#xe9;veloppement de <em>Sage</em>  en 2005 dans le but d'&#xe9;crire un
+      logiciel d'exp&#xe9;rimentation en alg&#xe8;bre et g&#xe9;om&#xe9;trie,
+      {Software for Algebra and Geometry Experimentation}.
+    </p>
+
+    <p>
+      Ces adresses pointent sur le site internet de r&#xe9;f&#xe9;rence de <em>Sage</em> 
+      et une pr&#xe9;sentation en fran&#xe7;ais du logiciel :
+      <me>
+        \begin{array}{c}
+        \text{\url{http\string://www.sagemath.org}
+              \qquad \url{http\string://www.sagemath.fr}} 
+        \\
+        \text{\url{http://www.sagemath.org/doc/} \qquad pour le tutoriel} 
+        \end{array}
+      </me>
+    </p>
+
+    <p>
+      La liste de diffusion en langue anglaise est la plus adapt&#xe9;e aux questions
+      des utilisateurs de <em>Sage</em> , et les utilisateurs francophones peuvent aussi
+      dialoguer sur une seconde liste :
+      <me>
+        \begin{array}{l}
+        \texttt{mail\string:sage-support@googlegroups.com} \\
+        \texttt{mail\string:sagemath-edu@mail.irem.univ-mrs.fr}
+        \end{array}
+      </me>
+    </p>
+
+    <p>
+      L'utilisateur peut au choix compiler le code source
+      ou installer directement le programme sur les syst&#xe8;mes d'exploitation
+      Linux, Windows, Mac os x et Solaris.
+      Certaines distributions de Linux proposent un paquetage
+      de <em>Sage</em>  pr&#xea;t &#xe0; &#xea;tre utilis&#xe9;, mais la version correspondante
+      n'est pas toujours la plus r&#xe9;cente.
+    </p>
+
+    <p>
+      L'interface d'utilisation de <em>Sage</em>  peut
+      &#xea;tre un terminal (<c>xterm</c> sous Linux)
+      ou une fen&#xea;tre d'un navigateur internet
+      comme <c>Firefox</c>.
+      Dans le premier cas il suffit de lancer le programme par la commande
+      <c>sage</c>, et de saisir ensuite les calculs ligne par ligne.
+    </p>
+
+    <p>
+      Dans le second cas, le navigateur internet
+      se connecte &#xe0; un serveur <em>Sage</em> , et l'utilisateur ouvre une
+      nouvelle feuille de calcul par le lien <c>New Worksheet</c>.
+      Ce serveur peut &#xea;tre le programme <em>Sage</em> 
+      install&#xe9; par l'utilisateur et lanc&#xe9; par la commande
+      <c>sage -notebook</c><fn>La communication entre \Sage et le navigateur
+      se fait g&#xe9;n&#xe9;ralement par l'interm&#xe9;diaire de l'addresse
+      <c>http\string://localhost\string:8000/home/admin</c></fn>.
+    </p>
+
+    <p>
+      Le d&#xe9;veloppement de <em>Sage</em>  est relativement rapide car il
+      privil&#xe9;gie l'usage de biblioth&#xe8;ques de calcul d&#xe9;j&#xe0; publi&#xe9;es.
+      Plus pr&#xe9;cis&#xe9;ment le programme est &#xe9;crit en langage <em>Python</em> ,
+      ainsi les instructions de <em>Sage</em>  sont en fait des appels
+      &#xe0; ces biblioth&#xe8;ques math&#xe9;matiques li&#xe9;es &#xe0; <em>Python</em> , et
+      les programmes &#xe9;crits pour <em>Sage</em>  sont des instructions &#xe9;valu&#xe9;es par <em>Python</em> .
+      Par cons&#xe9;quent les syntaxes de <em>Sage</em>  et de <em>Python</em>  sont similaires
+      mais <em>Sage</em>  modifie l&#xe9;g&#xe8;rement le fonctionnement standard de <em>Python</em>  pour
+      le sp&#xe9;cialiser dans les math&#xe9;matiques.
+    </p>
+  </subsection>
+</section>
+

@@ -1,0 +1,713 @@
+
+
+<section xml:id="sec_combinatoire_exemples">
+  <title>Premiers exemples</title>
+  <subsection xml:id="sec_combinatoire_exemples_poker">
+    <title>Jeu de poker et probabilit&#xe9;s</title>
+    <p>
+      Nous commen&#xe7;ons par r&#xe9;soudre un probl&#xe8;me classique:<nbsp />d&#xe9;nombrer
+      certaines combinaisons de cartes dans un jeu de poker, pour en d&#xe9;duire
+      leur probabilit&#xe9;.
+    </p>
+
+    <p>
+      Une carte de poker est caract&#xe9;ris&#xe9;e par une couleur (coeur, carreau,
+      pique ou tr&#xe8;fle) et une valeur (2, 3, <ellipsis />, 9, valet, dame, roi, ou
+      as). Le jeu de poker est constitu&#xe9; de toutes les cartes possibles; il
+      s'agit donc du produit cart&#xe9;sien de l'ensemble des couleurs et de
+      l'ensemble des valeurs:
+      <men>
+        \operatorname{Cartes} = \operatorname{Symboles} \times
+          \operatorname{Valeurs} = \{ (s, v)  \mathrel| s\in
+          \operatorname{Symboles} \text{ et }  v \in \operatorname{Valeurs} \}\,.
+      </men>
+    </p>
+
+    <p>
+      Construisons ces ensembles dans <em>Sage</em> :
+    </p>
+
+    <sage>
+      <input>
+        Symboles = Set(["Coeur", "Carreau", "Pique", "Trefle"])
+        Valeurs = Set([2, 3, 4, 5, 6, 7, 8, 9, 10,
+        "Valet", "Dame", "Roi", "As"])
+        Cartes = CartesianProduct(Symboles, Valeurs)
+      </input>
+    </sage>
+
+    <p>
+      Il y a <m>4</m> couleurs et <m>13</m> valeurs possibles donc <m>4 \times 13 =
+      52</m> cartes dans le jeu de poker:
+    </p>
+
+    <sage>
+      <input>
+        Symboles.cardinality()
+      </input>
+      <output>
+        4
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        Valeurs.cardinality()
+      </input>
+      <output>
+        13
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        Cartes.cardinality()
+      </input>
+      <output>
+        52
+      </output>
+    </sage>
+
+    <p>
+      Tirons une carte au hasard:
+    </p>
+
+    <sage>
+      <input>
+        Cartes.random_element()
+      </input>
+      <output>
+        ['Trefle', 6]
+      </output>
+    </sage>
+
+    <p>
+      Une petite digression technique est ici n&#xe9;cessaire. Les &#xe9;l&#xe9;ments du
+      produit cart&#xe9;sien sont renvoy&#xe9;s sous forme de listes:
+    </p>
+
+    <sage>
+      <input>
+        type(Cartes.random_element())
+      </input>
+      <output>
+        &lt;lt/>type 'list'>
+      </output>
+    </sage>
+
+    <p>
+      Une liste <em>Python</em>  n'&#xe9;tant pas immuable, on ne peut pas la mettre dans
+      un ensemble (voir <xref ref="sec_programmation_immuable">&#xa7;</xref>), ce
+      qui nous poserait probl&#xe8;me par la suite. Nous red&#xe9;finissons donc notre
+      produit cart&#xe9;sien pour que les &#xe9;l&#xe9;ments soient repr&#xe9;sent&#xe9;s par des
+      tuples:
+    </p>
+
+    <sage>
+      <input>
+        Cartes = CartesianProduct(Symboles, Valeurs).map(tuple)
+        Cartes.random_element()
+      </input>
+      <output>
+        ('Trefle', 'As')
+      </output>
+    </sage>
+
+    <p>
+      On peut maintenant construire un ensemble de cartes:
+    </p>
+
+    <sage>
+      <input>
+        Set([Cartes.random_element(), Cartes.random_element()])
+      </input>
+      <output>
+        {('Coeur', 2), ('Pique', 4)}
+      </output>
+    </sage>
+
+    <p>
+      Ce probl&#xe8;me devrait dispara&#xee;tre &#xe0; terme: il est pr&#xe9;vu de changer
+      l'implantation des produits cart&#xe9;siens pour que leurs &#xe9;l&#xe9;ments soient
+      immuables par d&#xe9;faut.
+    </p>
+
+    <p>
+      Revenons &#xe0; notre propos. On consid&#xe8;re ici une version simplifi&#xe9;e du
+      jeu de poker, o&#xf9; chaque joueur pioche directement cinq cartes, qui
+      forment une <em>main</em>. Toutes les cartes sont distinctes et l'ordre
+      n'a pas d'importance; une main est donc un sous-ensemble de taille <m>5</m>
+      de l'ensemble des cartes. Pour tirer une main au hasard, on commence
+      par construire l'ensemble de toutes les mains possibles puis on en
+      demande un &#xe9;l&#xe9;ment al&#xe9;atoire:
+    </p>
+
+    <sage>
+      <input>
+        Mains = Subsets(Cartes, 5)
+        Mains.random_element()
+      </input>
+      <output>
+        {('Coeur', 4), ('Carreau', 9), ('Pique', 8),
+           ('Trefle', 9), ('Coeur', 7)}
+      </output>
+    </sage>
+
+    <p>
+      Le nombre total de mains est donn&#xe9; par le nombre de sous-ensembles de
+      taille <m>5</m> d'un ensemble de taille <m>52</m>, c'est-&#xe0;-dire le coefficient
+      binomial <m>\binom{52}{5}</m>:
+    </p>
+
+    <sage>
+      <input>
+        binomial(52,5)
+      </input>
+      <output>
+        2598960
+      </output>
+    </sage>
+
+    <p>
+      On peut aussi ne pas se pr&#xe9;occuper de la m&#xe9;thode de calcul, et
+      simplement demander sa taille &#xe0; l'ensemble des mains:
+    </p>
+
+    <sage>
+      <input>
+        Mains.cardinality()
+      </input>
+      <output>
+        2598960
+      </output>
+    </sage>
+
+    <p>
+      La force d'une main de poker d&#xe9;pend de la combinaison de ses
+      cartes. Une de ces combinaisons est la <em>couleur</em>; il s'agit d'une
+      main dont toutes les cartes ont le m&#xea;me symbole (en principe il faut
+      exclure les quintes flush; ce sera l'objet d'un exercice
+      ci-dessous). Une telle main est donc caract&#xe9;ris&#xe9;e par le choix d'un
+      symbole parmi les quatre possibles et le choix de cinq valeurs parmi
+      les treize possibles. Construisons l'ensemble de toutes les couleurs,
+      pour en calculer le nombre:
+    </p>
+
+    <sage>
+      <input>
+        Couleurs = CartesianProduct(Symboles, Subsets(Valeurs, 5))
+        Couleurs.cardinality()
+      </input>
+      <output>
+        5148
+      </output>
+    </sage>
+
+    <p>
+      La probabilit&#xe9; d'obtenir une couleur en tirant une main au hasard est
+      donc de:
+    </p>
+
+    <sage>
+      <input>
+        Couleurs.cardinality()  / Mains.cardinality()
+      </input>
+      <output>
+        33/16660
+      </output>
+    </sage>
+
+    <p>
+      soit d'environ deux sur mille:
+    </p>
+
+    <sage>
+      <input>
+        1000.0 * Couleurs.cardinality()  / Mains.cardinality()
+      </input>
+      <output>
+        1.98079231692677
+      </output>
+    </sage>
+
+    <p>
+      Faisons une petite simulation num&#xe9;rique. La fonction suivante teste si
+      une main donn&#xe9;e est une couleur:
+    </p>
+
+    <sage>
+      <input>
+        def est_couleur(main):
+        return len(set(symbole for (symbole, val) in main)) == 1
+      </input>
+    </sage>
+
+    <p>
+      Nous tirons maintenant 10000 mains au hasard, et comptons le nombre de
+      couleurs obtenues (cela prend environ 10<nbsp />s):
+    </p>
+
+    <sage>
+      <input>
+        n = 10000
+        ncouleurs = 0
+        for i in range(n):
+        main = Mains.random_element()
+        if est_couleur(main):
+        ncouleurs += 1
+        print n, ncouleurs
+      </input>
+      <output>
+        10000, 18
+      </output>
+    </sage>
+
+    <paragraphs>
+      <title>Exercice</title>
+      <p>
+        Une main contenant quatre cartes de la m&#xea;me valeur est appel&#xe9;e un
+        <em>carr&#xe9;</em>. Construire l'ensemble des carr&#xe9;s (indication: utiliser
+        <c>Arrangements</c> pour tirer au hasard un couple de valeurs
+        distinctes puis choisir un symbole pour la premi&#xe8;re valeur).
+        Calculer le nombre de carr&#xe9;s, en donner la liste, puis d&#xe9;terminer la
+        probabilit&#xe9; d'obtenir un carr&#xe9; en tirant une main au hasard.
+      </p>
+    </paragraphs>
+    <paragraphs>
+      <title>Exercice</title>
+      <p>
+        Une main dont les cartes ont toutes le m&#xea;me symbole et dont les
+        valeurs se suivent est appel&#xe9;e une <em>quinte flush</em> et non une
+        <em>couleur</em>. Compter le nombre de quintes flush, puis en d&#xe9;duire
+        la probabilit&#xe9; correcte d'obtenir une couleur en tirant une main au
+        hasard.
+      </p>
+    </paragraphs>
+    <paragraphs>
+      <title>Exercice</title>
+      <p>
+        Calculer la probabilit&#xe9; de chacune des combinaisons de cartes au
+        poker (voir \url{http://fr.wikipedia.org/wiki/Main_au_poker}) et
+        comparer avec le r&#xe9;sultat de simulations.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_combinatoire_exemples_catalan">
+    <title>D&#xe9;nombrement d'arbres par s&#xe9;ries g&#xe9;n&#xe9;ratrices</title>
+    <p>
+      Dans cette section, nous traitons l'exemple des arbres binaires
+      complets, et illustrons sur cet exemple plusieurs techniques de
+      d&#xe9;nombrement o&#xf9; le calcul formel intervient naturellement. Ces
+      techniques sont en fait g&#xe9;n&#xe9;rales, s'appliquant &#xe0; chaque fois que les
+      objets combinatoires consid&#xe9;r&#xe9;s admettent une d&#xe9;finition r&#xe9;cursive
+      (grammaire) (voir <xref ref="sec_combinatoire_generique_especes">&#xa7;</xref> pour un
+      traitement automatis&#xe9;). L'objectif n'est pas de pr&#xe9;senter ces m&#xe9;thodes
+      formellement; aussi les calculs seront rigoureux mais la plupart des
+      justifications seront pass&#xe9;es sous silence.
+    </p>
+
+    <p>
+      Un <em>arbre binaire complet</em> est soit une feuille \mathrm{F},
+      soit un noeud sur lequel on a greff&#xe9; deux arbres binaires complets
+      (voir <xref ref="fig_combinatoire_exemples_catalan_arbres">figure</xref>).
+    </p>
+
+    <figure xml:id="fig_combinatoire_exemples_catalan_arbres" >
+      <caption>Les cinq arbres binaires complets &#xe0; quatre feuilles.</caption>
+      <image width="73%" source="images/arbres-binaires-complets.png" />
+    </figure>
+
+    <paragraphs xml:id="exo_enumeration_arbres">
+      <title>Exercice</title>
+      <p>
+        Chercher &#xe0; la main tous les arbres binaires complets &#xe0; <m>n=1, 2, 3,
+          4, 5</m> feuilles (voir
+        l'<xref ref="exo_combinatoire_briques_iterateurs_catalan">exercice</xref> pour
+        les chercher avec <em>Sage</em> ).
+      </p>
+    </paragraphs>
+    <p>
+      Notre objectif est de compter le nombre <m>c_n</m> d'arbres binaires
+      complets &#xe0; <m>n</m> feuilles (dans la section, et sauf mention explicite du
+      contraire, tous les arbres sont binaires complets). C'est une
+      situation typique o&#xf9; l'on ne s'int&#xe9;resse pas seulement &#xe0; un ensemble
+      isol&#xe9;, mais &#xe0; une famille d'ensembles, typiquement param&#xe9;tr&#xe9;e par
+      <m>n\in \N</m>.
+    </p>
+
+    <p>
+      D'apr&#xe8;s l'<xref ref="exo_enumeration_arbres">exercice</xref>, les premiers termes
+      sont donn&#xe9;s par <m>c_1,\dots,c_5 = 1,1,2,5,14</m>. Le simple fait d'avoir
+      ces quelques nombres est d&#xe9;j&#xe0; pr&#xe9;cieux. En effet, ils permettent une
+      recherche dans une mine d'or: l'<em>encyclop&#xe9;die en ligne des suites
+      de nombres entiers</em>
+      \url{http://www.research.att.com/<nbsp />njas/sequences/} appel&#xe9;e commun&#xe9;ment
+      le Sloane, du nom de son auteur principal, et qui contient plus de
+      170000 suites d'entiers:
+    </p>
+
+    <sage>
+      <input>
+        sloane_find([1,1,2,5,14])
+      </input>
+      <output>
+        Searching Sloane's online database...
+          [[108, 'Catalan numbers: C(n) = binomial(2n,n)/(n+1) ...
+      </output>
+    </sage>
+
+    <p>
+      Le r&#xe9;sultat sugg&#xe8;re que les arbres sont compt&#xe9;s par l'une des plus
+      fameuses suites, les nombres de Catalan. En fouillant dans les
+      r&#xe9;f&#xe9;rences fournies par le Sloane, on trouverait que c'est
+      effectivement le cas: les quelques nombres ci-dessus forment une
+      empreinte digitale de nos objets, qui permettent de retrouver en
+      quelques secondes un r&#xe9;sultat pr&#xe9;cis dans une abondante litt&#xe9;rature.
+    </p>
+
+    <p>
+      L'objectif de la suite est de retrouver ce r&#xe9;sultat avec l'aide de
+      <em>Sage</em> . Soit <m>C_n</m> l'ensemble des arbres &#xe0; <m>n</m> feuilles, de sorte que
+      <m>c_n=<c>C_n</c></m>; par convention, on d&#xe9;finira <m>C_0=\emptyset</m>, soit
+      <m>c_0=0</m>. L'ensemble de tous les arbres est alors la r&#xe9;union disjointe
+      des <m>C_n</m>:
+      <men>
+        C=\biguplus_{n\in \mathbb N} C_n\,.
+      </men>
+    </p>
+
+    <p>
+      Du fait d'avoir nomm&#xe9; l'ensemble <m>C</m> de tous les arbres, on peut
+      traduire la d&#xe9;finition r&#xe9;cursive des arbres en une &#xe9;quation
+      ensembliste:
+      <men>
+        C  \approx   \{ \mathrm{F} \}  \uplus C \times C\,.
+      </men>
+    </p>
+
+    <p>
+      En mots: un arbre <m>t</m> (donc dans <m>C</m>) est soit une feuille (donc dans
+      <m>\{\mathrm F\}</m>) soit un noeud sur lequel on a greff&#xe9; deux arbres <m>t_1</m> et
+      <m>t_2</m> et que l'on peut donc identifier avec le couple <m>(t_1,t_2)</m>
+      (donc dans le produit cart&#xe9;sien <m>C\times C</m>).
+    </p>
+
+    <p>
+      L'id&#xe9;e fondatrice de la combinatoire alg&#xe9;brique, introduite par Euler
+      dans une lettre &#xe0; Goldbach en 1751 pour traiter un probl&#xe8;me
+      similaire<nbsp /><nbsp /><xref ref="Euler_Lettre_Goldbach_1751" />, est de manipuler
+      simultan&#xe9;ment tous les coefficients <m>c_n</m> en les encodant sous la
+      forme d'une s&#xe9;rie formelle, dite <em>s&#xe9;rie g&#xe9;n&#xe9;ratrice</em> des <m>c_n</m>:
+      <men>
+        C(z) = \sum_{n\in \mathbb N} c_n z^n
+      </men>
+      o&#xf9; <m>z</m> est une ind&#xe9;termin&#xe9;e formelle (on n'a donc pas besoin de se
+      pr&#xe9;occuper de questions de convergence). La beaut&#xe9; de cette id&#xe9;e est
+      que les op&#xe9;rations ensemblistes (<m>A \uplus B</m>, <m>A\times B</m>) se
+      traduisent naturellement en op&#xe9;rations alg&#xe9;briques sur les s&#xe9;ries
+      (<m>A(z) + B(z)</m>, <m>A(z)\cdot B(z)</m>), de sorte que l'&#xe9;quation ensembliste
+      v&#xe9;rifi&#xe9;e par <m>C</m> se traduit en une &#xe9;quation alg&#xe9;brique sur <m>C(z)</m>:
+      <men>
+        C(z) = z + C(z) \cdot C(z)
+      </men>
+    </p>
+
+    <p>
+      R&#xe9;solvons cette &#xe9;quation avec <em>Sage</em> . Pour cela, on introduit deux
+      variables <m>C</m> et <m>z</m>, et on pose le syst&#xe8;me:
+    </p>
+
+    <sage>
+      <input>
+        var("C,z");
+        sys = [ C == z + C*C ]
+      </input>
+    </sage>
+
+    <p>
+      On a alors deux solutions, qui par chance sont sous forme close:
+    </p>
+
+    <sage>
+      <input>
+        sol = solve(sys, C, solution_dict=True); sol
+      </input>
+      <output>
+        [{C: -1/2*sqrt(-4*z + 1) + 1/2}, {C: 1/2*sqrt(-4*z + 1) + 1/2}]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        s0 = sol[0][C]; s1 = sol[1][C]
+      </input>
+    </sage>
+
+    <p>
+      et dont les d&#xe9;veloppements de Taylor commencent par:
+    </p>
+
+    <sage>
+      <input>
+        taylor(s0, z, 0, 5)
+      </input>
+      <output>
+        14*z^5 + 5*z^4 + 2*z^3 + z^2 + z
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        taylor(s1, z, 0, 5)
+      </input>
+      <output>
+        -14*z^5 - 5*z^4 - 2*z^3 - z^2 - z + 1
+      </output>
+    </sage>
+
+    <p>
+      La deuxi&#xe8;me solution est clairement aberrante; par contre, on retrouve
+      les coefficients pr&#xe9;vus sur la premi&#xe8;re. Posons donc:
+    </p>
+
+    <sage>
+      <input>
+        C = s0
+      </input>
+    </sage>
+
+    <p>
+      On peut maintenant calculer les termes suivants:
+    </p>
+
+    <sage>
+      <input>
+        taylor(C, z, 0, 10)
+      </input>
+      <output>
+        4862*z^10 + 1430*z^9 + 429*z^8 + 132*z^7 + 42*z^6 +
+        14*z^5 + 5*z^4 + 2*z^3 + z^2 + z
+      </output>
+    </sage>
+
+    <p>
+      ou calculer quasi instantan&#xe9;ment le 100-&#xe8;me coefficient:
+    </p>
+
+    <sage>
+      <input>
+        taylor(C, z, 0, 100).coeff(z,100)
+      </input>
+      <output>
+        227508830794229349661819540395688853956041682601541047340
+      </output>
+    </sage>
+
+    <p>
+      Il est cependant dommage de devoir tout recalculer si jamais on
+      voulait le 101-i&#xe8;me coefficient. Les s&#xe9;ries formelles paresseuses
+      (voir <xref ref="sec_polynomes_series_paresseuses">&#xa7;</xref>) prennent alors tout
+      leur sens, d'autant que l'on peut les d&#xe9;finir directement &#xe0; partir du
+      syst&#xe8;me d'&#xe9;quations, sans le r&#xe9;soudre, et donc en particulier sans
+      avoir besoin de forme close pour le r&#xe9;sultat. On commence par d&#xe9;finir
+      l'anneau des s&#xe9;ries formelles paresseuses:
+    </p>
+
+    <sage>
+      <input>
+        L.&lt;z> = LazyPowerSeriesRing(QQ)
+      </input>
+    </sage>
+
+    <p>
+      Puis l'on cr&#xe9;e une s&#xe9;rie formelle <q>libre</q>, &#xe0; laquelle on donne un nom,
+      et que l'on d&#xe9;finit ensuite par une &#xe9;quation r&#xe9;cursive:
+    </p>
+
+    <sage>
+      <input>
+        C = L()
+        C._name = 'C'
+        C.define( z + C * C );
+      </input>
+    </sage>
+
+    <sage>
+      <input>
+        [C.coefficient(i) for i in range(11)]
+      </input>
+      <output>
+        [0, 1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
+      </output>
+    </sage>
+
+    <p>
+      On peut &#xe0; tout moment demander un coefficient quelconque sans avoir &#xe0;
+      red&#xe9;finir <m>C</m>:
+    </p>
+
+    <sage>
+      <input>
+        C.coefficient(100)
+      </input>
+      <output>
+        227508830794229349661819540395688853956041682601541047340
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        C.coefficient(200)
+      </input>
+      <output>
+        1290131580644291140012229076696766751343495305527288824998\
+          10851598901419013348319045534580850847735528275750122188940
+      </output>
+    </sage>
+
+    <p>
+      Nous revenons maintenant &#xe0; la forme close pour <m>C(z)</m>:
+    </p>
+
+    <sage>
+      <input>
+        var('z');
+        C = s0; C
+      </input>
+    </sage>
+
+    <p>
+      Le <m>n</m>-i&#xe8;me coefficient du d&#xe9;veloppement de Taylor de <m>C(z)</m> &#xe9;tant
+      donn&#xe9; par <m>\frac{1}{n!} C(z)^{(n)}(0)</m>, regardons les d&#xe9;riv&#xe9;es
+      successives <m>C(z)^{(n)}</m> de <m>C(z)</m>:
+    </p>
+
+    <sage>
+      <input>
+        derivative(C, z, 1)
+      </input>
+      <output>
+        1/sqrt(-4*z + 1)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        derivative(C, z, 2)
+      </input>
+      <output>
+        2/(-4*z + 1)^(3/2)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        derivative(C, z, 3)
+      </input>
+      <output>
+        12/(-4*z + 1)^(5/2)
+      </output>
+    </sage>
+
+    <p>
+      Cela sugg&#xe8;re l'existence d'une formule explicite simple que l'on
+      recherche maintenant. La petite fonction suivante renvoie <m>d_n = n! \,
+      c_n</m>:
+    </p>
+
+    <sage>
+      <input>
+        def d(n): return derivative(s0, n).subs(z=0)
+      </input>
+    </sage>
+
+    <p>
+      En en prenant les quotients successifs:
+    </p>
+
+    <sage>
+      <input>
+        [ (d(n+1) / d(n)) for n in range(1,18) ]
+      </input>
+      <output>
+        [2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66]
+      </output>
+    </sage>
+
+    <p>
+      on constate que <m>d_n</m> satisfait la relation de r&#xe9;currence <m>d_{n+1} =
+      (4n-2)d_{n}</m>, d'o&#xf9; l'on d&#xe9;duit que <m>c_n</m> satisfait la relation de
+      r&#xe9;currence <m>c_{n+1} = \frac{(4n-2)}{n+1} c_n</m>. En simplifiant, on
+      obtient alors que <m>c_n</m> est le <m>(n-1)</m>-i&#xe8;me nombre de Catalan:
+      <men>
+        c_n = \operatorname{Catalan}(n-1) = \frac {1}{n} \binom{2(n-1)}{n-1}\,.
+      </men>
+    </p>
+
+    <p>
+      V&#xe9;rifions cela:
+    </p>
+
+    <sage>
+      <input>
+        var('n');
+        c = 1/n*binomial(2*(n-1),n-1)
+        [c.subs(n=k) for k in range(1, 11)]
+      </input>
+      <output>
+        [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        [catalan_number(k-1) for k in range(1, 11)]
+      </input>
+      <output>
+        [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
+      </output>
+    </sage>
+
+    <p>
+      On peut maintenant calculer les coefficients beaucoup plus loin; ici
+      on calcule <m>c_{100000}</m> qui a plus de <m>60000</m> chiffres:
+    </p>
+
+    <sage>
+      <input>
+        %time x = c(100000)
+      </input>
+      <output>
+        CPU times: user 2.34 s, sys: 0.00 s, total: 2.34 s
+          Wall time: 2.34 s
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        ZZ(x).ndigits()
+      </input>
+      <output>
+        60198
+      </output>
+    </sage>
+
+    <p>
+      Les m&#xe9;thodes que nous avons utilis&#xe9;es se g&#xe9;n&#xe9;ralisent &#xe0; tous les
+      objets d&#xe9;finis r&#xe9;cursivement: le syst&#xe8;me d'&#xe9;quations ensembliste se
+      traduit en un syst&#xe8;me d'&#xe9;quations sur la s&#xe9;rie g&#xe9;n&#xe9;ratrice; celui-ci
+      permet de calculer r&#xe9;cursivement ses coefficients. Lorsque les
+      &#xe9;quations ensemblistes sont suffisamment simples (par exemple ne font
+      intervenir que des produits cart&#xe9;siens et unions disjointes),
+      l'&#xe9;quation sur <m>C(z)</m> est alg&#xe9;brique. Elle admet rarement une solution
+      en forme close, mais en calculant les d&#xe9;riv&#xe9;es successives, on peut en
+      d&#xe9;duire en g&#xe9;n&#xe9;ral une &#xe9;quation diff&#xe9;rentielle <em>lin&#xe9;aire</em> sur
+      <m>C(z)</m>, qui se traduit en une &#xe9;quation de r&#xe9;currence de longueur fixe
+      sur les coefficients <m>c_n</m> (la s&#xe9;rie est alors dite
+      <em>holonomique</em>). Au final, apr&#xe8;s le pr&#xe9;calcul de cette &#xe9;quation de
+      r&#xe9;currence, le calcul des coefficients devient tr&#xe8;s rapide.
+    </p>
+  </subsection>
+</section>
+

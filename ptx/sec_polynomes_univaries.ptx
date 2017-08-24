@@ -1,0 +1,1776 @@
+
+
+<section xml:id="sec_polynomes_univaries">
+  <title>Polyn&#xf4;mes &#xe0; une ind&#xe9;termin&#xe9;e</title>
+  <subsection xml:id="sec_polynomes_anneaux">
+    <title>Anneaux de polyn&#xf4;mes</title>
+    <p>
+      \paragraph{Construction.}
+    </p>
+
+    <p>
+      La premi&#xe8;re &#xe9;tape pour mener un calcul dans une structure alg&#xe9;brique<nbsp /><m>R</m> est souvent de construire <m>R</m> elle-m&#xea;me. On construit <m>\Q[x]</m> par
+    </p>
+
+    <sage>
+      <input>
+        R = PolynomialRing(QQ, 'x')
+        x = R.gen()
+      </input>
+    </sage>
+
+    <p>
+      Le<nbsp /><c>'x'</c> qui appara&#xee;t sur la premi&#xe8;re ligne est une cha&#xee;ne de
+      caract&#xe8;res, le nom de l'ind&#xe9;termin&#xe9;e, ou <em>g&#xe9;n&#xe9;rateur</em> de l'anneau. Le<nbsp /><c>x</c> de la deuxi&#xe8;me ligne est une variable Python dans laquelle on r&#xe9;cup&#xe8;re le g&#xe9;n&#xe9;rateur ; employer le m&#xea;me nom<fn>Rappelons tout de m&#xea;me que techniquement, rien n'y oblige : les variables math&#xe9;matiques, dont font partie les ind&#xe9;termin&#xe9;es de polyn&#xf4;mes, sont d'une nature compl&#xe8;tement diff&#xe9;rente des variables Python qui servent &#xe0; la programmation.</fn>facilite la lecture du code. L'objet ainsi stock&#xe9; dans la variable<nbsp /><c>x</c> repr&#xe9;sente le polyn&#xf4;me <m>x \in \Q[x]</m>. Il a pour parent (le <em>parent</em> d'un objet <em>Sage</em>  est la structure alg&#xe9;brique <q> d'o&#xf9; il est issu </q>,
+      voir<nbsp /><xref ref="premierspas_classeselementaires">&#xa7;</xref>) l'anneau<nbsp /><c>QQ['x']</c> :
+    </p>
+
+    <sage>
+      <input>
+        x.parent()
+      </input>
+      <output>
+        Univariate Polynomial Ring in x over Rational Field
+      </output>
+    </sage>
+
+    <p>
+      Le polyn&#xf4;me <m>x \in \Q[x]</m> est consid&#xe9;r&#xe9; comme diff&#xe9;rent &#xe0; la fois des polyn&#xf4;mes identit&#xe9;<nbsp /><m>x \in A[x]</m> d'anneau de base <m>A \neq \Q</m> et de ceux comme <m>t \in \Q[t]</m> dont l'ind&#xe9;termin&#xe9;e porte un autre nom.
+    </p>
+
+    <p>
+      L'expression <c>PolynomialRing(QQ, 't')</c> s'&#xe9;crit aussi
+      <c>QQ['t']</c>. En combinant cette abr&#xe9;viation avec la construction <c>S.&lt;g> =</c>, qui affecte simultan&#xe9;ment une structure &#xe0; la variable<nbsp /><c>S</c> et son g&#xe9;n&#xe9;rateur &#xe0;<nbsp /><c>g</c>, la construction de l'anneau <m>\Q[x]</m> et de son ind&#xe9;termin&#xe9;e se r&#xe9;duit &#xe0; <c>R.&lt;x> = QQ['x']</c>, ou m&#xea;me simplement <c>R.&lt;x> = QQ[]</c> en sous-entendant la variable<nbsp /><c>x</c>.
+      La forme <c>x = polygen(QQ, 'x')</c> vue en introduction &#xe9;quivaut &#xe0;
+    </p>
+
+    <pre>
+      x = PolynomialRing(QQ, 'x').gen()
+    </pre>
+
+    <p>
+      \begin{cmdtable}{Anneaux de polyn&#xf4;mes}{poly:anneaux}
+
+  
+
+        \toprule
+        Manipulation des anneaux de polyn&#xf4;mes, <m>R = A[x]</m> 
+
+        \midrule
+
+      construction (repr. dense) &amp; <c>R.&lt;x> = A[]</c><em>ou</em> <c>R.&lt;x> = PolynomialRing(A, 'x')</c>
+    </p>
+
+    <p>
+      <em>ex.</em><nbsp /> <m>\Z[x]</m>, <m>\Q[x]</m>, <m>\R[x]</m>, <m>\Z/n\Z[x]</m> &amp; <c>ZZ['x']</c>, <c>QQ['x']</c>, <c>RR['x']</c>, <c>Integers(n)['x']</c>
+    </p>
+
+    <p>
+      construction (repr. creuse) &amp; |R.<lt/>x> = PolynomialRing(A, 'x', sparse=True)|
+    </p>
+
+    <p>
+      acc&#xe8;s &#xe0; l'anneau de base <m>A</m> &amp; <c>R.base_ring()</c>
+    </p>
+
+    <p>
+      acc&#xe8;s &#xe0; la variable <m>x</m> &amp; <c>R.gen()</c><em>ou</em>  <c>R.0</c>
+    </p>
+
+    <p>
+      tests (int&#xe8;gre, noeth&#xe9;rien, ...) &amp; <c>R.is_integral_domain()</c>, <c>R.is_noetherian()</c>, ...
+      \end{cmdtable}
+    </p>
+
+    <p>
+      \paragraph{Polyn&#xf4;mes.} Apr&#xe8;s l'instruction <c>R.&lt;x> = QQ[]</c>, les expressions construites &#xe0; partir de <c>x</c> et des constantes rationnelles par les op&#xe9;rations <c>+</c> et <c>*</c> sont des &#xe9;l&#xe9;ments de <m>\QQ[x]</m>. Une autre fa&#xe7;on de cr&#xe9;er un polyn&#xf4;me consiste &#xe0; &#xe9;num&#xe9;rer ses coefficients :
+    </p>
+
+    <sage>
+      <input>
+        def rook_polynomial(n, var='x'):
+        return ZZ[var]([binomial(n, k)^2 * factorial(k)
+        for k in (0..n) ])
+      </input>
+    </sage>
+
+    <p>
+      Ici, la conversion d'une liste d'entiers <m>[a_0, a_1, \dots]</m> en un &#xe9;l&#xe9;ment de <c>ZZ['x']</c> renvoie le polyn&#xf4;me <m>a_0 + a_1\,x+\dots \in \Z[x]</m>. Les polyn&#xf4;mes que construit cette fonction interviennent en combinatoire, leur nom anglais provient de l'interpr&#xe9;tation du coefficient de<nbsp /><m>x^k</m> dans <c>rook_polynomial(n)</c> comme le nombre de fa&#xe7;ons de placer <m>k</m> tours sur l'&#xe9;chiquier <m>n \times n</m> sans qu'elles se menacent.
+    </p>
+
+    <p>
+      Les &#xe9;l&#xe9;ments d'un anneau de polyn&#xf4;mes sont repr&#xe9;sent&#xe9;s par des objets Python de la classe <c>Polynomial</c> ou de classes d&#xe9;riv&#xe9;es.
+      Les principales op&#xe9;rations<fn>Il y en a beaucoup d'autres. Ces tableaux omettent les fonctionnalit&#xe9;s trop pointues, les variantes plus sp&#xe9;cialis&#xe9;es de m&#xe9;thodes mentionn&#xe9;es, et de nombreuses m&#xe9;thodes communes &#xe0; tous les <q> &#xe9;l&#xe9;ments d'anneaux </q>, voire &#xe0; tous les objets \Sage, qui ne pr&#xe9;sentent pas d'int&#xe9;r&#xea;t particulier sur les polyn&#xf4;mes. Notons cependant que les m&#xe9;thodes sp&#xe9;cialis&#xe9;es (par exemple <c>p.rescale(a)</c>, &#xe9;quivalent &#xe0; <c>p(a*x)</c>) sont souvent plus efficaces que les m&#xe9;thodes plus g&#xe9;n&#xe9;rales qui peuvent les remplacer.</fn>disponibles sur ces objets
+      sont r&#xe9;sum&#xe9;es dans les <xref ref="cmdtab_poly_base">tableaux</xref> <xref ref="cmdtab_poly_math">et</xref>. Ainsi,
+      on r&#xe9;cup&#xe8;re le degr&#xe9; d'un poly&#xf4;me en appelant sa m&#xe9;thode <c>degree</c>. De m&#xea;me, <c>p.subs(a)</c> ou simplement <c>p(a)</c> donne la valeur de<nbsp /><m>p</m> au point<nbsp /><m>a</m>, mais sert aussi &#xe0; calculer la compos&#xe9;e <m>p \circ a</m> lorsque <m>a</m> est lui-m&#xea;me un polyn&#xf4;me, et plus g&#xe9;n&#xe9;ralement &#xe0; &#xe9;valuer un polyn&#xf4;me de <m>A[x]</m> en un &#xe9;l&#xe9;ment d'une <m>A</m>-alg&#xe8;bre :
+    </p>
+
+    <sage>
+      <input>
+        p = R.random_element(degree=4); p  # un polynome au hasard
+      </input>
+      <output>
+        -4*x^4 - 52*x^3 - 1/6*x^2 - 4/23*x + 1
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.subs(x^2)
+      </input>
+      <output>
+        -4*x^8 - 52*x^6 - 1/6*x^4 - 4/23*x^2 + 1
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.subs(matrix([[1,2],[3,4]]))
+      </input>
+      <output>
+        [-375407/138  -273931/69]
+        [ -273931/46  -598600/69]
+      </output>
+    </sage>
+
+    <p>
+      La liste exacte des op&#xe9;rations disponibles, leur effet et leur efficacit&#xe9; d&#xe9;pendent fortement de l'anneau de base. Les polyn&#xf4;mes de <c>ZZ['x']</c> poss&#xe8;dent une m&#xe9;thode <c>content</c> qui renvoie leur contenu, c'est-&#xe0;-dire le pgcd de leurs coefficients ; ceux de <c>QQ['x']</c> non, l'op&#xe9;ration &#xe9;tant triviale. La m&#xe9;thode <c>factor</c> existe quant &#xe0; elle pour tous les polyn&#xf4;mes mais d&#xe9;clenche une exception <c>NotImplementedError</c> pour un polyn&#xf4;me &#xe0; coefficients dans<nbsp /><c>SR</c> ou dans <m>\Z/4\Z</m>. Cette exception signifie que l'op&#xe9;ration n'est pas disponible dans <em>Sage</em>  pour ce type d'objet <mdash /> le plus souvent, bien qu'elle ait un sens math&#xe9;matiquement.
+    </p>
+
+    <p>
+      Il est donc tr&#xe8;s utile de pouvoir jongler avec les diff&#xe9;rents anneaux de coefficients sur lesquels on peut consid&#xe9;rer un <q> m&#xea;me </q> polyn&#xf4;me. Appliqu&#xe9;e &#xe0; un polyn&#xf4;me de <m>A[x]</m>, la m&#xe9;thode <c>change_ring</c> renvoie son image dans<nbsp /><m>B[x]</m>, quand il y a une fa&#xe7;on naturelle de convertir les coefficients. La conversion est souvent donn&#xe9;e par un morphisme canonique de<nbsp /><m>A</m> dans<nbsp /><m>B</m> : notamment, <c>change_ring</c> sert &#xe0; &#xe9;tendre l'anneau de base pour disposer de propri&#xe9;t&#xe9;s alg&#xe9;briques suppl&#xe9;mentaires :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(ZZ); p = chebyshev_T(5, x); p
+      </input>
+      <output>
+        16*x^5 - 20*x^3 + 5*x
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p % (3*x^2)
+      </input>
+      <output>
+        x^5 + x^3 + 5*x
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.change_ring(QQ) % (3*x^2)
+      </input>
+      <output>
+        5*x
+      </output>
+    </sage>
+
+    <p>
+      Elle permet aussi de r&#xe9;duire un polyn&#xf4;me de <m>\Z[x]</m> modulo un nombre premier :
+    </p>
+
+    <sage>
+      <input>
+        p.change_ring(GF(3))
+      </input>
+      <output>
+        x^5 + x^3 + 2*x
+      </output>
+    </sage>
+
+    <p>
+      Inversement, si <m>B \subset A</m> et si les coefficients de<nbsp /><m>p</m> sont en fait dans<nbsp /><m>A</m>, c'est aussi <c>change_ring</c> que l'on utilise pour ramener<nbsp /><m>p</m> dans<nbsp /><m>B[x]</m>.
+    </p>
+
+    <p>
+      \begin{cmdtable}{Op&#xe9;rations de base sur les polyn&#xf4;mes <m>p,q \in A[x]</m>}{poly:base}
+
+  
+
+        \toprule
+        Acc&#xe8;s aux donn&#xe9;es, op&#xe9;rations syntaxiques 
+
+        \midrule
+
+      ind&#xe9;termin&#xe9;e <m>x</m> &amp; <c>p.variable_name()</c>
+    </p>
+
+    <p>
+      coefficient de <m>x^k</m> &amp; <c>p[k]</c>
+    </p>
+
+    <p>
+      coefficient dominant &amp; <c>p.leading_coefficient()</c>
+    </p>
+
+    <p>
+      degr&#xe9; <m>\deg p</m> &amp; <c>p.degree()</c>
+    </p>
+
+    <p>
+      liste des coefficients &amp; <c>p.coeffs()</c>
+    </p>
+
+    <p>
+      coefficients <em>non nuls</em> &amp; <c>p.coefficients()</c>
+    </p>
+
+    <p>
+      dictionnaire degr&#xe9; <m>\mapsto</m> coefficient &amp; <c>p.dict()</c>
+    </p>
+
+    <p>
+      tests (unitaire, constant, ...) &amp; <c>p.is_monic()</c>, <c>p.is_constant()</c>, ...
+    </p>
+
+    <p>
+      \toprule
+        Arithm&#xe9;tique de base 
+
+        \midrule
+
+      op&#xe9;rations <m>p+q</m>, <m>p-q</m>, <m>p \times q</m>, <m>p^k</m> &amp; <c>p + q</c>, <c>p - q</c>, <c>p * q</c>, <c>p^k</c>
+    </p>
+
+    <p>
+      substitution <m>x := a</m> &amp; <c>p(a)</c><em>ou</em>  <c>p.subs(a)</c>
+    </p>
+
+    <p>
+      d&#xe9;riv&#xe9;e &amp; <c>p.derivative()</c><em>ou</em>  <c>diff(p)</c>
+    </p>
+
+    <p>
+      \toprule
+        Transformations 
+
+        \midrule
+
+      changement d'anneau de base <m>A[x] \to B[x]</m> &amp; <c>p.change_ring(B)</c><em>ou</em>  <c>B['x'](p)</c>
+    </p>
+
+    <p>
+      polyn&#xf4;me r&#xe9;ciproque &amp; <c>p.reverse()</c>
+      \end{cmdtable}
+    </p>
+
+    <p>
+      \paragraph{Op&#xe9;rations sur les anneaux de polyn&#xf4;mes.}
+    </p>
+
+    <p>
+      Les anneaux de polyn&#xf4;mes sont des objets <em>Sage</em>  &#xe0; part enti&#xe8;re. Le syst&#xe8;me <q> conna&#xee;t </q> par exemple quelques propri&#xe9;t&#xe9;s alg&#xe9;briques de base des anneaux de polyn&#xf4;mes :
+    </p>
+
+    <sage>
+      <input>
+        A = QQ['x']
+        A.is_ring() and A.is_noetherian()  # A anneau n{\oe}th\'erien ?
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        ZZ.is_subring(A)  # Z sous-anneau de A ?
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        [n for n in range(20)                          # Z/nZ[x]
+        if Integers(n)['x'].is_integral_domain()]  #   int\`egre ?
+      </input>
+      <output>
+        [0, 2, 3, 5, 7, 11, 13, 17, 19]
+      </output>
+    </sage>
+
+    <p>
+      D'autres m&#xe9;thodes permettent de construire des polyn&#xf4;mes remarquables, d'en tirer au hasard, ou encore d'&#xe9;num&#xe9;rer des familles de polyn&#xf4;mes, ici ceux de degr&#xe9; exactement<nbsp />2 sur <m>\F_2</m> :
+    </p>
+
+    <sage>
+      <input>
+        list(GF(2)['x'].polynomials(of_degree=2))
+      </input>
+      <output>
+        [x^2, x^2 + 1, x^2 + x, x^2 + x + 1]
+      </output>
+    </sage>
+
+    <p>
+      Nous nous limitons &#xe0; ces quelques exemples et renvoyons &#xe0; la documentation pour les autres op&#xe9;rations.
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_representations">
+    <title>Repr&#xe9;sentation dense et repr&#xe9;sentation creuse</title>
+    <p>
+      Un m&#xea;me objet math&#xe9;matique <mdash /> le polyn&#xf4;me<nbsp /><m>p</m>, &#xe0; coefficients dans<nbsp /><m>A</m> <mdash /> peut avoir diff&#xe9;rentes repr&#xe9;sentations informatiques. Si le r&#xe9;sultat math&#xe9;matique d'une op&#xe9;ration sur <m>p</m> est bien s&#xfb;r ind&#xe9;pendant de la repr&#xe9;sentation, il en va autrement du comportement des objets <em>Sage</em>  correspondants. Le choix de la repr&#xe9;sentation influe sur les op&#xe9;rations possibles, la forme exacte de leurs r&#xe9;sultats, et particuli&#xe8;rement l'efficacit&#xe9; des calculs.
+    </p>
+
+    <p>
+      Il existe deux fa&#xe7;ons principales de repr&#xe9;senter les polyn&#xf4;mes. En repr&#xe9;sentation <em>dense</em>, les coefficients de <m>p = \sum_{i=0}^n p_i\,x^i</m> sont stock&#xe9;s dans un tableau <m>[p_0, \dots, p_n]</m> index&#xe9; par les exposants. Une repr&#xe9;sentation <em>creuse</em> ne stocke que les coefficients non nuls : le polyn&#xf4;me est cod&#xe9; par un ensemble de paires exposant-coefficient<nbsp /><m>(i, p_i)</m>, regroup&#xe9;es dans une liste, ou mieux, dans un dictionnaire index&#xe9; par les exposants (voir <xref ref="sec_programmation_dictionnaires">&#xa7;</xref>).
+    </p>
+
+    <p>
+      Pour des polyn&#xf4;mes qui sont effectivement denses, c'est-&#xe0;-dire dont la plupart des coefficients sont non nuls, la repr&#xe9;sentation dense occupe moins de m&#xe9;moire et permet des calculs plus rapides. Elle &#xe9;conomise le stockage des exposants et des structures de donn&#xe9;es internes du dictionnaire : ne reste que le strict n&#xe9;cessaire, les coefficients. De plus, l'acc&#xe8;s &#xe0; un &#xe9;l&#xe9;ment ou l'it&#xe9;ration sur les &#xe9;l&#xe9;ments sont plus rapides dans un tableau que dans un dictionnaire. Inversement, la repr&#xe9;sentation creuse permet de calculer efficacement sur des polyn&#xf4;mes qui ne tiendraient m&#xea;me pas en m&#xe9;moire en repr&#xe9;sentation dense :
+    </p>
+
+    <sage>
+      <input>
+        R = PolynomialRing(ZZ, 'x', sparse=True)
+        p = R.cyclotomic_polynomial(2^50); p, p.derivative()
+      </input>
+      <output>
+        (x^562949953421312 + 1, 562949953421312*x^562949953421311)
+      </output>
+    </sage>
+
+    <p>
+      En <em>Sage</em> , la repr&#xe9;sentation est une caract&#xe9;ristique de l'anneau de polyn&#xf4;mes, que l'on choisit &#xe0; sa construction. Le polyn&#xf4;me <q> dense </q> <m>x \in \QQ[x]</m> et le polyn&#xf4;me <q> creux </q> <m>x \in \QQ[x]</m> n'ont donc pas le m&#xea;me<fn>Pourtant, |QQ['x'] == PolynomialRing(QQ, 'x', sparse=True)| renvoie vrai : les deux parents sont <em>&#xe9;gaux</em>, car ils repr&#xe9;sentent le m&#xea;me objet math&#xe9;matique. Naturellement, le test correspondant avec <c>is</c> renvoie faux.</fn>parent. La repr&#xe9;sentation par d&#xe9;faut des polyn&#xf4;mes &#xe0; une ind&#xe9;termin&#xe9;e est dense. L'option <c>sparse=True</c> de <c>PolynomialRing</c> sert &#xe0; construire un anneau de polyn&#xf4;mes creux.
+    </p>
+
+    <p>
+      De plus, les d&#xe9;tails de repr&#xe9;sentation d&#xe9;passant la distinction dense-creux ainsi que le code utilis&#xe9; pour les calculs varient suivant la nature des coefficients des polyn&#xf4;mes. <em>Sage</em>  offre en effet, outre une impl&#xe9;mentation <em>g&#xe9;n&#xe9;rique</em> qui fonctionne sur tout anneau commutatif, plusieurs impl&#xe9;mentations des polyn&#xf4;mes optimis&#xe9;es pour un type particulier de coefficients. Celles-ci apportent quelques fonctionnalit&#xe9;s suppl&#xe9;mentaires, et surtout sont consid&#xe9;rablement plus efficaces que la version g&#xe9;n&#xe9;rique. Elles s'appuient pour cela sur des biblioth&#xe8;ques externes sp&#xe9;cialis&#xe9;es, par exemple flint ou ntl dans le cas de<nbsp /><m>\ZZ[x]</m>.
+    </p>
+
+    <p>
+      Pour mener &#xe0; bien de gros calculs, il est important de travailler autant que possible dans des anneaux de polyn&#xf4;mes disposant d'impl&#xe9;mentations efficaces.
+      La page d'aide affich&#xe9;e par<nbsp /><c>p?</c> pour un polyn&#xf4;me<nbsp /><c>p</c> indique quelle impl&#xe9;mentation il utilise. Le choix de l'impl&#xe9;mentation d&#xe9;coule le plus souvent de ceux de l'anneau de base et de la repr&#xe9;sentation. L'option <c>implementation</c> de <c>PolynomialRing</c> permet de pr&#xe9;ciser une impl&#xe9;mentation quand il reste plusieurs possibilit&#xe9;s.
+    </p>
+
+    <p>
+      Remarquons finalement que les expressions symboliques d&#xe9;crites dans les <xref ref="premierspas">chapitres</xref> <xref ref="calculus">et</xref> (c'est-&#xe0;-dire les &#xe9;l&#xe9;ments de <c>SR</c>) fournissent une troisi&#xe8;me repr&#xe9;sentation des polyn&#xf4;mes. Elles constituent un choix naturel quand un calcul m&#xea;le polyn&#xf4;mes et expressions plus complexes, comme c'est souvent le cas en analyse. Mais la souplesse de repr&#xe9;sentation qu'elles offrent est parfois utile m&#xea;me dans un contexte plus alg&#xe9;brique. Par exemple, le polyn&#xf4;me <m>(x+1)^{10^{10}}</m>, une fois d&#xe9;velopp&#xe9;, est dense, mais il n'est pas n&#xe9;cessaire (ni souhaitable !) de le d&#xe9;velopper pour le d&#xe9;river ou l'&#xe9;valuer num&#xe9;riquement. Attention cependant : contrairement aux polyn&#xf4;mes alg&#xe9;briques, les polyn&#xf4;mes symboliques ne sont pas rattach&#xe9;s &#xe0; un anneau de coefficients particulier et ne sont pas manipul&#xe9;s sous forme canonique. Un m&#xea;me polyn&#xf4;me a un grand nombre d'&#xe9;critures diff&#xe9;rentes, entre lesquelles c'est &#xe0; l'utilisateur d'expliciter les conversions n&#xe9;cessaires. Dans le m&#xea;me ordre d'id&#xe9;es, le domaine<nbsp /><c>SR</c> regroupe toutes les expressions symboliques, sans distinction entre les polyn&#xf4;mes et les autres, mais on peut tester explicitement si une expression symbolique<nbsp /><c>f</c> est polynomiale en une variable<nbsp /><c>x</c> par <c>f.is_polynomial(x)</c>.
+    </p>
+
+    <p>
+      \begin{cmdtable}{Arithm&#xe9;tique des polyn&#xf4;mes}{poly:math}
+
+  
+
+        \toprule
+        Divisibilit&#xe9; et division euclidienne 
+
+        \midrule
+      test de divisibilit&#xe9; <m>p \divides q</m> &amp; <c>p.divides(q)</c>
+    </p>
+
+    <p>
+      multiplicit&#xe9; d'un diviseur <m>q^k \divides p</m> &amp; <c>k = p.valuation(q)</c>
+    </p>
+
+    <p>
+      division euclidienne <m>p = qd+r</m> &amp; <c>q, r = p.quo_rem(d)</c>, <c>q = p//d</c>, |r = p
+      pseudo-division <m>a^k p = qd+r</m> &amp; <c>q, r, k = p.pseudo_divrem(d)</c>
+    </p>
+
+    <p>
+      plus grand commun diviseur &amp; <c>p.gcd(q)</c>, <c>gcd([p1, p2, p3])</c>
+    </p>
+
+    <p>
+      plus petit commun multiple &amp; <c>p.lcm(q)</c>, <c>lcm([p1, p2, p3])</c>
+    </p>
+
+    <p>
+      pgcd &#xe9;tendu <m>g=up+vq</m> &amp; <c>g, u, v = p.xgcd(q)</c><em>ou</em>  <c>xgcd(p, q)</c>
+    </p>
+
+    <p>
+      \toprule
+        Divers 
+
+        \midrule
+
+      interpolation <m>p(x_i)=y_i</m> &amp; |p = R.lagrange_polynomial([(x1,y1), ...])|
+    </p>
+
+    <p>
+      contenu de <m>p \in \Z[x]</m> &amp; <c>p.content()</c>
+      \end{cmdtable}
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_euclide">
+    <title>Arithm&#xe9;tique euclidienne</title>
+    <p>
+      Apr&#xe8;s la somme et le produit, les op&#xe9;rations les plus &#xe9;l&#xe9;mentaires sur les polyn&#xf4;mes sont la division euclidienne et le calcul de plus grand commun diviseur. Les op&#xe9;rateurs et m&#xe9;thodes correspondants sont analogues &#xe0; ceux sur les entiers (voir <xref ref="cmdtab_poly_math">tableau</xref>).
+    </p>
+
+    <p>
+      La division euclidienne fonctionne sur un corps, et plus g&#xe9;n&#xe9;ralement sur un anneau commutatif, lorsque le coefficient dominant du diviseur est inversible, puisque ce coefficient est le seul &#xe9;l&#xe9;ment de l'anneau de base par lequel il est n&#xe9;cessaire de diviser lors du calcul :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;t> = Integers(42)[]; (t^20-1) % (t^5+8*t+7)
+      </input>
+      <output>
+        22*t^4 + 14*t^3 + 14*t + 6
+      </output>
+    </sage>
+
+    <p>
+      Pour la m&#xea;me raison, si le coefficient dominant n'est pas inversible, on peut encore d&#xe9;finir une <em>pseudo-division euclidienne</em> :
+      soient <m>A</m> un anneau commutatif, <m>p, d \in A[x]</m>, et <m>a</m> le coefficient dominant de <m>d</m>. Alors il existe deux polyn&#xf4;mes <m>q, r \in A[x]</m>, avec <m>\deg r \lt  \deg d</m>, et un entier <m>k \leq \deg p - \deg d + 1</m> tels que
+      <me>
+        a^k p = q d + r.
+      </me>
+    </p>
+
+    <p>
+      La pseudo-division euclidienne est donn&#xe9;e par la m&#xe9;thode <c>pseudo_divrem</c>.
+    </p>
+
+    <p>
+      Pour effectuer une division exacte, on utilise &#xe9;galement l'op&#xe9;rateur de quotient euclidien<nbsp /><c>//</c>. En effet, diviser par un polyn&#xf4;me non constant avec <nbsp /><c>/</c> renvoie un r&#xe9;sultat de type fraction rationnelle (voir<nbsp /><xref ref="sec_polynomes_ratpoly">&#xa7;</xref>), ou &#xe9;choue si ce n'est pas possible :
+    </p>
+
+    <sage>
+      <input>
+        ((t^2+t)//t).parent()
+      </input>
+      <output>
+        Univariate Polynomial Ring in t over Ring of integers modulo 42
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        (t^2+t)/t
+      </input>
+      <output>
+        Traceback (most recent call last):
+        ...
+        TypeError: self must be an integral domain.
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_polynomes_chebyshev">
+      <title>Exercice</title>
+      <p>
+        <em>Sage</em>  repr&#xe9;sente les polyn&#xf4;mes de <m>\Q[x]</m> sur la base monomiale<nbsp /><m>(x^n)_{n \in \N}</m>.
+        Les polyn&#xf4;mes de Tchebycheff<nbsp /><m>T_n</m>, d&#xe9;finis par <m>T_n(\cos \theta) = \cos (n \theta)</m>, constituent une famille de polyn&#xf4;mes orthogonaux et donc une base de <m>\Q[x]</m>. Les premiers polyn&#xf4;mes de Tchebycheff sont
+      </p>
+
+      <sage>
+        <input>
+          x = polygen(QQ); [chebyshev_T(n, x) for n in (0..4)]
+        </input>
+        <output>
+          [1, x, 2*x^2 - 1, 4*x^3 - 3*x, 8*x^4 - 8*x^2 + 1]
+        </output>
+      </sage>
+
+      <p>
+        &#xc9;crire une fonction qui prend en entr&#xe9;e un &#xe9;l&#xe9;ment de <m>\Q[x]</m> et renvoie les coefficients de sa d&#xe9;composition sur la base<nbsp /><m>(T_n)_{n \in \N}</m>.
+      </p>
+    </paragraphs>
+    <paragraphs xml:id="exo_polynomes_puissances_croissantes">
+      <title>Exercice</title>
+      <p>
+        [Division suivant les puissances croissantes] Soient <m>n \in \N</m> et <m>u, v \in A[x]</m>, avec <m>v(0)</m> inversible. Alors il existe un unique couple <m>(q,r)</m> de polyn&#xf4;mes de <m>A[x]</m> tel que <m>u = qv + x^{n+1} r</m>. &#xc9;crire une fonction qui calcule<nbsp /><m>q</m> et<nbsp /><m>r</m> par un analogue de l'algorithme de division euclidienne. Comment faire ce m&#xea;me calcul le plus simplement possible, &#xe0; l'aide de fonctions existantes ?
+      </p>
+    </paragraphs>
+    <p>
+      De m&#xea;me, <em>Sage</em>  sait calculer le pgcd de polyn&#xf4;mes sur un corps, gr&#xe2;ce &#xe0; la structure euclidienne, mais aussi sur certains autres anneaux, dont les entiers :
+    </p>
+
+    <sage>
+      <input>
+        S.&lt;x> = ZZ[]; p = 2*(x^10-1)*(x^8-1); p.gcd(p.derivative())
+      </input>
+      <output>
+        2*x^2 - 2
+      </output>
+    </sage>
+
+    <p>
+      Le <em>pgcd &#xe9;tendu</em> (en anglais <em>extended gcd</em>), c'est-&#xe0;-dire le calcul d'une relation de B&#xe9;zout
+      <me>
+        g = \pgcd(p, q) = ap + bq, \qquad g, p, q, a, b \in K[x]
+      </me>
+      est fourni par <c>u.xgcd(v)</c> :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = QQ[]; p = (x^5-1); q = (x^3-1)
+        print "le pgcd est %s = (%s)*p + (%s)*q" % p.xgcd(q)
+      </input>
+      <output>
+        le pgcd est x - 1 = (-x)*p + (x^3 + 1)*q
+      </output>
+    </sage>
+
+    <p>
+      (La m&#xe9;thode <c>xgcd</c> existe aussi pour les polyn&#xf4;mes de <c>ZZ['x']</c>, mais attention : l'anneau <m>\Z[x]</m> n'&#xe9;tant pas factoriel, son r&#xe9;sultat n'est pas en g&#xe9;n&#xe9;ral une relation de B&#xe9;zout !)
+    </p>
+
+    <p>
+      En plus de la division euclidienne usuelle et de l'algorithme d'Euclide, on dispose pour ces op&#xe9;rations d'algorithmes rapides (division par la m&#xe9;thode de Newton, <q> demi-pgcd </q>), de complexit&#xe9; quasi-lin&#xe9;aire en les degr&#xe9;s des polyn&#xf4;mes en jeu. <em>Sage</em>  les utilise dans certaines circonstances. Un calcul de pgcd prend cependant beaucoup plus de temps qu'une multiplication ou une division, et &#xe9;viter les calculs de pgcd superflus acc&#xe9;l&#xe8;re consid&#xe9;rablement certains <q> gros </q> calculs sur les polyn&#xf4;mes.
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_factorisation">
+    <title>Polyn&#xf4;mes irr&#xe9;ductibles et factorisation</title>
+    <p>
+      \paragraph{Factorisation.}
+    </p>
+
+    <p>
+      La similitude algorithmique entre certains anneaux de polyn&#xf4;mes et celui des entiers s'arr&#xea;te avec la d&#xe9;composition en produit de facteurs irr&#xe9;ductibles, ou factorisation. Alors que d&#xe9;composer un entier en facteurs premiers est un probl&#xe8;me difficile, comme on l'a vu au chapitre pr&#xe9;c&#xe9;dent, factoriser un polyn&#xf4;me de degr&#xe9;<nbsp />1000 sur<nbsp /><m>\Q</m> ou<nbsp /><m>\F_p</m> prend quelques secondes<fn>D'un point de vue th&#xe9;orique, on sait factoriser dans <m>\Q[x]</m> en temps polynomial, et dans <m>\F_p[x]</m> en temps polynomial probabiliste, alors que l'on ignore s'il est possible de factoriser les entiers en temps polynomial.</fn>.
+    </p>
+
+    <sage>
+      <input>
+        p = ZZ['x'].random_element(degree=1000)
+        %timeit p.factor()
+      </input>
+      <output>
+        5 loops, best of 3: 4.63 s per loop
+      </output>
+    </sage>
+
+    <p>
+      La factorisation a lieu sur l'anneau de base du polyn&#xf4;me. <em>Sage</em>  permet de factoriser sur des anneaux vari&#xe9;s :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(ZZ); p = 54*x^4+36*x^3-102*x^2-72*x-12
+        p.factor()
+      </input>
+      <output>
+        2 * 3 * (3*x + 1)^2 * (x^2 - 2)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        for A in [QQ, ComplexField(16), GF(5), QQ[sqrt(2)]]:
+        print A, ":"; print A['x'](p).factor()
+      </input>
+      <output>
+        Rational Field :
+        (54) * (x + 1/3)^2 * (x^2 - 2)
+        Complex Field with 16 bits of precision :
+        (54.00) * (x - 1.414) * (x + 0.3333)^2 * (x + 1.414)
+        Finite Field of size 5 :
+        (4) * (x + 2)^2 * (x^2 + 3)
+        Number Field in sqrt2 with defining polynomial x^2 - 2 :
+        (54) * (x - sqrt2) * (x + sqrt2) * (x + 1/3)^2
+      </output>
+    </sage>
+
+    <p>
+      Le r&#xe9;sultat d'une d&#xe9;composition en facteurs irr&#xe9;ductibles n'est pas un polyn&#xf4;me (puisque les polyn&#xf4;mes sont toujours sous forme normale, c'est-&#xe0;-dire d&#xe9;velopp&#xe9;s !), mais un objet<nbsp /><c>f</c> de type <c>Factorization</c>. On peut r&#xe9;cup&#xe9;rer le <c>i</c>-&#xe8;me facteur avec <c>f[i]</c>, et on retrouve le polyn&#xf4;me par <c>f.expand()</c>. Les objets <c>Factorization</c> disposent aussi de m&#xe9;thodes comme <c>gcd</c> et <c>lcm</c> qui ont le m&#xea;me sens que pour les polyn&#xf4;mes mais op&#xe8;rent sur les formes factoris&#xe9;es.
+    </p>
+
+    <p>
+      \paragraph{Irr&#xe9;ductibilit&#xe9;.}
+    </p>
+
+    <p>
+      Le simple test d'irr&#xe9;ductibilit&#xe9; demeure plus facile que la factorisation. Par exemple, un polyn&#xf4;me <m>p \in \F_q[x]</m> de degr&#xe9;<nbsp /><m>n</m> est irr&#xe9;ductible si et seulement s'il divise <m>x^{q^n}-x</m> et est premier avec les <m>x^{q^{n/d}}-x</m> o&#xf9;<nbsp /><m>d</m> parcourt les diviseurs premiers de<nbsp /><m>n</m>.
+    </p>
+
+    <p>
+      V&#xe9;rifions que les cent premiers polyn&#xf4;mes cyclotomiques<nbsp /><m>\Phi_n</m> (<m>\Phi_n</m> est le produit des <m>x - \zeta</m> pour <m>\zeta</m> racine <m>n</m>-i&#xe8;me primitive de l'unit&#xe9;) sont irr&#xe9;ductibles :
+    </p>
+
+    <sage>
+      <input>
+        all(QQ['x'].cyclotomic_polynomial(j).is_irreducible()
+        for j in sxrange(1,100))
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <paragraphs xml:id="exo_polynomes_irreductibilite_sur_Z">
+      <title>Exercice</title>
+      <p>
+        Expliquer les r&#xe9;sultats suivants :
+      </p>
+
+      <sage>
+        <input>
+          p = ZZ['x']([ZZ.random_element(10) * (1 - n%2)
+          for n in range(42)])
+          p.is_irreducible()
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          p.derivative().is_irreducible()
+        </input>
+        <output>
+          False
+        </output>
+      </sage>
+    </paragraphs>
+    <p>
+      \paragraph{D&#xe9;composition sans carr&#xe9;.}
+    </p>
+
+    <p>
+      Malgr&#xe9; sa bonne complexit&#xe9; th&#xe9;orique et pratique, la factorisation compl&#xe8;te d'un polyn&#xf4;me est une op&#xe9;ration complexe. La d&#xe9;composition sans carr&#xe9; constitue une forme plus faible de factorisation, beaucoup plus facile &#xe0; obtenir <mdash /> quelques calculs de pgcd suffisent <mdash /> et qui apporte d&#xe9;j&#xe0; beaucoup d'information.
+    </p>
+
+    <p>
+      Soit <m>p = \prod_{i=1}^r p_i^{m_i} \in K[x]</m> un polyn&#xf4;me d&#xe9;compos&#xe9; en produit de facteurs irr&#xe9;ductibles sur un corps <m>K</m> de caract&#xe9;ristique nulle. On dit que<nbsp /><m>p</m> est sans carr&#xe9; (en anglais <em>squarefree</em>) si tous les<nbsp /><m>p_i</m> sont de multiplicit&#xe9;<nbsp /><m>m_i=1</m>, c'est-&#xe0;-dire si les racines de<nbsp /><m>p</m> dans une cl&#xf4;ture alg&#xe9;brique de<nbsp /><m>K</m> sont simples. Une <em>d&#xe9;composition sans carr&#xe9;</em> est une factorisation en produit de facteurs sans carr&#xe9; deux &#xe0; deux premiers entre eux :
+      <me>
+        p = f_1 f_2^2 \dots f_s^s \qquad \text{ o\`u }  \qquad f_m = \prod_{m_i=m} p_i.
+      </me>
+    </p>
+
+    <p>
+      La d&#xe9;composition sans carr&#xe9; s&#xe9;pare donc les facteurs irr&#xe9;ductibles de<nbsp /><m>p</m> par multiplicit&#xe9;. En particulier, la <em>partie sans carr&#xe9;</em> <m>f_1 \dots f_s = p_1 \dots p_r</m> de<nbsp /><m>p</m> est le polyn&#xf4;me &#xe0; racines simples qui a les m&#xea;me racines que<nbsp /><m>p</m> aux multiplicit&#xe9;s pr&#xe8;s.
+    </p>
+
+    <p>
+      \begin{cmdtable}{Factorisation et racines}{poly:facto}
+
+  
+
+        \toprule
+        Factorisation 
+
+        \midrule
+
+      test d'irr&#xe9;ductibilit&#xe9; &amp; <c>p.is_irreducible()</c>
+    </p>
+
+    <p>
+      factorisation &amp; <c>p.factor()</c>
+    </p>
+
+    <p>
+      factorisation sans carr&#xe9; &amp; <c>p.squarefree_decomposition()</c>
+    </p>
+
+    <p>
+      partie sans carr&#xe9; <m>p/\pgcd(p,p')</m> &amp; <c>p.radical()</c>
+    </p>
+
+    <p>
+      \toprule
+        Racines 
+
+        \midrule
+
+      racines dans <m>A</m>, dans <m>D</m> &amp; <c>p.roots()</c> ; <c>p.roots(D)</c>
+    </p>
+
+    <p>
+      racines r&#xe9;elles &amp; <c>p.roots(RR)</c> ; <c>p.real_roots()</c>
+    </p>
+
+    <p>
+      racines complexes &amp; <c>p.roots(CC)</c> ; <c>p.complex_roots()</c>
+    </p>
+
+    <p>
+      isolation des racines r&#xe9;elles &amp; <c>p.roots(RIF)</c> ; <c>p.real_root_intervals()</c>
+    </p>
+
+    <p>
+      isolation des racines complexes &amp; <c>p.roots(CIF)</c>
+    </p>
+
+    <p>
+      r&#xe9;sultant &amp; <c>p.resultant(q)</c>
+    </p>
+
+    <p>
+      discriminant &amp; <c>p.discriminant()</c>
+    </p>
+
+    <p>
+      groupe de Galois (<m>p</m> irr&#xe9;ductible) &amp; <c>p.galois_group()</c>
+      \end{cmdtable}
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_racines">
+    <title>Racines</title>
+    <p>
+      \paragraph{Recherche de racines.}
+    </p>
+
+    <p>
+      Le calcul des racines d'un polyn&#xf4;me admet de nombreuses variantes, suivant que l'on cherche des racines r&#xe9;elles, complexes, ou dans un autre domaine, exactes ou approch&#xe9;es, avec ou sans multiplicit&#xe9;s, de fa&#xe7;on garantie ou heuristique... La m&#xe9;thode <c>roots</c> d'un polyn&#xf4;me renvoie par d&#xe9;faut les racines du polyn&#xf4;me dans son anneau de base, sous la forme d'une liste de couples (racine, multiplicit&#xe9;) :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = ZZ[]; p = (2*x^2-5*x+2)^2 * (x^4-7); p.roots()
+      </input>
+      <output>
+        [(2, 2)]
+      </output>
+    </sage>
+
+    <p>
+      Avec un param&#xe8;tre, <c>roots(D)</c> renvoie les racines dans le domaine<nbsp /><m>D</m>, ici les racines rationnelles, puis des approximations des racines <m>\ell</m>-adiques pour <m>\ell=19</m> :
+    </p>
+
+    <sage>
+      <input>
+        p.roots(QQ)
+      </input>
+      <output>
+        [(2, 2), (1/2, 2)]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.roots(Zp(19, print_max_terms=3))
+      </input>
+      <output>
+        [(2 + 6*19^10 + 9*19^11 + ... + O(19^20), 1), 
+        (7 + 16*19 + 17*19^2 + ... + O(19^20), 1),
+        (10 + 9*19 + 9*19^2 + ... + O(19^20), 1),
+        (10 + 9*19 + 9*19^2 + ... + O(19^20), 1),
+        (12 + 2*19 + 19^2 + ... + O(19^20), 1),
+        (2 + 13*19^10 + 9*19^11 + ... + O(19^20), 1)]
+      </output>
+    </sage>
+
+    <p>
+      Cela fonctionne pour une grande vari&#xe9;t&#xe9; de domaines, avec une efficacit&#xe9; variable.
+    </p>
+
+    <p>
+      En particulier, choisir pour<nbsp /><c>D</c> le corps des nombres alg&#xe9;briques <c>QQbar</c> ou celui des alg&#xe9;briques r&#xe9;els <c>AA</c> permet de calculer de fa&#xe7;on exacte les racines complexes ou (respectivement) les racines r&#xe9;elles d'un polyn&#xf4;me &#xe0; coefficients rationnels :
+    </p>
+
+    <sage>
+      <input>
+        l = p.roots(AA); l
+      </input>
+      <output>
+        [(-1.626576561697786?, 1), (0.500000000000000?, 2), 
+        (1.626576561697786?, 1), (2.000000000000000?, 2)]
+      </output>
+    </sage>
+
+    <p>
+      Malgr&#xe9; leur affichage, les racines renvoy&#xe9;es ne sont pas de simples valeurs approch&#xe9;es, comme on peut le voir en for&#xe7;ant <em>Sage</em>  &#xe0; simplifier autant que possible la puissance quatri&#xe8;me de la premi&#xe8;re :
+    </p>
+
+    <sage>
+      <input>
+        a = l[0][0]^4; a.simplify(); a
+      </input>
+      <output>
+        7
+      </output>
+    </sage>
+
+    <p>
+      Une variante consiste &#xe0; simplement <em>isoler</em> les racines, c'est-&#xe0;-dire calculer des intervalles garantis contenir chacun exactement une racine, en passant comme domaine<nbsp /><c>D</c> celui des intervalles r&#xe9;els <c>RIF</c> ou complexes <c>CIF</c>.
+    </p>
+
+    <p>
+      Parmi les autres domaines utiles dans le cas d'un polyn&#xf4;me &#xe0; coefficients rationnels, citons <c>RR</c>, <c>CC</c>, <c>RDF</c>, <c>CDF</c>, qui correspondent tous &#xe0; des racines approch&#xe9;es, cherch&#xe9;es num&#xe9;riquement, ainsi que les corps de nombres <c>QQ[alpha]</c>. Les m&#xe9;thodes sp&#xe9;cifiques <c>real_roots</c>, <c>complex_roots</c> et (pour certains anneaux de base) <c>real_interval_roots</c> offrent des options suppl&#xe9;mentaires ou donnent des r&#xe9;sultats l&#xe9;g&#xe8;rement diff&#xe9;rents des appels correspondants &#xe0; <c>roots</c>. La recherche et l'isolation de racines num&#xe9;riques sont trait&#xe9;es plus en d&#xe9;tail en <xref ref="sec_resolution-numerique">&#xa7;</xref>.
+    </p>
+
+    <p>
+      \paragraph{R&#xe9;sultant.}
+    </p>
+
+    <p>
+      Sur tout anneau factoriel, l'existence d'un facteur commun non constant &#xe0; deux polyn&#xf4;mes se caract&#xe9;rise par l'annulation de leur <em>r&#xe9;sultant</em> <m>\Res(p, q)</m>, qui est un polyn&#xf4;me en leurs coefficients. Un int&#xe9;r&#xea;t majeur du r&#xe9;sultant par rapport au pgcd est qu'il se sp&#xe9;cialise bien. Par exemple, les polyn&#xf4;mes <m>x-12</m> et <m>x-20</m> sont premiers entre eux dans <m>\Z[x]</m>, mais calculer leur r&#xe9;sultant montre qu'ils ont une racine commune dans <m>\Z/n\Z</m> pour <m>n</m> divisant<nbsp /><m>8</m> :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(ZZ); (x-12).resultant(x-20)
+      </input>
+      <output>
+        -8
+      </output>
+    </sage>
+
+    <p>
+      Soient <m>p = \sum_{i=0}^m p_i x^i</m> et <m>q = \sum_{i=0}^n q_i x^i</m> deux polyn&#xf4;mes non constants de <m>A[x]</m>, avec <m>p_m, q_n \neq 0</m>. Le r&#xe9;sultant de<nbsp /><m>p</m> et<nbsp /><m>q</m> est d&#xe9;fini par
+      <md>
+        \Res(p, q) =
+        \begin{vmatrix}
+        p_m \amp  \cdots \amp  \cdots \amp  p_0 \\
+        \amp  \ddots \amp \amp \amp  \ddots\\
+        \amp \amp  p_m \amp  \cdots \amp  \cdots \amp  p_0 \\
+        q_n \amp  \cdots \amp  q_0 \\
+        \amp  \ddots \amp \amp  \ddots \\
+        \amp \amp \ddots \amp \amp  \ddots \\
+        \amp \amp \amp  q_n \amp  \cdots \amp  q_0 
+        \end{vmatrix},
+      </md>
+    </p>
+
+    <p>
+      (C'est le d&#xe9;terminant, dans des bases convenables, de l'application lin&#xe9;aire
+      <me>
+        \begin{array}{rcl}
+        A_{n-1}[x] \times A_{m-1}[x] \amp  \to \amp  A_{m+n-1}[x] \\
+        u, v \amp  \mapsto \amp  up + vq
+        \end{array}
+      </me>
+      o&#xf9; <m>A_k[x] \subset A[x]</m> d&#xe9;signe le sous-module des polyn&#xf4;mes de degr&#xe9; au plus <m>k</m>.) Si <m>p</m> et <m>q</m> sont scind&#xe9;s, leur r&#xe9;sultant s'&#xe9;crit aussi en fonction des diff&#xe9;rences de leurs racines :
+      <me>
+        \Res(p, q) = p_m^m q_n^n \prod_{i,j} (\alpha_i - \beta_j),  
+        \left\{
+        \begin{array}{l}
+        p = p_m (x-\alpha_1) \dots (x-\alpha_m) \\
+        q = q_n (x-\beta_1) \dots (x-\beta_n).
+        \end{array} 
+        \right.
+      </me>
+    </p>
+
+    <p>
+      La propri&#xe9;t&#xe9; de sp&#xe9;cialisation mentionn&#xe9;e plus haut se d&#xe9;duit de la d&#xe9;finition : si <m>\phi : A \to A'</m> est un morphisme d'anneau dont l'application &#xe0;<nbsp /><m>p</m> ne fait pas chuter son degr&#xe9; (autrement dit, <m>\phi(p_m) \neq 0</m>), alors
+      <me>
+        \Res(\phi(p), \phi(q)) = \phi(\Res(p, q)).
+      </me>
+    </p>
+
+    <p>
+      L'utilisation la plus commune du r&#xe9;sultant concerne le cas o&#xf9; l'anneau de base est lui-m&#xea;me un anneau de polyn&#xf4;mes. Par exemple, le discriminant de<nbsp /><m>p</m> est &#xe0; une normalisation pr&#xe8;s le r&#xe9;sultant de<nbsp /><m>p</m> et de sa d&#xe9;riv&#xe9;e :
+      <me>
+        \disc(p) = (-1)^{d(d-1)/2} \Res(p, p')/p_m.
+      </me>
+    </p>
+
+    <p>
+      Il s'annule donc quand<nbsp /><m>p</m> a une racine multiple. Les discriminants des polyn&#xf4;mes g&#xe9;n&#xe9;raux de degr&#xe9;<nbsp />2 ou<nbsp />3 sont classiques :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;a,b,c,d> = QQ[]; x = polygen(R); p = a*x^2+b*x+c
+        p.resultant(p.derivative())
+      </input>
+      <output>
+        -a*b^2 + 4*a^2*c
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        p.discriminant()
+      </input>
+      <output>
+        b^2 - 4*a*c
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        (a*x^3 + b*x^2 + c*x + d).discriminant()
+      </input>
+      <output>
+        b^2*c^2 - 4*a*c^3 - 4*b^3*d + 18*a*b*c*d - 27*a^2*d^2
+      </output>
+    </sage>
+
+    <p>
+      \paragraph{Groupe de Galois.}
+    </p>
+
+    <p>
+      Le groupe de Galois d'un polyn&#xf4;me irr&#xe9;ductible <m>p \in \Q[x]</m> est un objet alg&#xe9;brique qui d&#xe9;crit certaines <q> sym&#xe9;tries </q> des racines de<nbsp /><m>p</m>. Il s'agit d'un objet central de la th&#xe9;orie des &#xe9;quations alg&#xe9;briques. Notamment, l'&#xe9;quation <m>p(x)=0</m> est r&#xe9;soluble par radicaux, c'est-&#xe0;-dire que ses solutions s'expriment &#xe0; partir des coefficients de<nbsp /><m>p</m> au moyen des quatre op&#xe9;rations et de l'extraction de racine <m>n</m>-i&#xe8;me, si et seulement si le groupe de Galois de<nbsp /><m>p</m> est <em>r&#xe9;soluble</em>.
+    </p>
+
+    <p>
+      <em>Sage</em>  permet de calculer les groupes de Galois des polyn&#xf4;mes &#xe0; coefficients rationnels de degr&#xe9; mod&#xe9;r&#xe9;, et d'effectuer toutes sortes d'op&#xe9;rations sur les groupes obtenus. Tant la th&#xe9;orie de Galois que les fonctionnalit&#xe9;s de th&#xe9;orie des groupes de <em>Sage</em>  d&#xe9;passent le cadre de ce livre. Bornons-nous &#xe0; appliquer sans plus d'explications le th&#xe9;or&#xe8;me de Galois sur la r&#xe9;solubilit&#xe9; par radicaux. Le calcul suivant<fn>Ce calcul n&#xe9;cessite une table de groupes finis qui ne fait pas partie de l'installation de base de \Sage, mais que l'on peut t&#xe9;l&#xe9;charger et installer automatiquement par la commande |install_package("database_gap")|.</fn>montre que les racines de <m>x^5-x-1</m> ne s'expriment pas par radicaux :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(QQ); G = (x^5 - x -1).galois_group(); G
+      </input>
+      <output>
+        Transitive group number 5 of degree 5
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        G.is_solvable()
+      </input>
+      <output>
+        False
+      </output>
+    </sage>
+
+    <p>
+      Il s'agit d'un des exemples les plus simples dans ce cas, puisque les polyn&#xf4;mes de degr&#xe9; inf&#xe9;rieur ou &#xe9;gal &#xe0;<nbsp />4 sont toujours r&#xe9;solubles par radicaux, de m&#xea;me &#xe9;videmment que ceux de la forme <m>x^5-a</m>. En examinant les g&#xe9;n&#xe9;rateurs de<nbsp /><m>G</m> vu comme un groupe de permutations, on reconna&#xee;t que <m>G \simeq \mathfrak S_5</m>, ce que l'on v&#xe9;rifie facilement :
+    </p>
+
+    <sage>
+      <input>
+        G.gens()
+      </input>
+      <output>
+        [(1,2,3,4,5), (1,2)]
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        G.is_isomorphic(SymmetricGroup(5))
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_ideaux">
+    <title>Id&#xe9;aux et quotients de <m>A[x]</m></title>
+    <p>
+      Les id&#xe9;aux des anneaux de polyn&#xf4;mes, et les quotients par ces id&#xe9;aux, sont aussi des objets <em>Sage</em> , construits &#xe0; partir de l'anneau de polyn&#xf4;mes par les m&#xe9;thodes <c>ideal</c> et <c>quo</c>. Le produit d'une liste de polyn&#xf4;mes par un anneau de polyn&#xf4;mes est aussi interpr&#xe9;t&#xe9; comme un id&#xe9;al :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = QQ[]
+        J1 = (x^2 - 2*x + 1, 2*x^2 + x - 3)*R; J1
+      </input>
+      <output>
+        Principal ideal (x - 1) of Univariate Polynomial Ring in x
+        over Rational Field
+      </output>
+    </sage>
+
+    <p>
+      On peut multiplier les id&#xe9;aux, et r&#xe9;duire un polyn&#xf4;me modulo un id&#xe9;al :
+    </p>
+
+    <sage>
+      <input>
+        J2 = R.ideal(x^5 + 2)
+        ((3*x+5)*J1*J2).reduce(x^10)
+      </input>
+      <output>
+        421/81*x^6 - 502/81*x^5 + 842/81*x - 680/81
+      </output>
+    </sage>
+
+    <p>
+      Le polyn&#xf4;me r&#xe9;duit demeure dans ce cas un &#xe9;l&#xe9;ment de<nbsp /><c>QQ['x']</c>. Une autre possibilit&#xe9; consiste &#xe0; construire le quotient par un id&#xe9;al et y projeter des &#xe9;l&#xe9;ments. Le parent du projet&#xe9; est alors l'anneau quotient. La m&#xe9;thode <c>lift</c> des &#xe9;l&#xe9;ments du quotient sert &#xe0; les relever dans l'anneau de d&#xe9;part.
+    </p>
+
+    <sage>
+      <input>
+        B = R.quo((3*x+5)*J1*J2)  # quo nomme automatiquement 'xbar'
+        B(x^10)                   #   le g\'en\'erateur de B image de x
+      </input>
+      <output>
+        421/81*xbar^6 - 502/81*xbar^5 + 842/81*xbar - 680/81
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        B(x^10).lift()
+      </input>
+      <output>
+        421/81*x^6 - 502/81*x^5 + 842/81*x - 680/81
+      </output>
+    </sage>
+
+    <p>
+      Si<nbsp /><m>K</m> est un corps, l'anneau<nbsp /><m>K[x]</m> est principal : les id&#xe9;aux sont repr&#xe9;sent&#xe9;s dans les calculs par un g&#xe9;n&#xe9;rateur, et tout ceci n'est gu&#xe8;re qu'un langage plus alg&#xe9;brique pour les op&#xe9;rations vues en<nbsp /><xref ref="sec_polynomes_euclide">&#xa7;</xref>. Son principal int&#xe9;r&#xea;t est que les anneaux quotients peuvent &#xea;tre utilis&#xe9;s dans de nouvelles constructions, ici <m>(\F_5[x]/\langle x^2+3 \rangle)[y]</m> :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;t> = GF(5)[]; R.quo(x^2+3)['x'].random_element()
+      </input>
+      <output>
+        (3*tbar + 1)*x^2 + (2*tbar + 3)*x + 3*tbar + 4
+      </output>
+    </sage>
+
+    <p>
+      <em>Sage</em>  permet aussi de construire des id&#xe9;aux d'anneaux non principaux comme<nbsp /><m>\Z[x]</m>, mais les op&#xe9;rations disponibles sont alors limit&#xe9;es <mdash /> sauf dans le cas des polyn&#xf4;mes &#xe0; plusieurs ind&#xe9;termin&#xe9;es sur un corps, nous y reviendrons longuement &#xe0; la fin de ce chapitre.
+    </p>
+
+    <paragraphs xml:id="exo_polynomes_unrolling">
+      <title>Exercice</title>
+      <p>
+        On d&#xe9;finit la suite <m>(u_n)_{n\in\N}</m> par les conditions initiales <m>u_n = n+7</m> pour <m>0 \leq n \lt  1000</m> et la relation de r&#xe9;currence lin&#xe9;aire
+        <me>
+          u_{n+1000} = 23 u_{n+729} - 5 u_{n+2} + 12 u_{n+1} + 7 \qquad (n \geq 0).
+        </me>
+      </p>
+
+      <p>
+        Calculer les cinq derniers chiffres de <m>u_{10^{100}}</m>. <em>Indication : on pourra s'inspirer de l'algorithme de la<nbsp /><xref ref="sec_programmation_binexp">&#xa7;</xref>. Mais celui-ci prend trop de temps quand l'ordre de la r&#xe9;currence est &#xe9;lev&#xe9;. Introduire un quotient d'anneau de polyn&#xf4;mes judicieux pour &#xe9;viter ce probl&#xe8;me.</em>
+      </p>
+    </paragraphs>
+    <p>
+      Un cas particulier important est le quotient de<nbsp /><m>K[x]</m> par un polyn&#xf4;me irr&#xe9;ductible pour r&#xe9;aliser une extension alg&#xe9;brique de<nbsp /><m>K</m>. Les corps de nombres, extensions finies de<nbsp /><m>\Q</m>, sont repr&#xe9;sent&#xe9;s par des objets <c>NumberField</c> distincts des quotients de <c>QQ['x']</c>. Quand cela a un sens, la m&#xe9;thode <c>number_field</c> d'un quotient d'anneau de polyn&#xf4;mes renvoie le corps de nombres correspondant. L'interface des corps de nombres, plus riche que celle des anneaux quotients, d&#xe9;passe le cadre de ce livre. Les corps finis compos&#xe9;s<nbsp /><m>\F_{p^k}</m>, r&#xe9;alis&#xe9;s comme extensions alg&#xe9;briques des corps finis premiers<nbsp /><m>\F_p</m>, sont quant &#xe0; eux d&#xe9;crits en<nbsp /><xref ref="sec_numbertheory_finite_rings">&#xa7;</xref>.
+    </p>
+
+    <p>
+      \begin{cmdtable}{Id&#xe9;aux et quotients}{poly:ideaux}
+
+  
+
+        \toprule
+        Construction d'id&#xe9;aux et d'anneaux quotients <m>Q=R/I</m> 
+
+        \midrule
+
+      id&#xe9;al <m>\langle u, v, w \rangle</m> &amp; <c>R.ideal(u, v, w)</c><em>ou</em>  <c>(u, v, w)*A['x']</c>
+    </p>
+
+    <p>
+      r&#xe9;duction de <m>p</m> modulo <m>J</m> &amp; <c>J.reduce(p)</c><em>ou</em>  <c>p.mod(J)</c>
+    </p>
+
+    <p>
+      anneau quotient <m>R/I</m>, <m>R/\langle p \rangle</m> &amp; <c>R.quo(J)</c>, <c>R.quo(p)</c>
+    </p>
+
+    <p>
+      anneau quotient&#xe9; pour obtenir <m>Q</m> &amp; <c>Q.cover_ring()</c>
+    </p>
+
+    <p>
+      corps de nombres isomorphe &amp; <c>Q.number_field()</c>
+    </p>
+
+    <p>
+      \toprule
+        &#xc9;l&#xe9;ments de <m>K[x]/\langle p \rangle</m> 
+
+        \midrule
+
+      relev&#xe9; (section de <m>R \twoheadrightarrow R/J</m>) &amp; <c>u.lift()</c>
+    </p>
+
+    <p>
+      polyn&#xf4;me minimal &amp; <c>u.minpoly()</c>
+    </p>
+
+    <p>
+      polyn&#xf4;me caract&#xe9;ristique &amp; <c>u.charpoly()</c>
+    </p>
+
+    <p>
+      matrice &amp; <c>u.matrix()</c>
+    </p>
+
+    <p>
+      trace &amp; <c>u.trace()</c>
+      \end{cmdtable}
+    </p>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_ratpoly">
+    <title>Fractions rationnelles</title>
+    <p>
+      Diviser deux polyn&#xf4;mes (sur un anneau int&#xe8;gre) produit une fraction rationnelle. Son parent est le corps des fractions de l'anneau de polyn&#xf4;mes, qui peut s'obtenir par <c>Frac(R)</c> :
+    </p>
+
+    <sage>
+      <input>
+        x = polygen(RR); r = (1 + x)/(1 - x^2); r.parent()
+      </input>
+      <output>
+        Fraction Field of Univariate Polynomial Ring in x over Real
+        Field with 53 bits of precision
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        r
+      </input>
+      <output>
+        (x + 1.00000000000000)/(-x^2 + 1.00000000000000)
+      </output>
+    </sage>
+
+    <p>
+      On observe que la simplification n'est pas automatique. C'est parce que <c>RR</c> est un anneau <em>inexact</em>, c'est-&#xe0;-dire dont les &#xe9;l&#xe9;ments s'interpr&#xe8;tent comme des approximations d'objets math&#xe9;matiques. La m&#xe9;thode <c>reduce</c> met la fraction sous forme r&#xe9;duite. Elle ne renvoie pas de nouvel objet, mais modifie la fraction rationnelle existante :
+    </p>
+
+    <sage>
+      <input>
+        r.reduce(); r
+      </input>
+      <output>
+        1.00000000000000/(-x + 1.00000000000000)
+      </output>
+    </sage>
+
+    <p>
+      Sur un anneau exact, en revanche, les fractions rationnelles sont automatiquement r&#xe9;duites.
+    </p>
+
+    <p>
+      Les op&#xe9;rations sur les fractions rationnelles sont analogues &#xe0; celles sur les polyn&#xf4;mes. Celles qui ont un sens dans les deux cas (substitution, d&#xe9;riv&#xe9;e, factorisation, ...) s'utilisent de la m&#xea;me fa&#xe7;on. Le <xref ref="cmdtab_poly_apparentes">tableau</xref> &#xe9;num&#xe8;re quelques autres m&#xe9;thodes utiles. La d&#xe9;composition en &#xe9;l&#xe9;ments simples et surtout la reconstruction rationnelle m&#xe9;ritent quelques explications.
+    </p>
+
+    <p>
+      \begin{cmdtable}{Objets construits &#xe0; partir des polyn&#xf4;mes}{poly:apparentes}
+
+  
+
+        \toprule
+        Fractions rationnelles 
+
+        \midrule
+
+      corps <m>K(x)</m> &amp; <c>Frac(K['x'])</c>
+    </p>
+
+    <p>
+      num&#xe9;rateur &amp; <c>r.numerator()</c>
+    </p>
+
+    <p>
+      d&#xe9;nominateur &amp; <c>r.denominator()</c>
+    </p>
+
+    <p>
+      simplification (modifie <c>r</c>) &amp; <c>r.reduce()</c>
+    </p>
+
+    <p>
+      d&#xe9;composition en &#xe9;l&#xe9;ments simples &amp; |r.partial_fraction_decomposition()|
+    </p>
+
+    <p>
+      reconstruction rationnelle &amp; <c>p.rational_reconstruct(m)</c>
+    </p>
+
+    <p>
+      \toprule
+        S&#xe9;ries tronqu&#xe9;es 
+
+        \midrule
+
+      anneau <m>A[[t]]</m> &amp; |PowerSeriesRing(A, 'x', default_prec=10)|
+    </p>
+
+    <p>
+      anneau <m>A((t))</m> &amp; |R.<lt/>x> = LaurentSeriesRing(A, 'x')|
+    </p>
+
+    <p>
+      coefficient <m>[x^k]\,f(x)</m> &amp; <c>f[k]</c>
+    </p>
+
+    <p>
+      troncature &amp; <c>x + O(x^n)</c>
+    </p>
+
+    <p>
+      pr&#xe9;cision &amp; <c>f.prec()</c>
+    </p>
+
+    <p>
+      d&#xe9;riv&#xe9;e, primitive (nulle en 0) &amp; <c>f.derivative()</c>, <c>f.integral()</c>
+    </p>
+
+    <p>
+      op&#xe9;rations usuelles <m>\sqrt{f}</m>, <m>\exp f</m>, ... &amp; <c>f.sqrt()</c>, <c>f.exp()</c>, ...
+    </p>
+
+    <p>
+      inverse fonctionnel (<m>g \circ f = x</m>) &amp; <c>g = f.reversion()</c>
+    </p>
+
+    <p>
+      solution de <m>y' + ay = b</m> &amp; |a.solve_linear_de(precision, b)|
+      \end{cmdtable}
+    </p>
+
+    <p>
+      \paragraph{D&#xe9;composition en &#xe9;l&#xe9;ments simples.}
+    </p>
+
+    <p>
+      <em>Sage</em>  calcule la d&#xe9;composition en &#xe9;l&#xe9;ments simples d'une fraction rationnelle <m>a/b</m> de <c>Frac(K['x'])</c> &#xe0; partir de la factorisation de<nbsp /><m>b</m> dans <c>K['x']</c>. Il s'agit donc de la d&#xe9;composition en &#xe9;l&#xe9;ments simples sur<nbsp /><m>K</m>. Le r&#xe9;sultat est form&#xe9; d'une partie polynomiale<nbsp /><m>p</m> et d'une liste de fractions rationnelles dont les d&#xe9;nominateurs sont des puissances de facteurs irr&#xe9;ductibles de<nbsp /><m>b</m> :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = QQ[]; r = x^10/((x^2-1)^2*(x^2+3))
+        poly, parts = r.partial_fraction_decomposition()
+        print poly
+      </input>
+      <output>
+        x^4 - x^2 + 6
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        for part in parts: print part.factor()
+      </input>
+      <output>
+        (17/32) * (x - 1)^-2 * (x - 15/17)
+        (-17/32) * (x + 1)^-2 * (x + 15/17)
+        (-243/16) * (x^2 + 3)^-1
+      </output>
+    </sage>
+
+    <p>
+      On a ainsi obtenu la d&#xe9;composition en &#xe9;l&#xe9;ments simples sur les rationnels
+      <me>
+        r
+        =
+        \frac{x^{10}}{(x^2-1)^2 (x^2+3)}
+        =
+        x^4 - x^2 + 6
+        + \frac{\frac{17}{32}x-15}{(x-1)^2}
+        + \frac{-\frac{17}{32}x-15}{(x+1)^2}
+        + \frac{-\frac{243}{16}}{x^2+3}.
+      </me>
+    </p>
+
+    <p>
+      Il n'est pas difficile de voir que c'est aussi la d&#xe9;composition de<nbsp /><m>r</m> sur les r&#xe9;els.
+    </p>
+
+    <p>
+      Sur les complexes en revanche, le d&#xe9;nominateur du dernier terme n'est pas irr&#xe9;ductible, et donc la fraction rationnelle peut encore se d&#xe9;composer. On peut calculer la d&#xe9;composition en &#xe9;l&#xe9;ments simples sur les r&#xe9;els ou les complexes num&#xe9;riquement :
+    </p>
+
+    <sage>
+      <input>
+        C = ComplexField(15)
+        Frac(C['x'])(r).partial_fraction_decomposition()
+      </input>
+      <output>
+        (x^4 - x^2 + 6.000, [(0.5312*x - 0.4688)/(x^2 - 2.000*x + 1.000),
+        4.384*I/(x - 1.732*I), (-4.384*I)/(x + 1.732*I),
+        (-0.5312*x - 0.4688)/(x^2 + 2.000*x + 1.000)])
+      </output>
+    </sage>
+
+    <p>
+      Effectuer le m&#xea;me calcul exactement n'est pas imm&#xe9;diat, car <em>Sage</em>  (en version<nbsp />4.3) ne permet pas de calculer la d&#xe9;composition en &#xe9;l&#xe9;ments simples sur<nbsp /><c>AA</c> ou<nbsp /><c>QQbar</c>.
+    </p>
+
+    <p>
+      \paragraph{Reconstruction rationnelle, approximation de Pad&#xe9;.}
+    </p>
+
+    <p>
+      Un analogue de la recontruction rationnelle pr&#xe9;sent&#xe9;e en<nbsp /><xref ref="subsec_numbertheory_rational_reconstruction">&#xa7;</xref> existe en <em>Sage</em>  pour les polyn&#xf4;mes &#xe0; coefficients dans <m>A=\Z/n\Z</m> : la commande
+    </p>
+
+    <pre>
+      s.rational_reconstruct(m, dp, dq)
+    </pre>
+
+    <p>
+      calcule lorsque c'est possible des polyn&#xf4;mes <m>p, q \in A[x]</m> tels que
+      <me>
+        qs \equiv p \mod m, \qquad \deg p \leq d_p,  \deg q \leq d_q.
+      </me>
+    </p>
+
+    <p>
+      Restreignons-nous pour simplifier au cas o&#xf9; <m>n</m> est premier. Une telle relation avec <m>q</m> et <m>m</m> premiers entre eux entra&#xee;ne <m>p/q = s</m> dans <m>A[x]/\langle m\rangle</m>, d'o&#xf9; le nom de reconstruction rationnelle.
+    </p>
+
+    <p>
+      Le probl&#xe8;me de reconstruction rationnelle se traduit par un syst&#xe8;me lin&#xe9;aire sur les coefficients de <m>p</m> et <m>q</m>, et un simple argument de dimension montre qu'il admet une solution non triviale d&#xe8;s que <m>d_p + d_q \geq \deg m - 1</m>.
+      Il n'y a pas toujours de solution avec <m>q</m> et <m>m</m> premiers entre eux (par exemple, les solutions de <m>p \equiv qx \mod x^2</m> avec <m>\deg p \leq 0</m>, <m>\deg q \leq 1</m> sont les multiples constants de <m>(p,q)=(0,x)</m>), mais <c>rational_reconstruct</c> cherche en priorit&#xe9; les solutions qui satisfont cette condition suppl&#xe9;mentaire.
+    </p>
+
+    <p>
+      Un cas particulier important est l'approximation de Pad&#xe9;, qui correspond &#xe0; <m>m = x^n</m>. Un approximant de Pad&#xe9; de type <m>(k, n-k)</m> d'une s&#xe9;rie formelle <m>f \in K[[x]]</m>
+      est une fraction rationnelle <m>p/q \in K(x)</m> telle que <m>\deg p \leq k-1</m>, <m>\deg q \leq n-k</m>, <m>q(0) = 1</m>, et <m>p/q = f + O(x^n)</m> (et donc <m>p/q \equiv f \mod x^n</m>).
+    </p>
+
+    <p>
+      Commen&#xe7;ons par un exemple purement formel. Les commandes suivantes calculent un approximant de Pad&#xe9; de la s&#xe9;rie <m>f = \sum_{i=0}^{\infty} {(i+1)^2} x^i</m> &#xe0; coefficients dans <m>\Z/101\Z</m> :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = Integers(101)[]
+        f6 = sum( (i+1)^2 * x^i for i in (0..5) ); f6
+      </input>
+      <output>
+        36*x^5 + 25*x^4 + 16*x^3 + 9*x^2 + 4*x + 1
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        num, den = f6.rational_reconstruct(x^6, 1, 3); num/den
+      </input>
+      <output>
+        (100*x + 100)/(x^3 + 98*x^2 + 3*x + 100)
+      </output>
+    </sage>
+
+    <p>
+      En red&#xe9;veloppant en s&#xe9;rie la fraction rationnelle trouv&#xe9;e, on observe que non seulement les d&#xe9;veloppements co&#xef;ncident jusqu'&#xe0; l'ordre<nbsp />6, mais le terme suivant aussi <q> est juste </q> !
+    </p>
+
+    <sage>
+      <input>
+        S = PowerSeriesRing(A, 'x', 7); S(num)/S(den)
+      </input>
+      <output>
+        1 + 4*x + 9*x^2 + 16*x^3 + 25*x^4 + 36*x^5 + 49*x^6 + O(x^7)
+      </output>
+    </sage>
+
+    <p>
+      En effet, la s&#xe9;rie <m>f = (1+x)/(1-x)^3</m> est elle-m&#xea;me une fraction rationnelle. Le d&#xe9;veloppement tronqu&#xe9; <c>f6</c>, accompagn&#xe9; de bornes sur les degr&#xe9;s du num&#xe9;rateur et du d&#xe9;nominateur, suffit &#xe0; la repr&#xe9;senter sans ambigu&#xef;t&#xe9;. Cela a une grande importance dans certains algorithmes de calcul formel. De ce point de vue, le calcul d'approximants de Pad&#xe9; est l'inverse du d&#xe9;veloppement en s&#xe9;rie des fractions rationnelles. Il permet de repasser de cette repr&#xe9;sentation alternative &#xe0; la repr&#xe9;sentation habituelle comme quotient de deux polyn&#xf4;mes.
+    </p>
+
+    <p>
+      Historiquement, pourtant, les approximants de Pad&#xe9; ne sont pas n&#xe9;s de ce genre de consid&#xe9;rations formelles, mais de la th&#xe9;orie de l'approximation des fonctions analytiques. En effet, les approximants de Pad&#xe9; du d&#xe9;veloppement en s&#xe9;rie d'une fonction analytique approchent souvent mieux la fonction que les troncatures de la s&#xe9;rie, voire, quand le degr&#xe9; du d&#xe9;nominateur est assez grand, peuvent fournir de bonnes approximations m&#xea;me en-dehors du disque de convergence de la s&#xe9;rie. On dit parfois qu'ils <q> avalent les p&#xf4;les </q>. La <xref ref="fig_polynomes_pade_tangente">figure</xref>, qui montre la convergence des approximants de Pad&#xe9; de type <m>(2k,k)</m> de la fonction tangente au voisinage de<nbsp /><m>0</m>, illustre ce ph&#xe9;nom&#xe8;ne.
+    </p>
+
+    <table xml:id="fig_polynomes_pade_tangente" >
+      <caption>La fonction tangente et quelques approximants de Pad&#xe9; sur <m>[-2\pi,2\pi]</m>.</caption>
+      <sidebyside>
+        <image width="73%" source="images/polynomes__pade_tangente.png" />
+        <tabular>
+          type (4, 2) 
+
+            \makebox[1.5cm]{\myleaders{\cdot}} 
+
+          type (8, 4) 
+
+            \makebox[1.5cm]{\myleaders{\cdot\mkern 1.5mu-}} 
+
+          type (12, 6) 
+
+            \makebox[1.5cm]{\myleaders{-}}
+        </tabular>
+      </sidebyside>
+    </table>
+
+    <p>
+      Bien que <c>rational_reconstruct</c> soit limit&#xe9; aux polyn&#xf4;mes sur <m>\Z/n\Z</m>, il est possible de s'en servir pour calculer des approximants de Pad&#xe9; &#xe0; coefficients rationnels, et aboutir &#xe0; cette figure. Le plus simple est de commencer par effectuer la reconstruction rationnelle modulo un nombre premier assez grand :
+    </p>
+
+    <sage>
+      <input>
+        x = var('x'); s = tan(x).taylor(x, 0, 20)
+        p = previous_prime(2^30); ZpZx = Integers(p)['x']
+        Qx = QQ['x']
+      </input>
+    </sage>
+
+    <sage>
+      <input>
+        num, den = ZpZx(s).rational_reconstruct(ZpZx(x)^10, 4, 5)
+        num/den
+      </input>
+      <output>
+        (1073741779*x^3 + 105*x)/(x^4 + 1073741744*x^2 + 105)
+      </output>
+    </sage>
+
+    <p>
+      puis de relever la solution trouv&#xe9;e :
+    </p>
+
+    <sage>
+      <input>
+        def signed_lift(a):
+        m = a.parent().defining_ideal().gen()
+        n = a.lift()
+        if n &lt;= m // 2: return n
+        else: return n - m
+      </input>
+    </sage>
+
+    <sage>
+      <input>
+        Qx(map(signed_lift, num))/Qx(map(signed_lift, den))
+      </input>
+      <output>
+        (-10*x^3 + 105*x)/(x^4 - 45*x^2 + 105)
+      </output>
+    </sage>
+
+    <p>
+      Lorsque les coefficients cherch&#xe9;s sont trop grands pour cette technique, on peut faire le calcul modulo plusieurs premiers, et appliquer le th&#xe9;or&#xe8;me chinois pour retrouver une solution &#xe0; coefficients entiers, comme expliqu&#xe9; en<nbsp /><xref ref="subsec_numbertheory_crt">&#xa7;</xref>. Une autre possibilit&#xe9; est de calculer une relation de r&#xe9;currence &#xe0; coefficients constants satisfaite par les coefficients de la s&#xe9;rie. Ce calcul est presque &#xe9;quivalent &#xe0; celui d'un approximant de Pad&#xe9; (voir <xref ref="exo_polynomes_guessing">exercice</xref>), mais la fonction <c>berlekamp_massey</c> de <em>Sage</em>  permet de le faire sur un corps quelconque.
+    </p>
+
+    <p>
+      Syst&#xe9;matisons un peu le calcul pr&#xe9;c&#xe9;dent, en &#xe9;crivant une fonction qui calcule directement l'approximant &#xe0; coefficients rationnels, sous des hypoth&#xe8;ses suffisamment favorables :
+    </p>
+
+    <sage>
+      <input>
+        def mypade(pol, n, k):
+        x = ZpZx.gen();
+        n, d = ZpZx(pol).rational_reconstruct(x^n, k-1, n-k)
+        return Qx(map(signed_lift, n))/Qx(map(signed_lift, d))
+      </input>
+    </sage>
+
+    <p>
+      Il n'y a plus alors qu'&#xe0; appeler <c>plot</c> sur les r&#xe9;sultats de cette fonction (convertis en &#xe9;l&#xe9;ments de <c>SR</c>, car <c>plot</c> ne permet pas de tracer directement le graphe d'une fraction rationnelle) pour obtenir le graphique de la <xref ref="fig_polynomes_pade_tangente">figure</xref> :
+    </p>
+
+    <sage>
+      <input>
+        add(
+        plot(expr, -2*pi, 2*pi, ymin=-3, ymax=3, linestyle=style,
+        detect_poles=True, aspect_ratio=1)
+        for (expr, style) in [
+        (tan(x), '-'),                                                          
+        (SR(mypade(tan_series, 4,  2)), ':' ),                                  
+        (SR(mypade(tan_series, 8,  4)), '-.'),                                  
+        (SR(mypade(tan_series, 12, 6)), '--') ])
+      </input>
+    </sage>
+
+    <p>
+      Les exercices suivants pr&#xe9;sentent deux autres applications classiques de la reconstruction rationnelle.
+    </p>
+
+    <paragraphs xml:id="exo_polynomes_guessing">
+      <title>Exercice</title>
+      <ol>
+        <li>
+          <p>
+            Montrer que si <m>(u_n)_{n \in \N}</m> satisfait une r&#xe9;currence lin&#xe9;aire &#xe0; coefficients constants, la s&#xe9;rie formelle <m>\sum_{n \in \N} u_n z^n</m> est une fraction rationnelle. Comment s'interpr&#xe8;tent le num&#xe9;rateur et le d&#xe9;nominateur ?
+          </p>
+        </li>
+
+        <li>
+          <p>
+            Deviner les termes suivants de la suite
+            <me>
+              1, 1, 2, 3, 8, 11, 34, 39, 148, 127, 662, 339, 3056, 371, 14602, -4257, \dots,
+            </me>
+            en utilisant <c>rational_reconstruct</c>. Retrouver le r&#xe9;sultat &#xe0; l'aide de la fonction <c>berlekamp_massey</c>.
+          </p>
+        </li>
+      </ol>
+    </paragraphs>
+    <paragraphs xml:id="exo_polynomes_cauchy">
+      <title>Exercice</title>
+      <p>
+        [Interpolation de Cauchy] Trouver une fraction rationnelle <m>r=p/q \in \F_{17}(x)</m> telle que <m>r(0)=-1</m>, <m>r(1)=0</m>, <m>r(2)=7</m> , <m>r(3)=5</m>, avec <m>p</m> de degr&#xe9; minimal.
+      </p>
+    </paragraphs>
+  </subsection>
+
+  <subsection xml:id="sec_polynomes_series">
+    <title>S&#xe9;ries</title>
+    <p>
+      Nous &#xe9;tudions ici une derni&#xe8;re famille d'objets en une variable construits &#xe0; partir des polyn&#xf4;mes : les s&#xe9;ries. Les s&#xe9;ries du calcul formel sont le plus souvent des s&#xe9;ries tronqu&#xe9;es, c'est-&#xe0;-dire des objets de la forme
+      <me>
+        f = f_0 + f_1 \, x + \cdots + f_{n-1} \, x^{n-1} + O(x^n).
+      </me>
+    </p>
+
+    <p>
+      Elles sont utiles pour manipuler des fonctions qui n'admettent pas d'expression simple en forme close, notamment des solutions d'&#xe9;quations, et interviennent aussi fr&#xe9;quemment en combinatoire (voir <xref ref="combinat">chapitre</xref>) en tant que s&#xe9;ries g&#xe9;n&#xe9;ratrices.
+    </p>
+
+    <p>
+      \paragraph{Arithm&#xe9;tique.}
+    </p>
+
+    <p>
+      L'anneau de s&#xe9;ries formelles <m>\Q[[x]]</m> s'obtient par
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PowerSeriesRing(QQ)
+      </input>
+    </sage>
+
+    <p>
+      ou en abr&#xe9;g&#xe9; <c>R.&lt;x> = QQ[[]]</c><fn>Ou d'ailleurs &#xe0; partir de <m>\Q[x]</m>, par <c>QQ['x'].completion('x')</c>.</fn>.
+      Les &#xe9;l&#xe9;ments de <c>A[['x']]</c> sont des s&#xe9;ries tronqu&#xe9;es, qui repr&#xe9;sentent des approximations des s&#xe9;ries infinies du <q> v&#xe9;ritable </q> <m>A[[x]]</m>, tout comme les &#xe9;l&#xe9;ments de <c>RR</c> sont des flottants consid&#xe9;r&#xe9;s comme des approximations de r&#xe9;els. L'anneau <c>A[['x']]</c> est donc un anneau inexact.
+    </p>
+
+    <p>
+      Chaque s&#xe9;rie poss&#xe8;de son propre ordre de troncature, et la pr&#xe9;cision est suivie au cours des calculs<fn>D'un certain point de vue, c'est la principale diff&#xe9;rence entre un polyn&#xf4;me modulo<nbsp /><m>x^k</m> et une s&#xe9;rie tronqu&#xe9;e &#xe0; l'ordre<nbsp /><m>k</m> : les op&#xe9;ration sur ces deux sortes d'objets sont analogues, mais les &#xe9;l&#xe9;ments de <m>A[[x]]/\langle x^k \rangle</m> ont, eux, tous la m&#xea;me <q> pr&#xe9;cision </q>.</fn>:
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = QQ[[]]
+        f = 1 + x + O(x^2); g = x + 2*x^2 + O(x^4)
+        f + g
+      </input>
+      <output>
+        1 + 2*x + O(x^2)
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        f * g
+      </input>
+      <output>
+        x + 3*x^2 + O(x^3)
+      </output>
+    </sage>
+
+    <p>
+      Il existe des s&#xe9;ries de pr&#xe9;cision infinie, qui correspondent exactement aux polyn&#xf4;mes :
+    </p>
+
+    <sage>
+      <input>
+        (1 + x^3).prec()
+      </input>
+      <output>
+        +Infinity
+      </output>
+    </sage>
+
+    <p>
+      La pr&#xe9;cision par d&#xe9;faut, utilis&#xe9;e quand il est n&#xe9;cessaire de tronquer un r&#xe9;sultat exact, se r&#xe8;gle &#xe0; la cr&#xe9;ation de l'anneau, ou ensuite par sa m&#xe9;thode <c>set_default_prec</c> :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = PowerSeriesRing(Reals(24), default_prec=4)
+        1/(1 + RR.pi() * x)^2
+      </input>
+      <output>
+        1.00000 - 6.28319*x + 29.6088*x^2 - 124.025*x^3 + O(x^4)
+      </output>
+    </sage>
+
+    <p>
+      Tout cela signifie qu'il n'est pas possible de tester l'&#xe9;galit&#xe9; math&#xe9;matique de deux s&#xe9;ries. Cela constitue une diff&#xe9;rence conceptuelle importante entre celles-ci et les autres classes d'objets vues dans ce chapitre.
+    </p>
+
+    <p>
+      Attention, <em>Sage</em>  consid&#xe8;re cependant deux &#xe9;l&#xe9;ments de <c>A[['x']]</c> comme &#xe9;gaux d&#xe8;s qu'ils co&#xef;ncident jusqu'&#xe0; la plus faible de leurs pr&#xe9;cisions :
+    </p>
+
+    <sage>
+      <input>
+        R.&lt;x> = QQ[[]]
+        1 + x + O(x^2) == 1 + x + x^2 + O(x^3)
+      </input>
+      <output>
+        True
+      </output>
+    </sage>
+
+    <p>
+      En particulier, puisque <c>0</c> a une pr&#xe9;cision infinie, le test <c>O(x^2) == 0</c> renvoie vrai.
+    </p>
+
+    <p>
+      &#xc0; nouveau, les op&#xe9;rations arithm&#xe9;tiques de base fonctionnent comme sur les polyn&#xf4;mes. Le quotient par une s&#xe9;rie de valuation non nulle (sur un corps) cr&#xe9;e une s&#xe9;rie de Laurent. On dispose aussi de quelques fonctions usuelles, par exemple <c>f.exp()</c> lorsque <m>f(0)=0</m>, ainsi que des op&#xe9;rations de d&#xe9;rivation et d'int&#xe9;gration :
+    </p>
+
+    <sage>
+      <input>
+        (1/(1+x)).sqrt().integral().exp()/x^2 + O(x^4)
+      </input>
+      <output>
+        x^-2 + x^-1 + 1/4 + 1/24*x - 1/192*x^2 + 11/1920*x^3 + O(x^4)
+      </output>
+    </sage>
+
+    <p>
+      \paragraph{D&#xe9;veloppement de solutions d'&#xe9;quations.}
+    </p>
+
+    <p>
+      Face &#xe0; une &#xe9;quation diff&#xe9;rentielle dont les solutions exactes sont trop compliqu&#xe9;es &#xe0; calculer ou &#xe0; exploiter une fois calcul&#xe9;es, ou tout simplement qui n'admet pas de solution en forme close, un recours fr&#xe9;quent consiste &#xe0; chercher des solutions sous forme de s&#xe9;ries. Plus pr&#xe9;cis&#xe9;ment, on commence habituellement par d&#xe9;terminer les solutions de l'&#xe9;quation dans l'espace des s&#xe9;ries formelles, et si n&#xe9;cessaire, on conclut ensuite par un argument de convergence que les solutions formelles construites ont un sens analytique. Le calcul formel peut &#xea;tre d'une aide pr&#xe9;cieuse pour la premi&#xe8;re &#xe9;tape.
+    </p>
+
+    <p>
+      Consid&#xe9;rons par exemple l'&#xe9;quation diff&#xe9;rentielle
+      <me>
+        y'(x) = \sqrt{1+x^2} \, y(x) + \exp(x), \qquad y(0)=1.
+      </me>
+    </p>
+
+    <p>
+      Cette &#xe9;quation admet une unique solution en s&#xe9;rie formelle, dont on peut calculer les premiers termes par
+    </p>
+
+    <sage>
+      <input>
+        (1+x^2).sqrt().solve_linear_de(prec=6, b=x.exp())
+      </input>
+      <output>
+        1 + 2*x + 3/2*x^2 + 5/6*x^3 + 1/2*x^4 + 7/30*x^5 + O(x^6)
+      </output>
+    </sage>
+
+    <p>
+      De plus, le th&#xe9;or&#xe8;me de Cauchy d'existence de solutions d'&#xe9;quations diff&#xe9;rentielles lin&#xe9;aires &#xe0; coefficients analytiques assure que cette s&#xe9;rie converge pour<nbsp /><m>\mathopen\vert x\mathclose\vert \lt  1</m> : sa somme fournit donc une solution analytique sur le disque unit&#xe9; complexe.
+    </p>
+
+    <p>
+      Cette approche n'est pas limit&#xe9;e aux &#xe9;quations diff&#xe9;rentielles. L'&#xe9;quation fonctionnelle <m>e^{xf(x)} = f(x)</m> est plus compliqu&#xe9;e, ne serait-ce que parce qu'elle n'est pas lin&#xe9;aire. Mais c'est une &#xe9;quation de point fixe, nous pouvons essayer de raffiner une solution (formelle) par it&#xe9;ration :
+    </p>
+
+    <sage>
+      <input>
+        S.&lt;x> = PowerSeriesRing(QQ, default_prec=5)
+        f = S(1)
+        for i in range(5):
+        f = (x*f).exp()
+        print f
+      </input>
+      <output>
+        1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + O(x^5)
+        1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + O(x^5)
+        1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + O(x^5)
+        1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + O(x^5)
+        1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + O(x^5)
+      </output>
+    </sage>
+
+    <p>
+      Que se passe-t-il ici ? Les solutions de <m>e^{xf(x)} = f(x)</m> dans <m>\Q[[x]]</m> sont les points fixes de la transformation <m>\Phi: f \mapsto e^{xf}</m>. Si une suite d'it&#xe9;r&#xe9;s de la forme <m>\Phi^n(a)</m> converge, sa limite est n&#xe9;cessairement solution de l'&#xe9;quation. Inversement, posons <m>f(x) = \sum_{n=0}^\infty f_n \, x^n</m>, et d&#xe9;veloppons en s&#xe9;rie les deux membres : il vient
+      <men xml:id="polynomes_recurrence_equation_fonctionnelle" >
+        \begin{aligned}
+        \sum_{n=0}^\infty f_n \, x^n
+        \amp = \sum_{k=0}^\infty \frac{1}{k!} \biggl( x \sum_{j=0}^\infty f_j \, x^j \biggr)^n \\
+        \amp = \sum_{n=0}^\infty \biggl( \sum_{k=0}^\infty \frac{1}{k!} \!\! \sum_{\substack{j_1, \dots, j_k \in \N \\ j_1 + \dots + j_k = n-k} } f_{j_1} f_{j_2} \dots f_{j_k} \biggr) \, x^n.
+        \end{aligned}
+      </men>
+    </p>
+
+    <p>
+      Peu importent les d&#xe9;tails de la formule ; l'essentiel est que<nbsp /><m>f_n</m> se calcule en fonction des coefficients pr&#xe9;c&#xe9;dents <m>f_0, \dots, f_{n-1}</m>. Comme dans beaucoup de m&#xe9;thodes du point fixe, chaque it&#xe9;ration de <m>\Phi</m> fournit donc (au moins) un nouveau terme correct.
+    </p>
+
+    <paragraphs xml:id="exo_polynomes_tangente">
+      <title>Exercice</title>
+      <p>
+        Calculer le d&#xe9;veloppement limit&#xe9; &#xe0; l'ordre 15 de <m>\tan x</m> au voisinage de z&#xe9;ro &#xe0; partir de l'&#xe9;quation diff&#xe9;rentielle <m>\tan' = 1 + \tan^2</m>.
+      </p>
+    </paragraphs>
+    <p>
+      \paragraph{S&#xe9;ries paresseuses.} Il existe en <em>Sage</em>  une autre sorte de s&#xe9;ries formelles appel&#xe9;es s&#xe9;ries paresseuses. Ce ne sont pas des s&#xe9;ries tronqu&#xe9;es, mais bien des s&#xe9;ries infinies ; l'adjectif paresseux signifie que les coefficients ne sont calcul&#xe9;s que quand ils sont explicitement demand&#xe9;s. La contrepartie est que l'on ne peut repr&#xe9;senter que des s&#xe9;ries dont on sait calculer les coefficients : essentiellement, des combinaisons de s&#xe9;ries de base et certaines solutions d'&#xe9;quations pour lesquelles existent des relations comme<nbsp /><xref ref="polynomes_recurrence_equation_fonctionnelle" />. Par exemple, la s&#xe9;rie paresseuse <c>lazy_exp</c> d&#xe9;finie par<fn>Une future version de \Sage devrait contenir un nouvel anneau de s&#xe9;ries paresseuses appel&#xe9; <c>FormalPowerSeriesRing</c>, plus puissant que <c>LazyPowerSeriesRing</c>.</fn></p>
+
+    <sage>
+      <input>
+        L.&lt;x> = LazyPowerSeriesRing(QQ)
+        lazy_exp = x.exponential(); lazy_exp
+      </input>
+      <output>
+        O(1)
+      </output>
+    </sage>
+
+    <p>
+      est un objet qui contient le n&#xe9;cessaire pour calculer le d&#xe9;veloppement en s&#xe9;rie de <m>\exp x</m>. Elle s'affiche initialement comme <c>O(1)</c> car aucun coefficient n'a encore &#xe9;t&#xe9; calcul&#xe9;. Tenter d'acc&#xe9;der au coefficient de<nbsp /><m>x^5</m> d&#xe9;clenche le calcul, et les coefficients calcul&#xe9;s sont alors m&#xe9;moris&#xe9;s :
+    </p>
+
+    <sage>
+      <input>
+        lazy_exp[5]
+      </input>
+      <output>
+        1/120
+      </output>
+    </sage>
+
+    <sage>
+      <input>
+        lazy_exp
+      </input>
+      <output>
+        1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
+      </output>
+    </sage>
+
+    <p>
+      Une pr&#xe9;sentation en bonne et due forme des s&#xe9;ries paresseuses d&#xe9;passerait le cadre de ce livre. Bornons-nous &#xe0; reprendre l'exemple de l'&#xe9;quation <m>e^{x f(x)} = f(x)</m> pour montrer comment il se simplifie. Nous pouvons d'abord essayer de reproduire le calcul fait plus haut dans l'anneau <c>QQ[['x']]</c> :
+    </p>
+
+    <sage>
+      <input>
+        f = L(1)
+        for i in range(5):
+        f = (x*f).exponential()
+        f.compute_coefficients(5)  # force le calcul des
+        print f                    #   premiers coefficients
+      </input>
+      <output>
+        1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + O(x^6)
+        1 + x + 3/2*x^2 + 5/3*x^3 + 41/24*x^4 + 49/30*x^5 + O(x^6)
+        1 + x + 3/2*x^2 + 8/3*x^3 + 101/24*x^4 + 63/10*x^5 + O(x^6)
+        1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 49/5*x^5 + O(x^6)
+        1 + x + 3/2*x^2 + 8/3*x^3 + 125/24*x^4 + 54/5*x^5 + O(x^6)
+      </output>
+    </sage>
+
+    <p>
+      Les d&#xe9;veloppements obtenus sont bien s&#xfb;r les m&#xea;mes que pr&#xe9;c&#xe9;demment<fn>On peut en revanche constater que \Sage emploie parfois des conventions incoh&#xe9;rentes : ce qui s'appelait <c>exp</c> s'appelle <c>exponential</c>, et <c>compute_coefficients(5)</c> calcule les coeffcients jusqu'&#xe0; l'ordre<nbsp /><m>5</m> inclus tandis que <c>default_prec=5</c> donnait des s&#xe9;ries tronqu&#xe9;es apr&#xe8;s le coefficient de <m>x^4</m>.</fn>.
+      Mais la valeur de<nbsp /><c>f</c> &#xe0; chaque it&#xe9;ration est maintenant une s&#xe9;rie compl&#xe8;te, dont on peut calculer des coefficients &#xe0; la demande. Toutes ces s&#xe9;ries interm&#xe9;diaires sont conserv&#xe9;es en m&#xe9;moire, et le calcul de chacune est automatiquement pouss&#xe9; &#xe0; la pr&#xe9;cision requise si l'on acc&#xe8;de, par exemple, au coefficient de <m>x^{7}</m> dans le dernier it&#xe9;r&#xe9; :
+    </p>
+
+    <sage>
+      <input>
+        f[7]
+      </input>
+      <output>
+        28673/630
+      </output>
+    </sage>
+
+    <p>
+      Dans la premi&#xe8;re version de cet exemple, l'acc&#xe8;s &#xe0; <c>f[7]</c> aurait d&#xe9;clench&#xe9; une erreur <c>IndexError</c>, l'indice<nbsp />7 &#xe9;tant sup&#xe9;rieur &#xe0; l'ordre de troncature de la s&#xe9;rie<nbsp /><c>f</c>.
+    </p>
+
+    <p>
+      Cependant, la valeur renvoy&#xe9;e par <c>f[7]</c> n'est que le coefficient de <m>x^7</m> dans l'it&#xe9;r&#xe9; <m>\Phi^5(1)</m>, et non dans la solution. La force des s&#xe9;ries paresseuses est la possibilit&#xe9; de passer directement &#xe0; la limite, en codant<nbsp /><m>f</m> elle-m&#xea;me comme une s&#xe9;rie paresseuse :
+    </p>
+
+    <sage>
+      <input>
+        fromsage.combinat.species.series import LazyPowerSeries
+        f = LazyPowerSeries(L, name='f')
+        f.define((x*f).exponential())
+        f.coefficients(8)
+      </input>
+      <output>
+        [1, 1, 3/2, 8/3, 125/24, 54/5, 16807/720, 16384/315]
+      </output>
+    </sage>
+
+    <p>
+      Ce qui <q> faisait marcher </q> le calcul it&#xe9;ratif est la relation<nbsp /><xref ref="polynomes_recurrence_equation_fonctionnelle" />. En coulisses, <em>Sage</em>  d&#xe9;duit de la d&#xe9;finition r&#xe9;cursive <c>f.define((x*f).exponential())</c> une formule du m&#xea;me genre, qui permet de calculer les coefficients par r&#xe9;currence.
+    </p>
+  </subsection>
+</section>
+
