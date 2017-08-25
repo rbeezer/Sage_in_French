@@ -1,20 +1,8 @@
-
-
 <chapter xmlns:xi="http://www.w3.org/2001/XInclude"  xml:id="linalg">
   <title>Alg&#xe8;bre lin&#xe9;aire</title>
   <introduction>
-    <p>
-      \bottomrule
-      \end{tabular}
-    </p>
 
-    <p>
-      \DefineShortVerb{\|}
-      \VerbatimFootnotes
-    </p>
-
-    <blockquote>
-    Ce chapitre traite de l'alg&#xe8;bre lin&#xe9;aire exacte et symbolique, c'est-&#xe0;-dire sur
+    <p>Ce chapitre traite de l'alg&#xe8;bre lin&#xe9;aire exacte et symbolique, c'est-&#xe0;-dire sur
     des anneaux 
     propres au calcul formel, tels que <m>\Z</m>, des corps
     finis, des anneaux de polyn&#xf4;mes, ... L'alg&#xe8;bre lin&#xe9;aire num&#xe9;rique est
@@ -31,8 +19,7 @@
     On peut trouver dans les ouvrages de Gantmacher<nbsp /><nbsp /><xref ref="Gantmacher_1959_TM" />, de
     von zur Gathen et Gerhard<nbsp /><nbsp /><xref ref="voGe03" />, de Lombardi et
     Journa&#xef;di<nbsp /><nbsp /><xref ref="LomAbd_04_Methodes" /> un traitement approfondi des notions
-    abord&#xe9;es dans ce chapitre.
-    </blockquote>
+    abord&#xe9;es dans ce chapitre.</p>
   </introduction>
   <xi:include  href="sec_linalg_const.ptx" />
   <xi:include  href="section9-2.ptx" />

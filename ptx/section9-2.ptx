@@ -64,921 +64,846 @@
 
   <subsection xml:id="sec_linalg_gauss">
     <title>&#xc9;limination de Gauss, forme &#xe9;chelonn&#xe9;e</title>
-    <p>
-      \paragraph{&#xc9;limination de Gauss et &#xe9;quivalence &#xe0; gauche.}
-      L'&#xe9;limination de Gauss est l'une des op&#xe9;rations fondamentales en alg&#xe8;bre
-      lin&#xe9;aire car elle permet d'acc&#xe9;der &#xe0; une repr&#xe9;sentation de la matrice &#xe0; la fois
-      plus adapt&#xe9;e au calcul, comme la r&#xe9;solution de syst&#xe8;mes, et r&#xe9;v&#xe9;lant
-      certaines de ses propri&#xe9;t&#xe9;s fondamentales, comme le rang, le
-      d&#xe9;terminant, le profil de rang, etc.
-      Les op&#xe9;rations de base pour l'&#xe9;limination sont les op&#xe9;rations &#xe9;l&#xe9;mentaires sur
-      les lignes:
-      <ul>
-        <li>
-          <p>
-            permutation de deux lignes: <m>L_i\leftrightarrow L_j</m>,
-          </p>
-        </li>
+    <paragraphs>
+      <title>&#xc9;limination de Gauss et &#xe9;quivalence &#xe0; gauche</title>
+      <p>
+        L'&#xe9;limination de Gauss est l'une des op&#xe9;rations fondamentales en alg&#xe8;bre
+        lin&#xe9;aire car elle permet d'acc&#xe9;der &#xe0; une repr&#xe9;sentation de la matrice &#xe0; la fois
+        plus adapt&#xe9;e au calcul, comme la r&#xe9;solution de syst&#xe8;mes, et r&#xe9;v&#xe9;lant
+        certaines de ses propri&#xe9;t&#xe9;s fondamentales, comme le rang, le
+        d&#xe9;terminant, le profil de rang, etc.
+        Les op&#xe9;rations de base pour l'&#xe9;limination sont les op&#xe9;rations &#xe9;l&#xe9;mentaires sur
+        les lignes:
+        <ul>
+          <li>
+            <p>
+              permutation de deux lignes: <m>L_i\leftrightarrow L_j</m>,
+            </p>
+          </li>
 
-        <li>
-          <p>
-            ajout d'un multiple d'une ligne &#xe0; une autre: <m>L_i\leftarrow L_i + s L_j</m>.
-          </p>
-        </li>
-      </ul>
-    </p>
+          <li>
+            <p>
+              ajout d'un multiple d'une ligne &#xe0; une autre: <m>L_i\leftarrow L_i + s L_j</m>.
+            </p>
+          </li>
+        </ul>
+      </p>
 
-    <p>
-      Au niveau matriciel, ces transformations correspondent &#xe0; la multiplication &#xe0;
-      gauche par les matrices de transposition <m>T_{i,j}</m> et de transvection
-      <m>C_{i,j,s}</m> donn&#xe9;es par:
-      {
-      <me>
-        T_{i,j}=
-          \begin{array}{c}
+      <p>
+        Au niveau matriciel, ces transformations correspondent &#xe0; la multiplication &#xe0;
+        gauche par les matrices de transposition <m>T_{i,j}</m> et de transvection
+        <m>C_{i,j,s}</m> donn&#xe9;es par:
+        {
+        <me>
+          T_{i,j}=
+            \begin{array}{c}
+      
+      
+              \begin{array}{ccccccc}
+                \amp \amp i\amp \amp j\amp \amp 
+          \end{array} \\
+              \left[\begin{array}{ccccccc}
+                1\\
+                \amp \ddots\\
+                \amp \amp 0\amp \amp 1\\
+                \amp \amp \amp \ddots\\
+                \amp \amp 1\amp \amp 0\\
+                \amp \amp  \amp \amp  \amp \ddots\\
+                \amp \amp  \amp \amp  \amp \amp 1
+          \end{array} \right]
+          \end{array} ,
+          C_{i,j,s}=
+          \left[
     
-    
-            \begin{array}{ccccccc}
-              \amp \amp i\amp \amp j\amp \amp 
-        \end{array} \\
-            \left[\begin{array}{ccccccc}
+        
+            \begin{array}{cccccc}
               1\\
               \amp \ddots\\
-              \amp \amp 0\amp \amp 1\\
+              \amp \amp 1\\
               \amp \amp \amp \ddots\\
-              \amp \amp 1\amp \amp 0\\
-              \amp \amp  \amp \amp  \amp \ddots\\
-              \amp \amp  \amp \amp  \amp \amp 1
-        \end{array} \right]
-        \end{array} ,
-        C_{i,j,s}=
-        \left[
-  
-      
-          \begin{array}{cccccc}
-            1\\
-            \amp \ddots\\
-            \amp \amp 1\\
-            \amp \amp \amp \ddots\\
-            \amp \amp s\amp \amp 1\\
-            \amp \amp \amp \amp \amp \ddots
-        \end{array} 
-        \right]
-        \begin{array}{c}
-          \\
-          \\
-          i\\
-          \\
-          j
-        \end{array} .
-      </me>
-    </p>
+              \amp \amp s\amp \amp 1\\
+              \amp \amp \amp \amp \amp \ddots
+          \end{array} 
+          \right]
+          \begin{array}{c}
+            \\
+            \\
+            i\\
+            \\
+            j
+          \end{array} .
+        </me>
+      </p>
 
-    <p>
-      }
-      Ces matrices ont toutes pour d&#xe9;terminant
-      <m>1</m> ou <m>-1</m>. Ainsi
-      toute multiplication &#xe0; gauche par un produit de ces matrices peut &#xea;tre vu comme
-      un changement de base pr&#xe9;servant les volumes et donc en particulier le
-      d&#xe9;terminant.
-      En <em>Sage</em> , l'op&#xe9;ration de transvection est effectu&#xe9;e par la m&#xe9;thode
-      <c>add_multiple_of_row(i,j,s)</c>, et celle de transposition par la m&#xe9;thode
-      <c>swap_rows(i,j)</c>.
-    </p>
+      <p>
+        }
+        Ces matrices ont toutes pour d&#xe9;terminant
+        <m>1</m> ou <m>-1</m>. Ainsi
+        toute multiplication &#xe0; gauche par un produit de ces matrices peut &#xea;tre vu comme
+        un changement de base pr&#xe9;servant les volumes et donc en particulier le
+        d&#xe9;terminant.
+        En <em>Sage</em> , l'op&#xe9;ration de transvection est effectu&#xe9;e par la m&#xe9;thode
+        <c>add_multiple_of_row(i,j,s)</c>, et celle de transposition par la m&#xe9;thode
+        <c>swap_rows(i,j)</c>.
+      </p>
 
-    <p>
-      &#xc9;tant donn&#xe9; un vecteur colonne <m>x=
-      \begin{bmatrix}x_1\\ \vdots\\ x_n
-      \end{bmatrix}</m>
-      dont la <m>k</m>-i&#xe8;me
-      composante <m>x_k</m> est inversible, on d&#xe9;finit la transformation de Gauss
-      comme la composition des transvections <m>C_{i,k,\ell_{i}}</m>
-      pour <m>i=k+1\dots n</m>, avec <m>\ell_i=-\frac{x_i}{x_k}</m> (peu importe l'ordre &#xe9;tant
-      donn&#xe9; qu'elles commutent). La matrice correspondante est la suivante:
-      <me>
-        G_{x,k}=C_{k+1,k,\ell_{k+1}}\times \dots \times C_{n,k,\ell_n}=
-  
-      
-        \left[
-          \begin{array}{cccccccc}
-            1\\
-            \amp \ddots\\
-            \amp \amp 1\\
-            \amp \amp \ell_{k+1}\amp \ddots\\
-            \amp \amp \ell_{k+2}\amp \amp \ddots\\
-            \amp \amp \vdots\amp \amp \amp \amp \ddots\\
-            \amp \amp \ell_n\amp \amp \amp \amp \amp 1
-        \end{array} 
-        \right]
-        \begin{array}{c}
-          \\
-          \\
-          k\\
-          \\
-        \end{array}
-      </me>
-    </p>
+      <p>
+        &#xc9;tant donn&#xe9; un vecteur colonne <m>x=
+        \begin{bmatrix}x_1\\ \vdots\\ x_n
+        \end{bmatrix}</m>
+        dont la <m>k</m>-i&#xe8;me
+        composante <m>x_k</m> est inversible, on d&#xe9;finit la transformation de Gauss
+        comme la composition des transvections <m>C_{i,k,\ell_{i}}</m>
+        pour <m>i=k+1\dots n</m>, avec <m>\ell_i=-\frac{x_i}{x_k}</m> (peu importe l'ordre &#xe9;tant
+        donn&#xe9; qu'elles commutent). La matrice correspondante est la suivante:
+        <me>
+          G_{x,k}=C_{k+1,k,\ell_{k+1}}\times \dots \times C_{n,k,\ell_n}=
+    
+        
+          \left[
+            \begin{array}{cccccccc}
+              1\\
+              \amp \ddots\\
+              \amp \amp 1\\
+              \amp \amp \ell_{k+1}\amp \ddots\\
+              \amp \amp \ell_{k+2}\amp \amp \ddots\\
+              \amp \amp \vdots\amp \amp \amp \amp \ddots\\
+              \amp \amp \ell_n\amp \amp \amp \amp \amp 1
+          \end{array} 
+          \right]
+          \begin{array}{c}
+            \\
+            \\
+            k\\
+            \\
+          \end{array}
+        </me>
+      </p>
 
-    <p>
-      Une transformation de Gauss <m>G_{x,k}</m> a pour effet d'&#xe9;liminer les coefficients du vecteur
-      situ&#xe9;s sous le coefficient pivot <m>x_k</m>:
-      <me>
-        G_{x,k} \begin{bmatrix}x_1\\ \vdots \\ x_k\\ x_{k+1}\\ \vdots\\ x_n
-        \end{bmatrix}  =  
-          \begin{bmatrix}x_1\\ \vdots\\ x_k\\0\\ \vdots\\0
-        \end{bmatrix} 
-        .
-      </me>
-    </p>
+      <p>
+        Une transformation de Gauss <m>G_{x,k}</m> a pour effet d'&#xe9;liminer les coefficients du vecteur
+        situ&#xe9;s sous le coefficient pivot <m>x_k</m>:
+        <me>
+          G_{x,k} \begin{bmatrix}x_1\\ \vdots \\ x_k\\ x_{k+1}\\ \vdots\\ x_n
+          \end{bmatrix}  =  
+            \begin{bmatrix}x_1\\ \vdots\\ x_k\\0\\ \vdots\\0
+          \end{bmatrix} 
+          .
+        </me>
+      </p>
 
-    <p>
-      Pour une matrice <m>A=[a_{i,j}]</m> de dimension <m>m\times n</m>, l'algorithme du pivot
-      de Gauss proc&#xe8;de alors it&#xe9;rativement, de la colonne gauche &#xe0; la colonne
-      droite. En supposant que les <m>k-1</m> premi&#xe8;res colonnes ont d&#xe9;j&#xe0; &#xe9;t&#xe9; trait&#xe9;es, fournissant <m>p\leq k-1</m> pivots, la <m>k</m>-i&#xe8;me est alors trait&#xe9;e de la fa&#xe7;on suivante:
-      <ul>
-        <li>
+      <p>
+        Pour une matrice <m>A=[a_{i,j}]</m> de dimension <m>m\times n</m>, l'algorithme du pivot
+        de Gauss proc&#xe8;de alors it&#xe9;rativement, de la colonne gauche &#xe0; la colonne
+        droite. En supposant que les <m>k-1</m> premi&#xe8;res colonnes ont d&#xe9;j&#xe0; &#xe9;t&#xe9; trait&#xe9;es, fournissant <m>p\leq k-1</m> pivots, la <m>k</m>-i&#xe8;me est alors trait&#xe9;e de la fa&#xe7;on suivante:
+        <ul>
+          <li>
+            <p>
+              trouver la premi&#xe8;re composante inversible <m>a_{i,k}</m> de la colonne <m>C_k</m>
+                sur une ligne  <m>i>p</m>. On l'appelle le pivot.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Si aucun pivot n'est trouv&#xe9;, passer &#xe0; la colonne suivante.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Appliquer la transposition <m>T_{i,p+1}</m> sur les lignes pour placer le pivot
+                en position <m>(p+1,k)</m>.
+            </p>
+          </li>
+
+          <li>
+            <p>
+              Appliquer la transformation de Gauss <m>G_{x,p+1}</m>.
+            </p>
+          </li>
+        </ul>
+      </p>
+
+      <p>
+        Cet algorithme transforme la matrice <m>A</m> en une matrice triangulaire
+        sup&#xe9;rieure. Plus pr&#xe9;cis&#xe9;ment elle aura une forme &#xe9;chelonn&#xe9;e, c'est-&#xe0;-dire telle
+        que le premier coefficient non nul de chaque ligne se trouve plus &#xe0; droite que
+        celui de la ligne pr&#xe9;c&#xe9;dente ; de plus, toutes les lignes nulles se trouvent
+        regroup&#xe9;es en bas de la matrice. Voici un exemple de d&#xe9;roulement de cet algorithme.
+      </p>
+
+      <sage>
+        <input>
+          a=matrix(GF(7),4,3,[6,2,2,5,4,4,6,4,5,5,1,3]); a
+        </input>
+        <output>
+          [6 2 2]
+          [5 4 4]
+          [6 4 5]
+          [5 1 3]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          u=copy(identity_matrix(GF(7),4)); u[:,0]=-a[:,0]/a[0,0]; 
+          u, u*a
+        </input>
+        <output>
+          (
+          [6 0 0 0]  [1 5 5]
+          [5 1 0 0]  [0 0 0]
+          [6 0 1 0]  [0 2 3]
+          [5 0 0 1], [0 4 6]
+          )
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          v=copy(identity_matrix(GF(7),4)); v.swap_rows(1,2); 
+          b=v*u*a; v,b
+        </input>
+        <output>
+          (
+          [1 0 0 0]  [1 5 5]
+          [0 0 1 0]  [0 2 3]
+          [0 1 0 0]  [0 0 0]
+          [0 0 0 1], [0 4 6]
+          )
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          w=copy(identity_matrix(GF(7),4)); 
+          w[1:,1]=-b[1:,1]/b[1,1]; w, w*b
+        </input>
+        <output>
+          (
+          [1 0 0 0]  [1 5 5]
+          [0 6 0 0]  [0 5 4]
+          [0 0 1 0]  [0 0 0]
+          [0 5 0 1], [0 0 0]
+          )
+        </output>
+      </sage>
+    </paragraphs>
+
+    <paragraphs>
+      <title>&#xc9;limination de Gauss-Jordan</title>
+
+      <p>
+        La transformation de Gauss-Jordan est similaire &#xe0; celle de Gauss, en ajoutant &#xe0;
+        <m>G_{x,k}</m> les transvections correspondant aux lignes d'indice <m>i\lt  k</m> ; cela revient &#xe0;
+        &#xe9;liminer les coefficients d'une
+        colonne au-dessus et au-dessous du pivot. Si de plus on divise chaque ligne par
+        son pivot, on obtient alors une forme &#xe9;chelonn&#xe9;e dite <em>r&#xe9;duite</em> encore
+        appel&#xe9;e forme de Gauss-Jordan. Pour toute classe d'&#xe9;quivalence de matrices, il
+        n'existe qu'une unique
+        matrice sous cette forme; il s'agit donc d'une forme normale.
+      </p>
+
+      <definition>
+        <statement>
           <p>
-            trouver la premi&#xe8;re composante inversible <m>a_{i,k}</m> de la colonne <m>C_k</m>
-              sur une ligne  <m>i>p</m>. On l'appelle le pivot.
-          </p>
-        </li>
+            Une matrice est dite sous forme &#xe9;chelonn&#xe9;e r&#xe9;duite si
+            <ul>
+              <li>
+                <p>
+                  toutes les lignes nulles sont en bas de la matrice,
+                </p>
+              </li>
 
-        <li>
+              <li>
+                <p>
+                  le premier coefficient non nul de chaque ligne non nulle, appel&#xe9; le pivot, est un
+                    <m>1</m>, et est situ&#xe9; &#xe0; droite du pivot de la ligne pr&#xe9;c&#xe9;dente,
+                </p>
+              </li>
+
+              <li>
+                <p>
+                  les pivots sont les seuls coefficients non nuls au sein de leur colonne.
+                </p>
+              </li>
+            </ul>
+          </p>
+        </statement>
+      </definition>
+
+      <theorem>
+        <statement>
           <p>
-            Si aucun pivot n'est trouv&#xe9;, passer &#xe0; la colonne suivante.
+            Pour toute matrice <m>A</m> de dimension <m>m\times n</m> &#xe0; coefficients dans un corps, il
+            existe une unique matrice <m>R</m> de dimension <m>m\times n</m> sous forme &#xe9;chelonn&#xe9;e
+            r&#xe9;duite et une matrice inversible <m>U</m> de dimension <m>m \times m</m> telles
+            que <m>UA=R</m>. Il s'agit de la d&#xe9;composition de Gauss-Jordan.
           </p>
-        </li>
+        </statement>
+      </theorem>
 
-        <li>
-          <p>
-            Appliquer la transposition <m>T_{i,p+1}</m> sur les lignes pour placer le pivot
-              en position <m>(p+1,k)</m>.
-          </p>
-        </li>
+      <p>
+        En <em>Sage</em> , la forme &#xe9;chelonn&#xe9;e r&#xe9;duite est donn&#xe9;e par les m&#xe9;thodes
+        <c>echelonize</c> et <c>echelon_form</c>. La premi&#xe8;re remplace la matrice initiale par sa forme
+        &#xe9;chelonn&#xe9;e r&#xe9;duite alors que la deuxi&#xe8;me renvoie une matrice immuable sans
+        modifier la matrice initiale.
+      </p>
 
-        <li>
-          <p>
-            Appliquer la transformation de Gauss <m>G_{x,p+1}</m>.
-          </p>
-        </li>
-      </ul>
-    </p>
+      <sage>
+        <input>
+          A=matrix(GF(7),4,5,[4,4,0,2,4,5,1,6,5,4,1,1,0,1,0,
+          5,1,6,6,2]); A, A.echelon_form()
+        </input>
+        <output>
+          (
+          [4 4 0 2 4]  [1 0 5 0 3]
+          [5 1 6 5 4]  [0 1 2 0 6]
+          [1 1 0 1 0]  [0 0 0 1 5]
+          [5 1 6 6 2], [0 0 0 0 0]
+          )
+        </output>
+      </sage>
 
-    <p>
-      Cet algorithme transforme la matrice <m>A</m> en une matrice triangulaire
-      sup&#xe9;rieure. Plus pr&#xe9;cis&#xe9;ment elle aura une forme &#xe9;chelonn&#xe9;e, c'est-&#xe0;-dire telle
-      que le premier coefficient non nul de chaque ligne se trouve plus &#xe0; droite que
-      celui de la ligne pr&#xe9;c&#xe9;dente ; de plus, toutes les lignes nulles se trouvent
-      regroup&#xe9;es en bas de la matrice. Voici un exemple de d&#xe9;roulement de cet algorithme.
-    </p>
+      <p>
+        Plusieurs variantes de l'&#xe9;limination de Gauss s'interpr&#xe8;tent sous la forme de
+        diff&#xe9;rentes d&#xe9;compositions matricielles, parfois utiles pour le calcul: les
+        d&#xe9;compositions <m>A=LU</m> pour les matrices g&#xe9;n&#xe9;riques, <m>A=LUP</m>, pour les matrices
+        r&#xe9;guli&#xe8;res, <m>A=LSP</m>, <m>A=LQUP</m> ou <m>A=PLUQ</m> pour les matrices de rang quelconque.
+        Les matrices <m>L</m> sont triangulaires inf&#xe9;rieures (en anglais <em>Lower triangular</em>),
+        <m>U</m> triangulaires sup&#xe9;rieures (<em>Upper triangular</em>), et les matrices <m>P,Q</m> sont des permutations.
+        Si ces derni&#xe8;res sont algorithmiquement moins co&#xfb;teuses que la forme &#xe9;chelonn&#xe9;e
+        r&#xe9;duite, elles n'offrent pas l'avantage de fournir une forme normale.
+      </p>
+    </paragraphs>
 
-    <sage>
-      <input>
-        a=matrix(GF(7),4,3,[6,2,2,5,4,4,6,4,5,5,1,3]); a
-      </input>
-      <output>
-        [6 2 2]
-        [5 4 4]
-        [6 4 5]
-        [5 1 3]
-      </output>
-    </sage>
+    <paragraphs>
+      <title>Forme &#xe9;chelonn&#xe9;e dans les anneaux euclidiens</title>
 
-    <sage>
-      <input>
-        u=copy(identity_matrix(GF(7),4)); u[:,0]=-a[:,0]/a[0,0]; 
-        u, u*a
-      </input>
-      <output>
-        (
-        [6 0 0 0]  [1 5 5]
-        [5 1 0 0]  [0 0 0]
-        [6 0 1 0]  [0 2 3]
-        [5 0 0 1], [0 4 6]
-        )
-      </output>
-    </sage>
+      <p>
+        Dans un anneau euclidien, les coefficients non nuls ne sont pas n&#xe9;cessairement
+        inversibles, et
+        l'&#xe9;limination de Gauss consisterait donc &#xe0; choisir le premier &#xe9;l&#xe9;ment inversible
+        de la colonne courante pour pivot. Ainsi
+        certaines colonnes non nulles peuvent ne pas contenir de pivot
+        et l'&#xe9;limination n'est alors plus possible.
+      </p>
 
-    <sage>
-      <input>
-        v=copy(identity_matrix(GF(7),4)); v.swap_rows(1,2); 
-        b=v*u*a; v,b
-      </input>
-      <output>
-        (
-        [1 0 0 0]  [1 5 5]
-        [0 0 1 0]  [0 2 3]
-        [0 1 0 0]  [0 0 0]
-        [0 0 0 1], [0 4 6]
-        )
-      </output>
-    </sage>
+      <p>
+        Il est cependant toujours possible de d&#xe9;finir une transformation unimodulaire
+        &#xe9;liminant le coefficient de t&#xea;te d'une ligne avec celui d'une autre, gr&#xe2;ce &#xe0;
+        l'algorithme d'Euclide &#xe9;tendu.
+      </p>
 
-    <sage>
-      <input>
-        w=copy(identity_matrix(GF(7),4)); 
-        w[1:,1]=-b[1:,1]/b[1,1]; w, w*b
-      </input>
-      <output>
-        (
-        [1 0 0 0]  [1 5 5]
-        [0 6 0 0]  [0 5 4]
-        [0 0 1 0]  [0 0 0]
-        [0 5 0 1], [0 0 0]
-        )
-      </output>
-    </sage>
-
-    <p>
-      \paragraph{&#xc9;limination de Gauss-Jordan.}
-    </p>
-
-    <p>
-      La transformation de Gauss-Jordan est similaire &#xe0; celle de Gauss, en ajoutant &#xe0;
-      <m>G_{x,k}</m> les transvections correspondant aux lignes d'indice <m>i\lt  k</m> ; cela revient &#xe0;
-      &#xe9;liminer les coefficients d'une
-      colonne au-dessus et au-dessous du pivot. Si de plus on divise chaque ligne par
-      son pivot, on obtient alors une forme &#xe9;chelonn&#xe9;e dite <em>r&#xe9;duite</em> encore
-      appel&#xe9;e forme de Gauss-Jordan. Pour toute classe d'&#xe9;quivalence de matrices, il
-      n'existe qu'une unique
-      matrice sous cette forme; il s'agit donc d'une forme normale.
-    </p>
-
-    <definition>
-      <statement>
-        <p>
-          Une matrice est dite sous forme &#xe9;chelonn&#xe9;e r&#xe9;duite si
-          <ul>
-            <li>
-              <p>
-                toutes les lignes nulles sont en bas de la matrice,
-              </p>
-            </li>
-
-            <li>
-              <p>
-                le premier coefficient non nul de chaque ligne non nulle, appel&#xe9; le pivot, est un
-                  <m>1</m>, et est situ&#xe9; &#xe0; droite du pivot de la ligne pr&#xe9;c&#xe9;dente,
-              </p>
-            </li>
-
-            <li>
-              <p>
-                les pivots sont les seuls coefficients non nuls au sein de leur colonne.
-              </p>
-            </li>
-          </ul>
-        </p>
-      </statement>
-    </definition>
-
-    <theorem>
-      <statement>
-        <p>
-          Pour toute matrice <m>A</m> de dimension <m>m\times n</m> &#xe0; coefficients dans un corps, il
-          existe une unique matrice <m>R</m> de dimension <m>m\times n</m> sous forme &#xe9;chelonn&#xe9;e
-          r&#xe9;duite et une matrice inversible <m>U</m> de dimension <m>m \times m</m> telles
-          que <m>UA=R</m>. Il s'agit de la d&#xe9;composition de Gauss-Jordan.
-        </p>
-      </statement>
-    </theorem>
-
-    <p>
-      En <em>Sage</em> , la forme &#xe9;chelonn&#xe9;e r&#xe9;duite est donn&#xe9;e par les m&#xe9;thodes
-      <c>echelonize</c> et <c>echelon_form</c>. La premi&#xe8;re remplace la matrice initiale par sa forme
-      &#xe9;chelonn&#xe9;e r&#xe9;duite alors que la deuxi&#xe8;me renvoie une matrice immuable sans
-      modifier la matrice initiale.
-    </p>
-
-    <sage>
-      <input>
-        A=matrix(GF(7),4,5,[4,4,0,2,4,5,1,6,5,4,1,1,0,1,0,
-        5,1,6,6,2]); A, A.echelon_form()
-      </input>
-      <output>
-        (
-        [4 4 0 2 4]  [1 0 5 0 3]
-        [5 1 6 5 4]  [0 1 2 0 6]
-        [1 1 0 1 0]  [0 0 0 1 5]
-        [5 1 6 6 2], [0 0 0 0 0]
-        )
-      </output>
-    </sage>
-
-    <p>
-      Plusieurs variantes de l'&#xe9;limination de Gauss s'interpr&#xe8;tent sous la forme de
-      diff&#xe9;rentes d&#xe9;compositions matricielles, parfois utiles pour le calcul: les
-      d&#xe9;compositions <m>A=LU</m> pour les matrices g&#xe9;n&#xe9;riques, <m>A=LUP</m>, pour les matrices
-      r&#xe9;guli&#xe8;res, <m>A=LSP</m>, <m>A=LQUP</m> ou <m>A=PLUQ</m> pour les matrices de rang quelconque.
-      Les matrices <m>L</m> sont triangulaires inf&#xe9;rieures (en anglais <em>Lower triangular</em>),
-      <m>U</m> triangulaires sup&#xe9;rieures (<em>Upper triangular</em>), et les matrices <m>P,Q</m> sont des permutations.
-      Si ces derni&#xe8;res sont algorithmiquement moins co&#xfb;teuses que la forme &#xe9;chelonn&#xe9;e
-      r&#xe9;duite, elles n'offrent pas l'avantage de fournir une forme normale.
-    </p>
-
-    <p>
-      \paragraph{Forme &#xe9;chelonn&#xe9;e dans les anneaux euclidiens.}
-    </p>
-
-    <p>
-      Dans un anneau euclidien, les coefficients non nuls ne sont pas n&#xe9;cessairement
-      inversibles, et
-      l'&#xe9;limination de Gauss consisterait donc &#xe0; choisir le premier &#xe9;l&#xe9;ment inversible
-      de la colonne courante pour pivot. Ainsi
-      certaines colonnes non nulles peuvent ne pas contenir de pivot
-      et l'&#xe9;limination n'est alors plus possible.
-    </p>
-
-    <p>
-      Il est cependant toujours possible de d&#xe9;finir une transformation unimodulaire
-      &#xe9;liminant le coefficient de t&#xea;te d'une ligne avec celui d'une autre, gr&#xe2;ce &#xe0;
-      l'algorithme d'Euclide &#xe9;tendu.
-    </p>
-
-    <p>
-      Soit <m>A=
-      \begin{bmatrix}a\amp *\\
-        b\amp *
-      \end{bmatrix}</m> et soit <m>g=\text{ pgcd } (a,b)</m>.
-      Soient <m>u</m> et <m>v</m> les coefficients de B&#xe9;zout fournis par l'algorithme d'Euclide
-      &#xe9;tendu appliqu&#xe9; &#xe0; <m>a</m> et <m>b</m> (tels que <m>g=ua+vb</m>), et <m>s=b/g,t=-a/g</m> tels que
-      <me>
-        \begin{bmatrix}u \amp v\\
-          s \amp t
-        \end{bmatrix} 
+      <p>
+        Soit <m>A=
         \begin{bmatrix}a\amp *\\
           b\amp *
-        \end{bmatrix} =
-        \begin{bmatrix}g\amp *\\0\amp *
-        \end{bmatrix} .
-      </me>
-    </p>
+        \end{bmatrix}</m> et soit <m>g=\text{ pgcd } (a,b)</m>.
+        Soient <m>u</m> et <m>v</m> les coefficients de B&#xe9;zout fournis par l'algorithme d'Euclide
+        &#xe9;tendu appliqu&#xe9; &#xe0; <m>a</m> et <m>b</m> (tels que <m>g=ua+vb</m>), et <m>s=b/g,t=-a/g</m> tels que
+        <me>
+          \begin{bmatrix}u \amp v\\
+            s \amp t
+          \end{bmatrix} 
+          \begin{bmatrix}a\amp *\\
+            b\amp *
+          \end{bmatrix} =
+          \begin{bmatrix}g\amp *\\0\amp *
+          \end{bmatrix} .
+        </me>
+      </p>
 
-    <p>
-      Cette transformation est unimodulaire car
-      <m>\det\left(
-      \begin{bmatrix}u\amp v\\s\amp t
-      \end{bmatrix} \right)=1</m>.
-    </p>
+      <p>
+        Cette transformation est unimodulaire car
+        <m>\det\left(
+        \begin{bmatrix}u\amp v\\s\amp t
+        \end{bmatrix} \right)=1</m>.
+      </p>
 
-    <p>
-      Par ailleurs, comme pour Gauss-Jordan, on peut toujours ajouter des multiples de
-      la ligne pivot aux lignes sup&#xe9;rieures afin de r&#xe9;duire leurs
-      coefficients dans la m&#xea;me colonne modulo le pivot <m>g</m>. Cette op&#xe9;ration effectu&#xe9;e it&#xe9;rativement sur toutes les
-      colonnes de la matrice produit la forme normale de Hermite.
-    </p>
+      <p>
+        Par ailleurs, comme pour Gauss-Jordan, on peut toujours ajouter des multiples de
+        la ligne pivot aux lignes sup&#xe9;rieures afin de r&#xe9;duire leurs
+        coefficients dans la m&#xea;me colonne modulo le pivot <m>g</m>. Cette op&#xe9;ration effectu&#xe9;e it&#xe9;rativement sur toutes les
+        colonnes de la matrice produit la forme normale de Hermite.
+      </p>
 
-    <definition>
-      <statement>
-        <p>
-          Une matrice est dite sous forme de Hermite si
-          <ul>
-            <li>
-              <p>
-                ses lignes nulles sont en bas,
-              </p>
-            </li>
+      <definition>
+        <statement>
+          <p>
+            Une matrice est dite sous forme de Hermite si
+            <ul>
+              <li>
+                <p>
+                  ses lignes nulles sont en bas,
+                </p>
+              </li>
 
-            <li>
-              <p>
-                le premier coefficient non nul de chaque ligne, appel&#xe9; le pivot, se
-                    trouve &#xe0; droite de celui de la ligne sup&#xe9;rieure,
-              </p>
-            </li>
+              <li>
+                <p>
+                  le premier coefficient non nul de chaque ligne, appel&#xe9; le pivot, se
+                      trouve &#xe0; droite de celui de la ligne sup&#xe9;rieure,
+                </p>
+              </li>
 
-            <li>
-              <p>
-                tous les coefficients au-dessus du pivot sont
-                    r&#xe9;duits modulo le pivot.
-              </p>
-            </li>
-          </ul>
-        </p>
-      </statement>
-    </definition>
+              <li>
+                <p>
+                  tous les coefficients au-dessus du pivot sont
+                      r&#xe9;duits modulo le pivot.
+                </p>
+              </li>
+            </ul>
+          </p>
+        </statement>
+      </definition>
 
-    <theorem>
-      <statement>
-        <p>
-          Pour toute matrice <m>A</m> de dimension <m>m\times n</m> &#xe0; coefficients dans un anneau
-          euclidien, il existe une unique matrice <m>H</m> de dimension <m>m\times n</m> sous
-          forme de Hermite et une matrice <m>U</m> unimodulaire, de dimension <m>m\times m</m>
-          telles que <m>UA=H</m>.
-        </p>
-      </statement>
-    </theorem>
+      <theorem>
+        <statement>
+          <p>
+            Pour toute matrice <m>A</m> de dimension <m>m\times n</m> &#xe0; coefficients dans un anneau
+            euclidien, il existe une unique matrice <m>H</m> de dimension <m>m\times n</m> sous
+            forme de Hermite et une matrice <m>U</m> unimodulaire, de dimension <m>m\times m</m>
+            telles que <m>UA=H</m>.
+          </p>
+        </statement>
+      </theorem>
 
-    <p>
-      Dans le cas d'un corps, la forme de Hermite correspond &#xe0; la forme &#xe9;chelonn&#xe9;e
-      r&#xe9;duite, ou forme de Gauss-Jordan.
-      En effet, dans ce cas, tous les pivots sont inversibles, chaque ligne peut
-      &#xea;tre divis&#xe9;e par son pivot, et les
-      coefficients au-dessus de celui-ci peuvent &#xea;tre &#xe0; nouveau &#xe9;limin&#xe9;s par des
-      transformations de Gauss, produisant ainsi une forme &#xe9;chelonn&#xe9;e r&#xe9;duite.
-      En <em>Sage</em> , il n'y a donc qu'une seule m&#xe9;thode: <c>echelon_form</c>, qui retourne soit
-      la forme de Hermite, soit la forme &#xe9;chelonn&#xe9;e r&#xe9;duite, selon que la matrice est
-      &#xe0; coefficients dans un anneau ou dans un corps.
-    </p>
+      <p>
+        Dans le cas d'un corps, la forme de Hermite correspond &#xe0; la forme &#xe9;chelonn&#xe9;e
+        r&#xe9;duite, ou forme de Gauss-Jordan.
+        En effet, dans ce cas, tous les pivots sont inversibles, chaque ligne peut
+        &#xea;tre divis&#xe9;e par son pivot, et les
+        coefficients au-dessus de celui-ci peuvent &#xea;tre &#xe0; nouveau &#xe9;limin&#xe9;s par des
+        transformations de Gauss, produisant ainsi une forme &#xe9;chelonn&#xe9;e r&#xe9;duite.
+        En <em>Sage</em> , il n'y a donc qu'une seule m&#xe9;thode: <c>echelon_form</c>, qui retourne soit
+        la forme de Hermite, soit la forme &#xe9;chelonn&#xe9;e r&#xe9;duite, selon que la matrice est
+        &#xe0; coefficients dans un anneau ou dans un corps.
+      </p>
 
-    <p>
-      Par exemple, pour une matrice &#xe0; coefficients dans <m>\Z</m>, on obtient les deux
-      formes &#xe9;chelonn&#xe9;es diff&#xe9;rentes, selon que le domaine de base soit <m>\Z</m> ou <m>\Q</m>:
-    </p>
+      <p>
+        Par exemple, pour une matrice &#xe0; coefficients dans <m>\Z</m>, on obtient les deux
+        formes &#xe9;chelonn&#xe9;es diff&#xe9;rentes, selon que le domaine de base soit <m>\Z</m> ou <m>\Q</m>:
+      </p>
 
-    <sage>
-      <input>
-        a=matrix(ZZ, 4, 6, [2,1,2,2,2,-1,1,2,-1,2,1,-1,2,1,-1,-1,\
-        2,2,2,1,1,-1,-1,-1]); a.echelon_form()
-      </input>
-      <output>
-        [ 1  2  0  5  4 -1]
-        [ 0  3  0  2 -6 -7]
-        [ 0  0  1  3  3  0]
-        [ 0  0  0  6  9  3]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          a=matrix(ZZ, 4, 6, [2,1,2,2,2,-1,1,2,-1,2,1,-1,2,1,-1,-1,\
+          2,2,2,1,1,-1,-1,-1]); a.echelon_form()
+        </input>
+        <output>
+          [ 1  2  0  5  4 -1]
+          [ 0  3  0  2 -6 -7]
+          [ 0  0  1  3  3  0]
+          [ 0  0  0  6  9  3]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        a.base_extend(QQ).echelon_form()
-      </input>
-      <output>
-        [   1    0    0    0  5/2 11/6]
-        [   0    1    0    0   -3 -8/3]
-        [   0    0    1    0 -3/2 -3/2]
-        [   0    0    0    1  3/2  1/2]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          a.base_extend(QQ).echelon_form()
+        </input>
+        <output>
+          [   1    0    0    0  5/2 11/6]
+          [   0    1    0    0   -3 -8/3]
+          [   0    0    1    0 -3/2 -3/2]
+          [   0    0    0    1  3/2  1/2]
+        </output>
+      </sage>
 
-    <p>
-      Pour les matrices sur <m>\Z</m>, la forme normale de Hermite est aussi accessible par
-      la fonction <c>hermite_form</c>. Pour obtenir la matrice de passage
-      <m>U</m> telle que <m>UA=H</m>, on peut utiliser l'option <c>transformation=True</c>.
-    </p>
+      <p>
+        Pour les matrices sur <m>\Z</m>, la forme normale de Hermite est aussi accessible par
+        la fonction <c>hermite_form</c>. Pour obtenir la matrice de passage
+        <m>U</m> telle que <m>UA=H</m>, on peut utiliser l'option <c>transformation=True</c>.
+      </p>
 
-    <sage>
-      <input>
-        A=matrix(ZZ,4,5,[4,4,0,2,4,5,1,6,5,4,\
-        1,1,0,1,0,5,1,6,6,2])
-        E,U=A.echelon_form(transformation=True); E,U
-      </input>
-      <output>
-        (
-        [ 1  1  0  0  2]  [ 0  1  1 -1]
-        [ 0  4 -6  0 -4]  [ 0 -1  5  0]
-        [ 0  0  0  1 -2]  [ 0 -1  0  1]
-        [ 0  0  0  0  0], [ 1 -2 -4  2]
-        )
-      </output>
-    </sage>
+      <sage>
+        <input>
+          A=matrix(ZZ,4,5,[4,4,0,2,4,5,1,6,5,4,\
+          1,1,0,1,0,5,1,6,6,2])
+          E,U=A.echelon_form(transformation=True); E,U
+        </input>
+        <output>
+          (
+          [ 1  1  0  0  2]  [ 0  1  1 -1]
+          [ 0  4 -6  0 -4]  [ 0 -1  5  0]
+          [ 0  0  0  1 -2]  [ 0 -1  0  1]
+          [ 0  0  0  0  0], [ 1 -2 -4  2]
+          )
+        </output>
+      </sage>
+    </paragraphs>
 
-    <p>
-      \begin{paragraph}
-      {Facteurs invariants et forme normale de Smith.}
-    </p>
+    <paragraphs>
+      <title>Facteurs invariants et forme normale de Smith</title>
+      <p>
+        Si l'on s'autorise &#xe0; &#xe9;liminer plus avant la forme de Hermite par des
+        transformations unimodulaires &#xe0; droite, on peut alors obtenir une forme
+        diagonale canonique, appel&#xe9;e forme normale de Smith. Ses coefficients diagonaux
+        sont appel&#xe9;s les <em>facteurs invariants</em> (en anglais <em>elementary
+        divisors</em>) de la matrice. Ils sont totalement ordonn&#xe9;s pour la divisibilit&#xe9;
+        (i.e. <m>s_i \divides s_{i+1}</m>).
+      </p>
 
-    <p>
-      Si l'on s'autorise &#xe0; &#xe9;liminer plus avant la forme de Hermite par des
-      transformations unimodulaires &#xe0; droite, on peut alors obtenir une forme
-      diagonale canonique, appel&#xe9;e forme normale de Smith. Ses coefficients diagonaux
-      sont appel&#xe9;s les <em>facteurs invariants</em> (en anglais <em>elementary
-      divisors</em>) de la matrice. Ils sont totalement ordonn&#xe9;s pour la divisibilit&#xe9;
-      (i.e. <m>s_i \divides s_{i+1}</m>).
-    </p>
+      <theorem>
+        <statement>
+          <p>
+            Pour toute matrice <m>A</m> de dimension <m>m\times n</m> et &#xe0; coefficients dans un
+            anneau principal, il existe des matrices unimodulaires <m>U</m> et <m>V</m> de
+            dimension <m>m\times m</m> et <m>n\times n</m> et une unique matrice diagonale
+            <m>S=\text{ diag } (s_1,\dots, s_{\min{m,n}})</m> telles que <m>S=UAV</m>. Les coefficients
+            <m>s_i</m> v&#xe9;rifient <m>s_i\divides   s_{i+1}</m> et sont appel&#xe9;s les facteurs
+            invariants de <m>A</m>.
+          </p>
+        </statement>
+      </theorem>
 
-    <theorem>
-      <statement>
-        <p>
-          Pour toute matrice <m>A</m> de dimension <m>m\times n</m> et &#xe0; coefficients dans un
-          anneau principal, il existe des matrices unimodulaires <m>U</m> et <m>V</m> de
-          dimension <m>m\times m</m> et <m>n\times n</m> et une unique matrice diagonale
-          <m>S=\text{ diag } (s_1,\dots, s_{\min{m,n}})</m> telles que <m>S=UAV</m>. Les coefficients
-          <m>s_i</m> v&#xe9;rifient <m>s_i\divides   s_{i+1}</m> et sont appel&#xe9;s les facteurs
-          invariants de <m>A</m>.
-        </p>
-      </statement>
-    </theorem>
+      <p>
+        En <em>Sage</em> , la m&#xe9;thode <c>elementary_divisors</c> renvoie la liste des facteurs
+        invariants. On peut par ailleurs calculer la forme normale de Smith ainsi que
+        les matrices de passages <m>U</m> et <m>V</m> par la commande <c>smith_form</c>.
+      </p>
 
-    <p>
-      En <em>Sage</em> , la m&#xe9;thode <c>elementary_divisors</c> renvoie la liste des facteurs
-      invariants. On peut par ailleurs calculer la forme normale de Smith ainsi que
-      les matrices de passages <m>U</m> et <m>V</m> par la commande <c>smith_form</c>.
-    </p>
+      <sage>
+        <input>
+          A=matrix(ZZ,4,5,[-1,-1,-1,-2,-2,-2,1,1,-1,2,2,2,2,2,-1,\
+          2,2,2,2,2])
+          A.smith_form()
+        </input>
+        <output>
+          (
+                                      [ 0 -2 -1 -5  0]
+          [1 0 0 0 0]  [ 1  0  0  0]  [ 1  0  1 -1 -1]
+          [0 1 0 0 0]  [ 0  0  1  0]  [ 0  0  0  0  1]
+          [0 0 3 0 0]  [-2  1  0  0]  [-1  2  0  5  0]
+          [0 0 0 6 0], [ 0  0 -2 -1], [ 0 -1  0 -2  0]
+          )
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        A=matrix(ZZ,4,5,[-1,-1,-1,-2,-2,-2,1,1,-1,2,2,2,2,2,-1,\
-        2,2,2,2,2])
-        A.smith_form()
-      </input>
-      <output>
-        (
-                                    [ 0 -2 -1 -5  0]
-        [1 0 0 0 0]  [ 1  0  0  0]  [ 1  0  1 -1 -1]
-        [0 1 0 0 0]  [ 0  0  1  0]  [ 0  0  0  0  1]
-        [0 0 3 0 0]  [-2  1  0  0]  [-1  2  0  5  0]
-        [0 0 0 6 0], [ 0  0 -2 -1], [ 0 -1  0 -2  0]
-        )
-      </output>
-    </sage>
+      <sage>
+        <input>
+          S,U,V=A.smith_form(); S
+        </input>
+        <output>
+          [1 0 0 0 0]
+          [0 1 0 0 0]
+          [0 0 3 0 0]
+          [0 0 0 6 0]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        S,U,V=A.smith_form(); S
-      </input>
-      <output>
-        [1 0 0 0 0]
-        [0 1 0 0 0]
-        [0 0 3 0 0]
-        [0 0 0 6 0]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          A.elementary_divisors()
+        </input>
+        <output>
+          [1, 1, 3, 6]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        A.elementary_divisors()
-      </input>
-      <output>
-        [1, 1, 3, 6]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          S==U*A*V
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
+    </paragraphs>
+    
+    <paragraphs>
+      <title>Rang, profil de rang et pivots</title>
 
-    <sage>
-      <input>
-        S==U*A*V
-      </input>
-      <output>
-        True
-      </output>
-    </sage>
+      <p>
+        L'&#xe9;limination de Gauss r&#xe9;v&#xe8;le de nombreux invariants de la matrice, tels que son
+        rang et son d&#xe9;terminant (qui peut &#xea;tre lu comme le produit des pivots). Ils
+        sont accessibles par les fonctions <c>det</c> et <c>rank</c>. Ces valeurs seront
+        mises en cache,
+        et ne seront donc pas recalcul&#xe9;es lors d'un deuxi&#xe8;me appel.
+      </p>
 
-    <p>
-      \end{paragraph}
-    </p>
+      <p>
+        Plus g&#xe9;n&#xe9;ralement, la notion de profil de rang est tr&#xe8;s utile, lorsque l'on
+        consid&#xe8;re la matrice comme une s&#xe9;quence
+        de vecteurs.
+      </p>
 
-    <p>
-      \paragraph{Rang, profil de rang et pivots.}
-    </p>
+      <definition>
+        <statement>
+          <p>
+            Le profil de rang par colonne d'une matrice <m>m\times n</m> <m>A</m> de rang
+            <m>r</m> est la s&#xe9;quence de <m>r</m> indices lexicographiquement minimale,
+            telle que les colonnes correspondantes dans <m>A</m> sont lin&#xe9;airement
+            ind&#xe9;pendantes.
+          </p>
+        </statement>
+      </definition>
 
-    <p>
-      L'&#xe9;limination de Gauss r&#xe9;v&#xe8;le de nombreux invariants de la matrice, tels que son
-      rang et son d&#xe9;terminant (qui peut &#xea;tre lu comme le produit des pivots). Ils
-      sont accessibles par les fonctions <c>det</c> et <c>rank</c>. Ces valeurs seront
-      mises en cache,
-      et ne seront donc pas recalcul&#xe9;es lors d'un deuxi&#xe8;me appel.
-    </p>
+      <p>
+        Le profil de rang se lit directement sur la forme &#xe9;chelonn&#xe9;e r&#xe9;duite, comme la s&#xe9;quence des
+        indices des pivots. Il est calcul&#xe9; par la fonction <c>pivots</c>. Lorsque la forme
+        &#xe9;chelonn&#xe9;e r&#xe9;duite a d&#xe9;j&#xe0; &#xe9;t&#xe9; calcul&#xe9;e, le profil de rang est aussi m&#xe9;moris&#xe9;
+        dans le cache, et peut &#xea;tre obtenu sans calcul suppl&#xe9;mentaire.
+      </p>
 
-    <p>
-      Plus g&#xe9;n&#xe9;ralement, la notion de profil de rang est tr&#xe8;s utile, lorsque l'on
-      consid&#xe8;re la matrice comme une s&#xe9;quence
-      de vecteurs.
-    </p>
+      <p>
+        Le profil de rang par ligne se d&#xe9;finit de mani&#xe8;re similaire, en consid&#xe9;rant la
+        matrice comme une s&#xe9;quence de <m>m</m> vecteurs ligne. Il s'obtient par la commande
+        <c>pivot_rows</c> ou comme sous-produit de la forme &#xe9;chelonn&#xe9;e r&#xe9;duite de la matrice
+        transpos&#xe9;e.
+      </p>
 
-    <definition>
-      <statement>
-        <p>
-          Le profil de rang par colonne d'une matrice <m>m\times n</m> <m>A</m> de rang
-          <m>r</m> est la s&#xe9;quence de <m>r</m> indices lexicographiquement minimale,
-          telle que les colonnes correspondantes dans <m>A</m> sont lin&#xe9;airement
-          ind&#xe9;pendantes.
-        </p>
-      </statement>
-    </definition>
+      <sage>
+        <input>
+          B=matrix(GF(7),5,4,[4,5,1,5,4,1,1,1,0,6,0,6,2,5,1,6,\
+          4,4,0,2])
+          B.transpose().echelon_form()
+        </input>
+        <output>
+          [1 0 5 0 3]
+          [0 1 2 0 6]
+          [0 0 0 1 5]
+          [0 0 0 0 0]
+        </output>
+      </sage>
 
-    <p>
-      Le profil de rang se lit directement sur la forme &#xe9;chelonn&#xe9;e r&#xe9;duite, comme la s&#xe9;quence des
-      indices des pivots. Il est calcul&#xe9; par la fonction <c>pivots</c>. Lorsque la forme
-      &#xe9;chelonn&#xe9;e r&#xe9;duite a d&#xe9;j&#xe0; &#xe9;t&#xe9; calcul&#xe9;e, le profil de rang est aussi m&#xe9;moris&#xe9;
-      dans le cache, et peut &#xea;tre obtenu sans calcul suppl&#xe9;mentaire.
-    </p>
+      <sage>
+        <input>
+          B.pivot_rows()
+        </input>
+        <output>
+          [0, 1, 3]
+        </output>
+      </sage>
 
-    <p>
-      Le profil de rang par ligne se d&#xe9;finit de mani&#xe8;re similaire, en consid&#xe9;rant la
-      matrice comme une s&#xe9;quence de <m>m</m> vecteurs ligne. Il s'obtient par la commande
-      <c>pivot_rows</c> ou comme sous-produit de la forme &#xe9;chelonn&#xe9;e r&#xe9;duite de la matrice
-      transpos&#xe9;e.
-    </p>
-
-    <sage>
-      <input>
-        B=matrix(GF(7),5,4,[4,5,1,5,4,1,1,1,0,6,0,6,2,5,1,6,\
-        4,4,0,2])
-        B.transpose().echelon_form()
-      </input>
-      <output>
-        [1 0 5 0 3]
-        [0 1 2 0 6]
-        [0 0 0 1 5]
-        [0 0 0 0 0]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        B.pivot_rows()
-      </input>
-      <output>
-        [0, 1, 3]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        B.transpose().pivots() == B.pivot_rows()
-      </input>
-      <output>
-        True
-      </output>
-    </sage>
+      <sage>
+        <input>
+          B.transpose().pivots() == B.pivot_rows()
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
+    </paragraphs>
   </subsection>
 
   <subsection xml:id="sec_linalg_syst">
     <title>R&#xe9;solution de syst&#xe8;mes; image et base du noyau</title>
-    <p>
-      \paragraph{R&#xe9;solution de syst&#xe8;mes.}
-    </p>
+        
+    <paragraphs>
+      <title>R&#xe9;solution de syst&#xe8;mes</title>
 
-    <p>
-      Un syst&#xe8;me lin&#xe9;aire peut &#xea;tre repr&#xe9;sent&#xe9; par une matrice <m>A</m> et un
-      vecteur <m>b</m> soit &#xe0; droite: <m>Ax=b</m>, soit &#xe0; gauche: <m>\trans{x}A=b</m>. Les fonctions <c>solve_right</c> et
-      <c>solve_left</c> effectuent leur r&#xe9;solution. On peut aussi utiliser de fa&#xe7;on
-      &#xe9;quivalente les op&#xe9;rateurs <c>A\b</c> et <c>b/A</c>. Lorsque le syst&#xe8;me est donn&#xe9; par une
-      matrice &#xe0; coefficients dans un anneau, la r&#xe9;solution est syst&#xe9;matiquement
-      effectu&#xe9;e dans le corps des fractions de cet anneau (e.g., <m>\Q</m> pour <m>\Z</m> ou <m>K(X)</m>
-      pour <m>K[X]</m>). On verra plus loin comment la r&#xe9;solution peut &#xea;tre faite dans
-      l'anneau lui-m&#xea;me.
-      Le membre de droite dans l'&#xe9;galit&#xe9; du syst&#xe8;me peut &#xea;tre aussi bien un vecteur qu'une
-      matrice (ce qui correspond &#xe0; r&#xe9;soudre plusieurs syst&#xe8;mes lin&#xe9;aires
-      simultan&#xe9;ment, avec la m&#xea;me matrice).
-    </p>
+      <p>
+        Un syst&#xe8;me lin&#xe9;aire peut &#xea;tre repr&#xe9;sent&#xe9; par une matrice <m>A</m> et un
+        vecteur <m>b</m> soit &#xe0; droite: <m>Ax=b</m>, soit &#xe0; gauche: <m>\trans{x}A=b</m>. Les fonctions <c>solve_right</c> et
+        <c>solve_left</c> effectuent leur r&#xe9;solution. On peut aussi utiliser de fa&#xe7;on
+        &#xe9;quivalente les op&#xe9;rateurs <c>A\b</c> et <c>b/A</c>. Lorsque le syst&#xe8;me est donn&#xe9; par une
+        matrice &#xe0; coefficients dans un anneau, la r&#xe9;solution est syst&#xe9;matiquement
+        effectu&#xe9;e dans le corps des fractions de cet anneau (e.g., <m>\Q</m> pour <m>\Z</m> ou <m>K(X)</m>
+        pour <m>K[X]</m>). On verra plus loin comment la r&#xe9;solution peut &#xea;tre faite dans
+        l'anneau lui-m&#xea;me.
+        Le membre de droite dans l'&#xe9;galit&#xe9; du syst&#xe8;me peut &#xea;tre aussi bien un vecteur qu'une
+        matrice (ce qui correspond &#xe0; r&#xe9;soudre plusieurs syst&#xe8;mes lin&#xe9;aires
+        simultan&#xe9;ment, avec la m&#xea;me matrice).
+      </p>
 
-    <p>
-      Les matrices des syst&#xe8;mes peuvent &#xea;tre rectangulaires, et admettre une unique,
-      aucune ou une infinit&#xe9; de solutions. Dans ce dernier cas, les fonctions <c>solve</c>
-      renvoient l'une de ces solutions, en mettant &#xe0; z&#xe9;ro les composantes
-      lin&#xe9;airement ind&#xe9;pendantes.
-    </p>
+      <p>
+        Les matrices des syst&#xe8;mes peuvent &#xea;tre rectangulaires, et admettre une unique,
+        aucune ou une infinit&#xe9; de solutions. Dans ce dernier cas, les fonctions <c>solve</c>
+        renvoient l'une de ces solutions, en mettant &#xe0; z&#xe9;ro les composantes
+        lin&#xe9;airement ind&#xe9;pendantes.
+      </p>
 
-    <sage>
-      <input>
-        R.&lt;x>=PolynomialRing(GF(5),'x')
-        A=random_matrix(R,2,3); A
-      </input>
-      <output>
-        [      3*x^2 + x       x^2 + 2*x       2*x^2 + 2]
-        [    x^2 + x + 2 2*x^2 + 4*x + 3   x^2 + 4*x + 3]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          R.&lt;x>=PolynomialRing(GF(5),'x')
+          A=random_matrix(R,2,3); A
+        </input>
+        <output>
+          [      3*x^2 + x       x^2 + 2*x       2*x^2 + 2]
+          [    x^2 + x + 2 2*x^2 + 4*x + 3   x^2 + 4*x + 3]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        b=random_matrix(R,2,1); b
-      </input>
-      <output>
-        [  4*x^2 + 1]
-        [3*x^2 + 2*x]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          b=random_matrix(R,2,1); b
+        </input>
+        <output>
+          [  4*x^2 + 1]
+          [3*x^2 + 2*x]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        A.solve_right(b)
-      </input>
-      <output>
-        [(4*x^3 + 2*x + 4)/(3*x^3 + 2*x^2 + 2*x)]
-        [  (3*x^2 + 4*x + 3)/(x^3 + 4*x^2 + 4*x)]
-        [                                      0]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          A.solve_right(b)
+        </input>
+        <output>
+          [(4*x^3 + 2*x + 4)/(3*x^3 + 2*x^2 + 2*x)]
+          [  (3*x^2 + 4*x + 3)/(x^3 + 4*x^2 + 4*x)]
+          [                                      0]
+        </output>
+      </sage>
+    </paragraphs>
 
-    <p>
-      \paragraph{Image et noyau.}
-    </p>
+    <paragraphs>
+      <title>Image et noyau</title>
 
-    <p>
-      Interpr&#xe9;t&#xe9;e comme une application lin&#xe9;aire <m>\Phi</m>, une matrice <m>A</m> de dimension
-      <m>m\times n</m> d&#xe9;finit deux sous-espaces vectoriels de <m>K^m</m> et <m>K^n</m>, respectivement
-      l'image et le noyau de <m>\Phi</m>.
-    </p>
+      <p>
+        Interpr&#xe9;t&#xe9;e comme une application lin&#xe9;aire <m>\Phi</m>, une matrice <m>A</m> de dimension
+        <m>m\times n</m> d&#xe9;finit deux sous-espaces vectoriels de <m>K^m</m> et <m>K^n</m>, respectivement
+        l'image et le noyau de <m>\Phi</m>.
+      </p>
 
-    <p>
-      L'image est l'ensemble des vecteurs de <m>K^m</m> obtenus par combinaisons lin&#xe9;aires
-      des colonnes de <m>A</m>. Il s'obtient par la fonction <c>image</c> qui renvoie
-      un espace vectoriel dont la base est sous forme &#xe9;chelonn&#xe9;e r&#xe9;duite.
-    </p>
+      <p>
+        L'image est l'ensemble des vecteurs de <m>K^m</m> obtenus par combinaisons lin&#xe9;aires
+        des colonnes de <m>A</m>. Il s'obtient par la fonction <c>image</c> qui renvoie
+        un espace vectoriel dont la base est sous forme &#xe9;chelonn&#xe9;e r&#xe9;duite.
+      </p>
 
-    <p>
-      Le noyau est le sous-espace vectoriel de <m>K^n</m> des vecteurs <m>x</m> tels que <m>Ax=0</m>.
-      Obtenir une base de ce sous-espace sert en particulier &#xe0; d&#xe9;crire l'ensemble des
-      solutions d'un syst&#xe8;me lin&#xe9;aire, lorsque celui-ci en poss&#xe8;de une infinit&#xe9;: si
-      <m>\overline{x}</m> est une solution de <m>Ax=b</m> et <m>V</m> le noyau de <m>A</m>, alors
-      l'ensemble des solutions s'&#xe9;crit simplement <m>{\overline{x}}+V</m>.
-      Il s'obtient par la fonction <c>right_kernel</c> qui renvoie l'espace vectoriel
-      ainsi qu'une base mise sous forme &#xe9;chelonn&#xe9;e r&#xe9;duite.
-      On peut naturellement aussi d&#xe9;finir le noyau &#xe0; gauche (l'ensemble des <m>x</m> dans
-      <m>K^m</m> tels que <m>\trans{x}A=0</m>), qui correspond au noyau &#xe0; droite de la
-      transpos&#xe9;e de <m>A</m> (i.e., l'adjoint de <m>\Phi</m>). Il s'obtient avec la fonction <c>left_kernel</c>. Par
-      convention, la fonction <c>kernel</c> retourne le noyau &#xe0; gauche. De plus les
-      bases sont donn&#xe9;es comme des matrices de vecteurs lignes dans les deux cas.
-    </p>
+      <p>
+        Le noyau est le sous-espace vectoriel de <m>K^n</m> des vecteurs <m>x</m> tels que <m>Ax=0</m>.
+        Obtenir une base de ce sous-espace sert en particulier &#xe0; d&#xe9;crire l'ensemble des
+        solutions d'un syst&#xe8;me lin&#xe9;aire, lorsque celui-ci en poss&#xe8;de une infinit&#xe9;: si
+        <m>\overline{x}</m> est une solution de <m>Ax=b</m> et <m>V</m> le noyau de <m>A</m>, alors
+        l'ensemble des solutions s'&#xe9;crit simplement <m>{\overline{x}}+V</m>.
+        Il s'obtient par la fonction <c>right_kernel</c> qui renvoie l'espace vectoriel
+        ainsi qu'une base mise sous forme &#xe9;chelonn&#xe9;e r&#xe9;duite.
+        On peut naturellement aussi d&#xe9;finir le noyau &#xe0; gauche (l'ensemble des <m>x</m> dans
+        <m>K^m</m> tels que <m>\trans{x}A=0</m>), qui correspond au noyau &#xe0; droite de la
+        transpos&#xe9;e de <m>A</m> (i.e., l'adjoint de <m>\Phi</m>). Il s'obtient avec la fonction <c>left_kernel</c>. Par
+        convention, la fonction <c>kernel</c> retourne le noyau &#xe0; gauche. De plus les
+        bases sont donn&#xe9;es comme des matrices de vecteurs lignes dans les deux cas.
+      </p>
 
-    <sage>
-      <input>
-        a=matrix(QQ,3,5,[2,2,-1,-2,-1,2,-1,1,2,-1/2,2,-2,\
-        -1,2,-1/2]) 
-        a.image()
-      </input>
-      <output>
-        Vector space of degree 5 and dimension 3 over Rational Field
-        Basis matrix:
-        [     1      0      0    1/4 -11/32]
-        [     0      1      0     -1   -1/8]
-        [     0      0      1    1/2   1/16]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          a=matrix(QQ,3,5,[2,2,-1,-2,-1,2,-1,1,2,-1/2,2,-2,\
+          -1,2,-1/2]) 
+          a.image()
+        </input>
+        <output>
+          Vector space of degree 5 and dimension 3 over Rational Field
+          Basis matrix:
+          [     1      0      0    1/4 -11/32]
+          [     0      1      0     -1   -1/8]
+          [     0      0      1    1/2   1/16]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        a.right_kernel()
-      </input>
-      <output>
-        Vector space of degree 5 and dimension 2 over Rational Field
-        Basis matrix:
-        [    1     0     0  -1/3   8/3]
-        [    0     1  -1/2 11/12   2/3]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          a.right_kernel()
+        </input>
+        <output>
+          Vector space of degree 5 and dimension 2 over Rational Field
+          Basis matrix:
+          [    1     0     0  -1/3   8/3]
+          [    0     1  -1/2 11/12   2/3]
+        </output>
+      </sage>
 
-    <p>
-      La notion de noyau se g&#xe9;n&#xe9;ralise naturellement au cas o&#xf9; les coefficients ne
-      sont plus dans un corps; il s'agit alors d'un module libre. En particulier,
-      pour une matrice d&#xe9;finie dans un corps de fraction, on obtiendra le noyau dans
-      l'anneau de base par la commande <c>integer_kernel</c>.
-      Par exemple, pour une matrice &#xe0; coefficients dans <m>\Z</m>, plong&#xe9;e dans l'espace
-      vectoriel des matrices &#xe0; coefficients dans <m>\Q</m>, on pourra calculer aussi
-      bien son noyau comme un sous-espace vectoriel de <m>\Q^m</m> ou comme un
-      module libre de <m>\Z^m</m>.
-      \vbox{
-    </p>
+      <p>
+        La notion de noyau se g&#xe9;n&#xe9;ralise naturellement au cas o&#xf9; les coefficients ne
+        sont plus dans un corps; il s'agit alors d'un module libre. En particulier,
+        pour une matrice d&#xe9;finie dans un corps de fraction, on obtiendra le noyau dans
+        l'anneau de base par la commande <c>integer_kernel</c>.
+        Par exemple, pour une matrice &#xe0; coefficients dans <m>\Z</m>, plong&#xe9;e dans l'espace
+        vectoriel des matrices &#xe0; coefficients dans <m>\Q</m>, on pourra calculer aussi
+        bien son noyau comme un sous-espace vectoriel de <m>\Q^m</m> ou comme un
+        module libre de <m>\Z^m</m>.
+        \vbox{
+      </p>
 
-    <sage>
-      <input>
-        a=matrix(ZZ,5,3,[1,1,122,-1,-2,1,-188,2,1,1,-10,1,\
-        -1,-1,-1])
-        a.kernel()
-      </input>
-      <output>
-        Free module of degree 5 and rank 2 over Integer Ring
-        Echelon basis matrix:
-        [   1  979  -11 -279  811]
-        [   0 2079  -22 -569 1488]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          a=matrix(ZZ,5,3,[1,1,122,-1,-2,1,-188,2,1,1,-10,1,\
+          -1,-1,-1])
+          a.kernel()
+        </input>
+        <output>
+          Free module of degree 5 and rank 2 over Integer Ring
+          Echelon basis matrix:
+          [   1  979  -11 -279  811]
+          [   0 2079  -22 -569 1488]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        b=a.base_extend(QQ)
-        b.kernel()
-      </input>
-      <output>
-        Vector space of degree 5 and dimension 2 over Rational Field
-        Basis matrix:
-        [        1         0  -121/189 -2090/189   6949/63]
-        [        0         1    -2/189 -569/2079   496/693]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          b=a.base_extend(QQ)
+          b.kernel()
+        </input>
+        <output>
+          Vector space of degree 5 and dimension 2 over Rational Field
+          Basis matrix:
+          [        1         0  -121/189 -2090/189   6949/63]
+          [        0         1    -2/189 -569/2079   496/693]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        b.integer_kernel()
-      </input>
-      <output>
-        Free module of degree 5 and rank 2 over Integer Ring
-        Echelon basis matrix:
-        [   1  979  -11 -279  811]
-        [   0 2079  -22 -569 1488]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          b.integer_kernel()
+        </input>
+        <output>
+          Free module of degree 5 and rank 2 over Integer Ring
+          Echelon basis matrix:
+          [   1  979  -11 -279  811]
+          [   0 2079  -22 -569 1488]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        b.integer_kernel() == a.kernel()
-      </input>
-      <output>
-        True
-      </output>
-    </sage>
+      <sage>
+        <input>
+          b.integer_kernel() == a.kernel()
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
 
-    <p>
-      \begin{cmdtable}{Calculs sur les matrices}{linalg:calculs}
+    <table xml:id="linalg-calculs">
+      <caption>Calculs sur les matrices</caption>
+      <tabular>
+        <row bottom="medium">
+          <cell colspan="2" halign="center">&#xc9;limination de Gauss et applications</cell>
+        </row>
+        
+        <row><cell>transvection sur les lignes</cell><cell><c>add_multiple_of_row(i,j,s)</c></cell></row>
+        <row><cell>transvection sur les colonnes</cell><cell><c>add_multiple_of_column(i,j,s)</c></cell></row>
+        <row><cell>transposition de lignes, colonnes</cell><cell><c>swap_rows(i,j)</c>, <c>swap_columns(i,j)</c></cell></row>
+        <row><cell>forme de Gauss-Jordan, immuable</cell><cell><c>echelon_form()</c></cell></row>
+        <row><cell>facteurs invariants</cell><cell><c>elementary_divisors</c></cell></row>
+        <row><cell>forme normale de Smith</cell><cell><c>smith_form</c></cell></row>
+        <row><cell>forme de Gauss-Jordan en place</cell><cell><c>echelonize()</c></cell></row>
+        <row><cell>d&#xe9;terminant, rang</cell><cell><c>det</c>, <c>rank</c></cell></row>
+        <row><cell>mineurs d'ordre <m>k</m></cell><cell><c>minors(k)</c></cell></row>
+        <row><cell>profil de rang en colonne, en ligne</cell><cell><c>pivots</c>, <c>pivot_rows</c></cell></row>
+        <row><cell>r&#xe9;solution de syst&#xe8;me &#xe0; gauche</cell><cell><c>A\b</c><em>ou</em>  <c>A.solve_left(b)</c></cell></row>
+        <row><cell>r&#xe9;solution de syst&#xe8;me &#xe0; droite</cell><cell><c>b/A</c><em>ou</em>  <c>A.solve_right(b)</c></cell></row>
+        <row><cell>espace image</cell><cell><c>image</c></cell></row>
+        <row><cell>noyau &#xe0; gauche</cell><cell><c>kernel</c><em>ou</em>  <c>left_kernel</c></cell></row>
+        <row><cell>noyau &#xe0; droite</cell><cell><c>right_kernel</c></cell></row>
+        <row><cell>noyau dans l'anneau de base</cell><cell><c>integer_kernel</c></cell></row>
 
-  
+        <row bottom="medium">
+          <cell colspan="2" halign="center">D&#xe9;composition spectrale</cell>
+        </row>
 
-        \toprule
-        &#xc9;limination de Gauss et applications 
+        <row><cell>polyn&#xf4;me minimal</cell><cell><c>minimal_polynomial</c><em>ou</em>  <c>minpoly</c></cell></row>
+        <row><cell>polyn&#xf4;me caract&#xe9;ristique</cell><cell><c>characteristic_polynomial</c><em>ou</em>  <c>charpoly</c></cell></row>
+        <row><cell>it&#xe9;r&#xe9;s de Krylov &#xe0; gauche</cell><cell><c>maxspin(v)</c></cell></row>
+        <row><cell>valeurs propres</cell><cell><c>eigenvalues</c></cell></row>
+        <row><cell>vecteurs propres &#xe0; gauche, &#xe0; droite</cell><cell><c>eigenvectors_left</c>, <c>eigenvectors_right</c></cell></row>
+        <row><cell>espaces propres &#xe0; gauche, &#xe0; droite</cell><cell><c>eigenspaces_left</c>, <c>eigenspaces_right</c></cell></row>
+        <row><cell>diagonalisation</cell><cell><c>eigenmatrix_left</c>, <c>eigenmatrix_right</c></cell></row>
+        <row><cell>bloc de Jordan <m>J_{a,k}</m></cell><cell><c>jordan_block(a,k)</c></cell></row> </tabular>
+  </table>
 
-        \midrule
-
-      transvection sur les lignes &amp; <c>add_multiple_of_row(i,j,s)</c>
-    </p>
-
-    <p>
-      transvection sur les colonnes &amp; <c>add_multiple_of_column(i,j,s)</c>
-    </p>
-
-    <p>
-      transposition de lignes, colonnes &amp; <c>swap_rows(i,j)</c>, <c>swap_columns(i,j)</c>
-    </p>
-
-    <p>
-      forme de Gauss-Jordan, immuable &amp; <c>echelon_form()</c>
-    </p>
-
-    <p>
-      facteurs invariants &amp; <c>elementary_divisors</c>
-    </p>
-
-    <p>
-      forme normale de Smith &amp; <c>smith_form</c>
-    </p>
-
-    <p>
-      forme de Gauss-Jordan en place &amp; <c>echelonize()</c>
-    </p>
-
-    <p>
-      d&#xe9;terminant, rang &amp; <c>det</c>, <c>rank</c>
-    </p>
-
-    <p>
-      mineurs d'ordre <m>k</m> &amp; <c>minors(k)</c>
-    </p>
-
-    <p>
-      profil de rang en colonne, en ligne &amp; <c>pivots</c>, <c>pivot_rows</c>
-    </p>
-
-    <p>
-      r&#xe9;solution de syst&#xe8;me &#xe0; gauche &amp; <c>A\b</c><em>ou</em>  <c>A.solve_left(b)</c>
-    </p>
-
-    <p>
-      r&#xe9;solution de syst&#xe8;me &#xe0; droite &amp; <c>b/A</c><em>ou</em>  <c>A.solve_right(b)</c>
-    </p>
-
-    <p>
-      espace image &amp; <c>image</c>
-    </p>
-
-    <p>
-      noyau &#xe0; gauche &amp; <c>kernel</c><em>ou</em>  <c>left_kernel</c>
-    </p>
-
-    <p>
-      noyau &#xe0; droite &amp; <c>right_kernel</c>
-    </p>
-
-    <p>
-      noyau dans l'anneau de base &amp; <c>integer_kernel</c>
-    </p>
-
-    <p>
-      \toprule
-        D&#xe9;composition spectrale 
-
-        \midrule
-
-      polyn&#xf4;me minimal &amp; <c>minimal_polynomial</c><em>ou</em>  <c>minpoly</c>
-    </p>
-
-    <p>
-      polyn&#xf4;me caract&#xe9;ristique &amp;<c>characteristic_polynomial</c><em>ou</em>  <c>charpoly</c>
-    </p>
-
-    <p>
-      it&#xe9;r&#xe9;s de Krylov &#xe0; gauche &amp; <c>maxspin(v)</c>
-    </p>
-
-    <p>
-      valeurs propres &amp; <c>eigenvalues</c>
-    </p>
-
-    <p>
-      vecteurs propres &#xe0; gauche, &#xe0; droite &amp; <c>eigenvectors_left</c>, <c>eigenvectors_right</c>
-    </p>
-
-    <p>
-      espaces propres &#xe0; gauche, &#xe0; droite &amp; <c>eigenspaces_left</c>, <c>eigenspaces_right</c>
-    </p>
-
-    <p>
-      diagonalisation &amp; <c>eigenmatrix_left</c>, <c>eigenmatrix_right</c>
-    </p>
-
-    <p>
-      bloc de Jordan <m>J_{a,k}</m> &amp; <c>jordan_block(a,k)</c>
-      \end{cmdtable}
-    </p>
+    </paragraphs>
   </subsection>
 
   <subsection xml:id="sec_linalg_similitude">
@@ -1046,50 +971,49 @@
       caract&#xe9;ristique et minimal.
     </p>
 
-    <p>
-      \paragraph{Espaces invariants cycliques, et forme normale de Frobenius.}
-    </p>
+    <paragraphs>
+        <title>Espaces invariants cycliques, et forme normale de Frobenius</title>
 
-    <p>
-      Soit <m>A</m> une matrice <m>n\times n</m> sur un corps <m>K</m> et <m>u</m> un vecteur de
-      <m>K^n</m>. La famille de vecteurs <m>u, Au, A^2u, \dots, A^nu</m>, appel&#xe9;e s&#xe9;quence de
-      Krylov, est li&#xe9;e (comme famille
-      de <m>n+1</m> vecteurs en dimension <m>n</m>). Soit <m>d</m> tel que <m>A^du</m> soit le premier
-      vecteur de la s&#xe9;quence lin&#xe9;airement d&#xe9;pendant avec ses pr&#xe9;d&#xe9;cesseurs <m>u,Au,
-      \dots, A^{d-1}u</m>. On &#xe9;crira
-      <me>
-        A^du=\sum_{i=0}^{d-1}\alpha_iA^iu
-      </me>
-      cette relation de d&#xe9;pendance lin&#xe9;aire.
-      Le polyn&#xf4;me <m>\phi_{A,u}(x)=x^d-\sum_{i=0}^{d-1}\alpha_ix^i</m>, qui v&#xe9;rifie
-      <m>\phi_{A,u}(A)u=0</m> est donc un polyn&#xf4;me unitaire annulateur de la s&#xe9;quence de Krylov et
-      de degr&#xe9; minimal. On l'appelle le <em>polyn&#xf4;me minimal</em> du vecteur <m>u</m> (sous
-      entendu, relativement &#xe0; la matrice <m>A</m>). L'ensemble des polyn&#xf4;mes annulateurs de
-      <m>u</m> forme un id&#xe9;al
-      de <m>K[X]</m>, engendr&#xe9; par <m>\phi_{A,u}</m>.
-    </p>
+      <p>
+        Soit <m>A</m> une matrice <m>n\times n</m> sur un corps <m>K</m> et <m>u</m> un vecteur de
+        <m>K^n</m>. La famille de vecteurs <m>u, Au, A^2u, \dots, A^nu</m>, appel&#xe9;e s&#xe9;quence de
+        Krylov, est li&#xe9;e (comme famille
+        de <m>n+1</m> vecteurs en dimension <m>n</m>). Soit <m>d</m> tel que <m>A^du</m> soit le premier
+        vecteur de la s&#xe9;quence lin&#xe9;airement d&#xe9;pendant avec ses pr&#xe9;d&#xe9;cesseurs <m>u,Au,
+        \dots, A^{d-1}u</m>. On &#xe9;crira
+        <me>
+          A^du=\sum_{i=0}^{d-1}\alpha_iA^iu
+        </me>
+        cette relation de d&#xe9;pendance lin&#xe9;aire.
+        Le polyn&#xf4;me <m>\phi_{A,u}(x)=x^d-\sum_{i=0}^{d-1}\alpha_ix^i</m>, qui v&#xe9;rifie
+        <m>\phi_{A,u}(A)u=0</m> est donc un polyn&#xf4;me unitaire annulateur de la s&#xe9;quence de Krylov et
+        de degr&#xe9; minimal. On l'appelle le <em>polyn&#xf4;me minimal</em> du vecteur <m>u</m> (sous
+        entendu, relativement &#xe0; la matrice <m>A</m>). L'ensemble des polyn&#xf4;mes annulateurs de
+        <m>u</m> forme un id&#xe9;al
+        de <m>K[X]</m>, engendr&#xe9; par <m>\phi_{A,u}</m>.
+      </p>
 
-    <p>
-      Le polyn&#xf4;me minimal de la matrice <m>A</m> est d&#xe9;fini comme le polyn&#xf4;me unitaire
-      <m>\phi_A(x)</m> de plus petit degr&#xe9; annulant la matrice <m>A</m>: <m>\phi_A(A)=0</m>. En
-      particulier, en appliquant <m>\phi_A</m> &#xe0; droite sur le vecteur <m>u</m>, on constate que <m>\phi_A</m> est un
-      polyn&#xf4;me annulateur de la s&#xe9;quence de Krylov. Il est donc n&#xe9;cessairement un
-      multiple du polyn&#xf4;me minimal de <m>u</m>.
-      On peut en outre montrer (cf. <xref ref="exo_minpoly">exercice</xref>) qu'il existe un
-      vecteur <m>\overline{u}</m> tel que
-      <men xml:id="eq_minpolyvect" >
-        \phi_{A,\overline{u}}=\phi_A.
-      </men>
-    </p>
+      <p>
+        Le polyn&#xf4;me minimal de la matrice <m>A</m> est d&#xe9;fini comme le polyn&#xf4;me unitaire
+        <m>\phi_A(x)</m> de plus petit degr&#xe9; annulant la matrice <m>A</m>: <m>\phi_A(A)=0</m>. En
+        particulier, en appliquant <m>\phi_A</m> &#xe0; droite sur le vecteur <m>u</m>, on constate que <m>\phi_A</m> est un
+        polyn&#xf4;me annulateur de la s&#xe9;quence de Krylov. Il est donc n&#xe9;cessairement un
+        multiple du polyn&#xf4;me minimal de <m>u</m>.
+        On peut en outre montrer (cf. <xref ref="exo_minpoly">exercice</xref>) qu'il existe un
+        vecteur <m>\overline{u}</m> tel que
+        <men xml:id="eq_minpolyvect" >
+          \phi_{A,\overline{u}}=\phi_A.
+        </men>
+      </p>
 
-    <p>
-      Lorsque le vecteur <m>u</m> est choisi al&#xe9;atoirement, la probabilit&#xe9; qu'il satisfasse
-      l'&#xe9;quation <xref ref="eq_minpolyvect" /> est d'autant plus grande que la taille du corps
-      est grande (on peut montrer qu'elle est au moins de <m>1-\frac{n}{\divides K \divides}</m>).
-    </p>
+      <p>
+        Lorsque le vecteur <m>u</m> est choisi al&#xe9;atoirement, la probabilit&#xe9; qu'il satisfasse
+        l'&#xe9;quation <xref ref="eq_minpolyvect" /> est d'autant plus grande que la taille du corps
+        est grande (on peut montrer qu'elle est au moins de <m>1-\frac{n}{\divides K \divides}</m>).
+      </p>
+    </paragraphs>
 
-    <paragraphs xml:id="exo_minpoly">
-      <title>Exercice</title>
+    <exercise xml:id="exo_minpoly">
       <p>
         Montrons qu'il existe toujours un vecteur <m>\overline{u}</m> dont le polyn&#xf4;me minimal
         co&#xef;ncide avec le polyn&#xf4;me minimal de la matrice.
@@ -1149,7 +1073,8 @@
           </li>
         </ol>
       </p>
-    </paragraphs>
+    </exercise>
+
     <p>
       Soit <m>P=x^k+\sum_{i=0}^{k-1}\alpha_ix^i</m> un polyn&#xf4;me unitaire de degr&#xe9; <m>k</m>. La
       matrice compagnon associ&#xe9;e au polyn&#xf4;me <m>P</m> est la matrice <m>k\times k</m> d&#xe9;finie par
@@ -1321,6 +1246,7 @@
         qui est donc annulateur de la matrice <m>A</m>.
       </p>
     </paragraphs>
+
     <p>
       En <em>Sage</em> , on pourra calculer la forme normale de Frobenius dans <m>\Q</m> de matrices &#xe0;
       coefficients dans <m>\Z</m> avec la m&#xe9;thode <c>frobenius</c><fn>C'est une l&#xe9;g&#xe8;re
@@ -1400,377 +1326,364 @@
       cadre de cet ouvrage.
     </p>
 
-    <p>
-      \begin{paragraph}
-      {Facteurs invariants et invariants de similitude.}
-    </p>
+    <paragraphs>
+      <title>Facteurs invariants et invariants de similitude</title>
 
-    <p>
-      Une propri&#xe9;t&#xe9; importante relie les invariants de similitude et les facteurs
-      invariants vus dans la <xref ref="sec_linalg_gauss">section</xref>.
-    </p>
-
-    <theorem>
-      <statement>
-        <p>
-          Les invariants de similitude d'une matrice &#xe0; coefficients dans un corps
-          correspondent aux facteurs invariants de sa matrice caract&#xe9;ristique.
-        </p>
-      </statement>
-    </theorem>
-
-    <p>
-      La preuve de ce r&#xe9;sultat d&#xe9;passe le cadre de cet ouvrage et nous nous
-      contentons de l'illustrer sur l'exemple pr&#xe9;c&#xe9;dent.
-    </p>
-
-    <sage>
-      <input>
-        S.&lt;x>=QQ[]
-        B=x*identity_matrix(8)-A
-        B.elementary_divisors()
-      </input>
-      <output>
-        [1, 1, 1, 1, 1, x - 2, x^3 - x^2 - 4, x^4 - x^2 - 4*x - 4]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        A.frobenius(1)
-      </input>
-      <output>
-        [x^4 - x^2 - 4*x - 4, x^3 - x^2 - 4, x - 2]
-      </output>
-    </sage>
-
-    <p>
-      \end{paragraph}
-    </p>
-
-    <p>
-      \paragraph{Valeurs propres, vecteurs propres.}
-    </p>
-
-    <p>
-      Si l'on d&#xe9;compose le polyn&#xf4;me minimal en facteurs irr&#xe9;ductibles,
-      <m>\phi_1=\psi_{1}^{m_1}\dots\psi_{s}^{m_s}</m>, alors tous les facteurs invariants
-      s'&#xe9;crivent sous la forme <m>\phi_i=\psi_{1}^{m_{i,1}}\dots\psi_{s}^{m_{i,s}}</m>,
-      avec des multiplicit&#xe9;s <m>m_{i,j}\leq m_j</m>. On
-      montre que l'on peut alors trouver une transformation de similitude qui change
-      chaque bloc compagnon <m>C_{\phi_i}</m> de la forme de Frobenius en un bloc
-      diagonal <m>\text{ Diag } (C_{\psi_1^{m_{i,1}}},\dots,C_{\psi_s^{m_{i,s}}})</m>. Cette variante
-      de la forme de Frobenius, que l'on appelle forme interm&#xe9;diaire, est toujours
-      form&#xe9;e de blocs compagnons, mais cette
-      fois correspondant chacun &#xe0; une puissance d'un polyn&#xf4;me irr&#xe9;ductible.
-      <men xml:id="eq_formeinter" >
-        F=
-        \left[
-          \begin{array}{cccc}
-            \begin{array}{<c>ccc</c>}
-              \hline
-              C_{\psi_1^{m_{1,1}}}\amp \amp \\
-              \amp \ddots\amp \\
-              \amp      \amp C_{\psi_s^{m_{1,s}}}\\
-              \hline
-            \end{array}\\
-            \amp 
-             \begin{array}{<c>ccc</c>}
-              \hline
-              C_{\psi_1^{m_{2,1}}}\amp \amp \\
-              \amp \ddots\amp \\
-              \hline
-            \end{array}\\
-           \amp \amp \ddots\\
-        \amp \amp \amp     
-             \begin{array}{<c>ccc</c>}
-              \hline
-              C_{\psi_1^{m_{k,1}}}\amp \amp \\
-              \amp \ddots\amp \\
-              \hline
-            \end{array}
-          \end{array}
-        \right]
-      </men>
-    </p>
-
-    <p>
-      Lorsqu'un facteur irr&#xe9;ductible <m>\psi_i</m> est de degr&#xe9; 1 et de multiplicit&#xe9; 1,
-      son bloc compagnon est une matrice <m>1\times 1</m> sur la diagonale et correspond ainsi &#xe0;
-      une valeur propre. Lorsque le polyn&#xf4;me minimal est scind&#xe9; et sans carr&#xe9;, la
-      matrice est donc diagonalisable.
-    </p>
-
-    <p>
-      On obtiendra les valeurs propres par la m&#xe9;thode <c>eigenvalues</c>. La liste des
-      vecteurs propres &#xe0; droite (respectivement &#xe0; gauche), associ&#xe9;s &#xe0; leur valeur
-      propre et sa multiplicit&#xe9; est donn&#xe9;e par la m&#xe9;thode <c>eigenvectors_right</c>
-      (respectivement <c>eigenvectors_left</c>). Enfin les espaces propres, ainsi que leur
-      base de vecteurs propres, sont fournis par les m&#xe9;thodes <c>eigenspaces_right</c> et
-      <c>eigenspaces_left</c>.
-    </p>
-
-    <sage>
-      <input>
-        A=matrix(GF(7),4,[5,5,4,3,0,3,3,4,0,1,5,4,6,0,6,3])
-        A.eigenvalues()
-      </input>
-      <output>
-        [4, 1, 2, 2]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        A.eigenvectors_right()
-      </input>
-      <output>
-        [(4, [
-        (1, 5, 5, 1)
-        ], 1), (1, [
-        (0, 1, 1, 4)
-        ], 1), (2, [
-        (1, 3, 0, 1),
-        (0, 0, 1, 1)
-        ], 2)]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        A.eigenspaces_right()
-      </input>
-      <output>
-        [
-        (4, Vector space of degree 4 and dimension 1 over Finite Field 
-        of size 7
-        User basis matrix:
-        [1 5 5 1]),
-        (1, Vector space of degree 4 and dimension 1 over Finite Field 
-        of size 7
-        User basis matrix:
-        [0 1 1 4]),
-        (2, Vector space of degree 4 and dimension 2 over Finite Field 
-        of size 7
-        User basis matrix:
-        [1 3 0 1]
-        [0 0 1 1])
-        ]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        A.eigenmatrix_right()
-      </input>
-      <output>
-        (
-        [4 0 0 0]  [1 0 1 0]
-        [0 1 0 0]  [5 1 3 0]
-        [0 0 2 0]  [5 1 0 1]
-        [0 0 0 2], [1 4 1 1]
-        )
-      </output>
-    </sage>
-
-    <p>
-      \paragraph{Forme de Jordan.}
-    </p>
-
-    <p>
-      Lorsque le polyn&#xf4;me minimal est scind&#xe9; mais ayant des facteurs avec des
-      multiplicit&#xe9;s sup&#xe9;rieures &#xe0; <m>1</m>, la forme interm&#xe9;diaire <xref ref="eq_formeinter" />
-      n'est pas diagonale. On montre alors qu'il n'existe pas de transformation de
-      similitude la rendant diagonale, elle n'est donc pas diagonalisable.
-      On peut en revanche la trigonaliser, c'est-&#xe0;-dire la rendre triangulaire sup&#xe9;rieure,
-      telle que les valeurs propres apparaissent sur la diagonale. Parmi les
-      diff&#xe9;rentes matrices triangulaires possibles, la plus r&#xe9;duite de toutes est la
-      forme normale de Jordan.
-    </p>
-
-    <p>
-      Un bloc de Jordan <m>J_{\lambda,k}</m>, associ&#xe9; &#xe0; la valeur propre <m>\lambda</m> et l'ordre
-      <m>k</m>, est la matrice <m>J_{\lambda,k}</m> de dimensions <m>k\times k</m> donn&#xe9;e par
-      <me>
-        J_{\lambda,k}=
-        \begin{bmatrix}\lambda \amp  1\\
-          \amp  \ddots \amp \ddots\\
-          \amp \amp \lambda\amp 1\\
-          \amp \amp \amp \lambda
-        \end{bmatrix} .
-      </me>
-    </p>
-
-    <p>
-      Cette matrice joue un r&#xf4;le similaire &#xe0; celui des blocs compagnons, en
-      r&#xe9;v&#xe9;lant plus pr&#xe9;cis&#xe9;ment la multiplicit&#xe9; d'un polyn&#xf4;me. En effet, son polyn&#xf4;me
-      caract&#xe9;ristique vaut <m>\chi_{J_{\lambda,k}}=(X-\lambda)^k</m>. De plus son polyn&#xf4;me
-      minimal vaut aussi <m>\phi_{J_{\lambda,k}}=(X-\lambda)^k</m>, en effet, il est
-      n&#xe9;cessairement un multiple de <m>P=X-\lambda</m>. Or
-      <me>
-        P(J_{\lambda,k})=
-        \begin{bmatrix}0\amp 1\\
-          \amp \ddots\amp \ddots\\
-          \amp \amp 0\amp 1\\
-          \amp \amp \amp 0
-        \end{bmatrix}
-      </me>
-      est une matrice nilpotente d'ordre <m>k</m> d'o&#xf9;
-      <m>\phi_{J_{\lambda,k}}=\chi_{J_{\lambda,k}}=(X-\lambda)^k</m>.
-      La forme normale de Jordan correspond ensuite &#xe0; la forme interm&#xe9;diaire
-      <xref ref="eq_formeinter" />, o&#xf9; les blocs compagnons des <m>\psi_j^{m_{i,j}}</m> ont &#xe9;t&#xe9;
-      remplac&#xe9;s par les blocs de Jordan <m>J_{\lambda_j,m_{i,j}}</m> (on rappelle que, le
-      polyn&#xf4;me minimal &#xe9;tant scind&#xe9;, les <m>\psi_j</m> s'&#xe9;crivent sous la forme
-      <m>X-\lambda_j</m>).
-    </p>
-
-    <p>
-      Ainsi lorsque son polyn&#xf4;me minimal est scind&#xe9;, toute matrice est semblable &#xe0; une
-      matrice de Jordan de la forme
-      <men xml:id="eq_jordan" >
-        J=\left[
-
-          \begin{array}{cccc}
-            \begin{array}{<c>ccc</c>}
-              \hline
-              J_{\lambda_1,m_{1,1}}\amp \amp \\
-              \amp \ddots\amp \\
-              \amp      \amp J_{\lambda_s,m_{1,s}}\\
-              \hline
-            \end{array}\\
-            \amp 
-             \begin{array}{<c>ccc</c>}
-              \hline
-              J_{\lambda_1,m_{2,1}}\amp \amp \\
-              \amp \ddots\amp \\
-              \hline
-            \end{array}\\
-           \amp \amp \ddots\\
-        \amp \amp \amp     
-             \begin{array}{<c>ccc</c>}
-              \hline
-              J_{\lambda_1,m_{k,1}}\amp \amp \\
-              \amp \ddots\amp \\
-              \hline
-            \end{array}
-          \end{array}
-        \right]
-        .
-      </men>
-    </p>
-
-    <p>
-      En particulier, dans tout corps alg&#xe9;briquement clos, comme <m>\C</m>, la forme de
-      Jordan d'une matrice est toujours d&#xe9;finie.
-    </p>
-
-    <p>
-      En <em>Sage</em> , le constructeur <c>jordan_block(a,k)</c> produit le bloc de Jordan
-      <m>J_{a,k}</m>. On obtiendra la forme normale de Jordan, si elle existe, par la
-      m&#xe9;thode <c>jordan_form</c>. L'option <c>transformation=True</c> permet d'obtenir la
-      matrice de transformation <m>U</m> telle que <m>U^{-1}AU</m> est sous forme de Jordan.
-    </p>
-
-    <p>
-      \vbox{
-    </p>
-
-    <sage>
-      <input>
-        A=matrix(ZZ,4,[3,-1,0,-1,0,2,0,-1,1,-1,2,0,1,-1,-1,3])
-        A.jordan_form()
-      </input>
-      <output>
-        [3|0|0 0]
-        [-+-+---]
-        [0|3|0 0]
-        [-+-+---]
-        [0|0|2 1]
-        [0|0|0 2]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        J,U=A.jordan_form(transformation=True)
-        U^-1*A*U==J
-      </input>
-      <output>
-        True
-      </output>
-    </sage>
-
-    <p>
-      La forme de Jordan est unique &#xe0; une permutation des blocs de Jordan pr&#xe8;s. Selon
-      les ouvrages, on peut imposer ou non que leur ordre d'apparition sur la
-      diagonale respecte l'ordre des polyn&#xf4;mes invariants, comme dans l'&#xe9;quation
-      <xref ref="eq_jordan" />. On remarque dans l'exemple ci-dessus que <em>Sage</em>  ne respecte
-      pas cet ordre, puisque le premier polyn&#xf4;me invariant (le polyn&#xf4;me minimal) est
-      le polyn&#xf4;me <m>(X-3)(X-2)^2</m>.
-    </p>
-
-    <p>
-      \paragraph{Forme normale primaire.} Pour &#xea;tre complet, il faut mentionner une
-      derni&#xe8;re forme normale qui g&#xe9;n&#xe9;ralise la forme de Jordan dans le cas quelconque
-      o&#xf9; le polyn&#xf4;me minimal n'est pas scind&#xe9;. Pour un polyn&#xf4;me irr&#xe9;ductible <m>P</m> de
-      degr&#xe9; <m>k</m>, on d&#xe9;finit le bloc de Jordan de multiplicit&#xe9; <m>m</m> comme la matrice
-      <m>J_{P,m}</m> de dimension <m>km\times km</m> v&#xe9;rifiant
-      <me>
-        J_{P,m} = 
-        \begin{bmatrix}C_P \amp  B\\
-          \amp \ddots \amp  \ddots\\
-          \amp \amp C_P \amp B\\
-          \amp \amp \amp C_P
-        \end{bmatrix}
-      </me>
-      o&#xf9; <m>B</m> est la matrice <m>k\times k</m> dont le seul coefficient non nul est
-      <m>B_{k,1}=1</m>.
-      On note que si <m>P = X-\lambda</m>, on retrouve la notion de bloc de Jordan associ&#xe9; &#xe0;
-      la valeur propre <m>\lambda</m>. On montre de fa&#xe7;on similaire que les polyn&#xf4;mes
-      minimal et caract&#xe9;ristique de cette matrice valent
-      <me>
-        \chi_{J_{P,m}}=\phi_{J_{P,m}}=P^m.
-      </me>
-    </p>
-
-    <p>
-      Ainsi on montre qu'il existe une transformation de similitude rempla&#xe7;ant chaque
-      bloc compagnon <m>C_{\psi_i^{m_{i,j}}}</m> de la forme interm&#xe9;diaire
-      <xref ref="eq_formeinter" /> en un bloc de Jordan <m>J_{\psi_i,m_{i,j}}</m>.
-      La matrice ainsi form&#xe9;e est appel&#xe9;e la forme primaire ou encore la deuxi&#xe8;me
-      forme de Frobenius. Il s'agit l&#xe0; encore d'une forme normale, c'est-&#xe0;-dire
-      unique &#xe0; une permutation des blocs diagonaux pr&#xe8;s.
-    </p>
-
-    <p>
-      L'unicit&#xe9; de ces formes normales permet en particulier de tester si deux
-      matrices sont semblables, et par la m&#xea;me occasion de produire une matrice de
-      passage entre l'une et l'autre.
-    </p>
-
-    <paragraphs xml:id="exo_testsimilitude">
-      <title>Exercice</title>
       <p>
-        &#xc9;crire un programme qui d&#xe9;termine si deux matrices <m>A</m> et <m>B</m> sont semblables et
-        renvoie la matrice <m>U</m> de passage telle que <m>A=U^{-1}BU</m> (on pourra
-        renvoyer <c>None</c> dans le cas o&#xf9; les matrices ne sont pas semblables).
+        Une propri&#xe9;t&#xe9; importante relie les invariants de similitude et les facteurs
+        invariants vus dans la <xref ref="sec_linalg_gauss">section</xref>.
+      </p>
+
+      <theorem>
+        <statement>
+          <p>
+            Les invariants de similitude d'une matrice &#xe0; coefficients dans un corps
+            correspondent aux facteurs invariants de sa matrice caract&#xe9;ristique.
+          </p>
+        </statement>
+      </theorem>
+
+      <p>
+        La preuve de ce r&#xe9;sultat d&#xe9;passe le cadre de cet ouvrage et nous nous
+        contentons de l'illustrer sur l'exemple pr&#xe9;c&#xe9;dent.
+      </p>
+
+      <sage>
+        <input>
+          S.&lt;x>=QQ[]
+          B=x*identity_matrix(8)-A
+          B.elementary_divisors()
+        </input>
+        <output>
+          [1, 1, 1, 1, 1, x - 2, x^3 - x^2 - 4, x^4 - x^2 - 4*x - 4]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          A.frobenius(1)
+        </input>
+        <output>
+          [x^4 - x^2 - 4*x - 4, x^3 - x^2 - 4, x - 2]
+        </output>
+      </sage>
+    </paragraphs>
+
+    <paragraphs>
+      <title>Valeurs propres, vecteurs propres</title>
+
+      <p>
+        Si l'on d&#xe9;compose le polyn&#xf4;me minimal en facteurs irr&#xe9;ductibles,
+        <m>\phi_1=\psi_{1}^{m_1}\dots\psi_{s}^{m_s}</m>, alors tous les facteurs invariants
+        s'&#xe9;crivent sous la forme <m>\phi_i=\psi_{1}^{m_{i,1}}\dots\psi_{s}^{m_{i,s}}</m>,
+        avec des multiplicit&#xe9;s <m>m_{i,j}\leq m_j</m>. On
+        montre que l'on peut alors trouver une transformation de similitude qui change
+        chaque bloc compagnon <m>C_{\phi_i}</m> de la forme de Frobenius en un bloc
+        diagonal <m>\text{ Diag } (C_{\psi_1^{m_{i,1}}},\dots,C_{\psi_s^{m_{i,s}}})</m>. Cette variante
+        de la forme de Frobenius, que l'on appelle forme interm&#xe9;diaire, est toujours
+        form&#xe9;e de blocs compagnons, mais cette
+        fois correspondant chacun &#xe0; une puissance d'un polyn&#xf4;me irr&#xe9;ductible.
+        <men xml:id="eq_formeinter" >
+          F=
+          \left[
+            \begin{array}{cccc}
+              \begin{array}{<c>ccc</c>}
+                \hline
+                C_{\psi_1^{m_{1,1}}}\amp \amp \\
+                \amp \ddots\amp \\
+                \amp      \amp C_{\psi_s^{m_{1,s}}}\\
+                \hline
+              \end{array}\\
+              \amp 
+               \begin{array}{<c>ccc</c>}
+                \hline
+                C_{\psi_1^{m_{2,1}}}\amp \amp \\
+                \amp \ddots\amp \\
+                \hline
+              \end{array}\\
+             \amp \amp \ddots\\
+          \amp \amp \amp     
+               \begin{array}{<c>ccc</c>}
+                \hline
+                C_{\psi_1^{m_{k,1}}}\amp \amp \\
+                \amp \ddots\amp \\
+                \hline
+              \end{array}
+            \end{array}
+          \right]
+        </men>
+      </p>
+
+      <p>
+        Lorsqu'un facteur irr&#xe9;ductible <m>\psi_i</m> est de degr&#xe9; 1 et de multiplicit&#xe9; 1,
+        son bloc compagnon est une matrice <m>1\times 1</m> sur la diagonale et correspond ainsi &#xe0;
+        une valeur propre. Lorsque le polyn&#xf4;me minimal est scind&#xe9; et sans carr&#xe9;, la
+        matrice est donc diagonalisable.
+      </p>
+
+      <p>
+        On obtiendra les valeurs propres par la m&#xe9;thode <c>eigenvalues</c>. La liste des
+        vecteurs propres &#xe0; droite (respectivement &#xe0; gauche), associ&#xe9;s &#xe0; leur valeur
+        propre et sa multiplicit&#xe9; est donn&#xe9;e par la m&#xe9;thode <c>eigenvectors_right</c>
+        (respectivement <c>eigenvectors_left</c>). Enfin les espaces propres, ainsi que leur
+        base de vecteurs propres, sont fournis par les m&#xe9;thodes <c>eigenspaces_right</c> et
+        <c>eigenspaces_left</c>.
+      </p>
+
+      <sage>
+        <input>
+          A=matrix(GF(7),4,[5,5,4,3,0,3,3,4,0,1,5,4,6,0,6,3])
+          A.eigenvalues()
+        </input>
+        <output>
+          [4, 1, 2, 2]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          A.eigenvectors_right()
+        </input>
+        <output>
+          [(4, [
+          (1, 5, 5, 1)
+          ], 1), (1, [
+          (0, 1, 1, 4)
+          ], 1), (2, [
+          (1, 3, 0, 1),
+          (0, 0, 1, 1)
+          ], 2)]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          A.eigenspaces_right()
+        </input>
+        <output>
+          [
+          (4, Vector space of degree 4 and dimension 1 over Finite Field 
+          of size 7
+          User basis matrix:
+          [1 5 5 1]),
+          (1, Vector space of degree 4 and dimension 1 over Finite Field 
+          of size 7
+          User basis matrix:
+          [0 1 1 4]),
+          (2, Vector space of degree 4 and dimension 2 over Finite Field 
+          of size 7
+          User basis matrix:
+          [1 3 0 1]
+          [0 0 1 1])
+          ]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          A.eigenmatrix_right()
+        </input>
+        <output>
+          (
+          [4 0 0 0]  [1 0 1 0]
+          [0 1 0 0]  [5 1 3 0]
+          [0 0 2 0]  [5 1 0 1]
+          [0 0 0 2], [1 4 1 1]
+          )
+        </output>
+      </sage>
+
+    </paragraphs>
+
+    <paragraphs>
+      <title>Forme de Jordan</title>
+
+      <p>
+        Lorsque le polyn&#xf4;me minimal est scind&#xe9; mais ayant des facteurs avec des
+        multiplicit&#xe9;s sup&#xe9;rieures &#xe0; <m>1</m>, la forme interm&#xe9;diaire <xref ref="eq_formeinter" />
+        n'est pas diagonale. On montre alors qu'il n'existe pas de transformation de
+        similitude la rendant diagonale, elle n'est donc pas diagonalisable.
+        On peut en revanche la trigonaliser, c'est-&#xe0;-dire la rendre triangulaire sup&#xe9;rieure,
+        telle que les valeurs propres apparaissent sur la diagonale. Parmi les
+        diff&#xe9;rentes matrices triangulaires possibles, la plus r&#xe9;duite de toutes est la
+        forme normale de Jordan.
+      </p>
+
+      <p>
+        Un bloc de Jordan <m>J_{\lambda,k}</m>, associ&#xe9; &#xe0; la valeur propre <m>\lambda</m> et l'ordre
+        <m>k</m>, est la matrice <m>J_{\lambda,k}</m> de dimensions <m>k\times k</m> donn&#xe9;e par
+        <me>
+          J_{\lambda,k}=
+          \begin{bmatrix}\lambda \amp  1\\
+            \amp  \ddots \amp \ddots\\
+            \amp \amp \lambda\amp 1\\
+            \amp \amp \amp \lambda
+          \end{bmatrix} .
+        </me>
+      </p>
+
+      <p>
+        Cette matrice joue un r&#xf4;le similaire &#xe0; celui des blocs compagnons, en
+        r&#xe9;v&#xe9;lant plus pr&#xe9;cis&#xe9;ment la multiplicit&#xe9; d'un polyn&#xf4;me. En effet, son polyn&#xf4;me
+        caract&#xe9;ristique vaut <m>\chi_{J_{\lambda,k}}=(X-\lambda)^k</m>. De plus son polyn&#xf4;me
+        minimal vaut aussi <m>\phi_{J_{\lambda,k}}=(X-\lambda)^k</m>, en effet, il est
+        n&#xe9;cessairement un multiple de <m>P=X-\lambda</m>. Or
+        <me>
+          P(J_{\lambda,k})=
+          \begin{bmatrix}0\amp 1\\
+            \amp \ddots\amp \ddots\\
+            \amp \amp 0\amp 1\\
+            \amp \amp \amp 0
+          \end{bmatrix}
+        </me>
+        est une matrice nilpotente d'ordre <m>k</m> d'o&#xf9;
+        <m>\phi_{J_{\lambda,k}}=\chi_{J_{\lambda,k}}=(X-\lambda)^k</m>.
+        La forme normale de Jordan correspond ensuite &#xe0; la forme interm&#xe9;diaire
+        <xref ref="eq_formeinter" />, o&#xf9; les blocs compagnons des <m>\psi_j^{m_{i,j}}</m> ont &#xe9;t&#xe9;
+        remplac&#xe9;s par les blocs de Jordan <m>J_{\lambda_j,m_{i,j}}</m> (on rappelle que, le
+        polyn&#xf4;me minimal &#xe9;tant scind&#xe9;, les <m>\psi_j</m> s'&#xe9;crivent sous la forme
+        <m>X-\lambda_j</m>).
+      </p>
+
+      <p>
+        Ainsi lorsque son polyn&#xf4;me minimal est scind&#xe9;, toute matrice est semblable &#xe0; une
+        matrice de Jordan de la forme
+        <men xml:id="eq_jordan" >
+          J=\left[
+
+            \begin{array}{cccc}
+              \begin{array}{<c>ccc</c>}
+                \hline
+                J_{\lambda_1,m_{1,1}}\amp \amp \\
+                \amp \ddots\amp \\
+                \amp      \amp J_{\lambda_s,m_{1,s}}\\
+                \hline
+              \end{array}\\
+              \amp 
+               \begin{array}{<c>ccc</c>}
+                \hline
+                J_{\lambda_1,m_{2,1}}\amp \amp \\
+                \amp \ddots\amp \\
+                \hline
+              \end{array}\\
+             \amp \amp \ddots\\
+          \amp \amp \amp     
+               \begin{array}{<c>ccc</c>}
+                \hline
+                J_{\lambda_1,m_{k,1}}\amp \amp \\
+                \amp \ddots\amp \\
+                \hline
+              \end{array}
+            \end{array}
+          \right]
+          .
+        </men>
+      </p>
+
+      <p>
+        En particulier, dans tout corps alg&#xe9;briquement clos, comme <m>\C</m>, la forme de
+        Jordan d'une matrice est toujours d&#xe9;finie.
+      </p>
+
+      <p>
+        En <em>Sage</em> , le constructeur <c>jordan_block(a,k)</c> produit le bloc de Jordan
+        <m>J_{a,k}</m>. On obtiendra la forme normale de Jordan, si elle existe, par la
+        m&#xe9;thode <c>jordan_form</c>. L'option <c>transformation=True</c> permet d'obtenir la
+        matrice de transformation <m>U</m> telle que <m>U^{-1}AU</m> est sous forme de Jordan.
+      </p>
+
+      <sage>
+        <input>
+          A=matrix(ZZ,4,[3,-1,0,-1,0,2,0,-1,1,-1,2,0,1,-1,-1,3])
+          A.jordan_form()
+        </input>
+        <output>
+          [3|0|0 0]
+          [-+-+---]
+          [0|3|0 0]
+          [-+-+---]
+          [0|0|2 1]
+          [0|0|0 2]
+        </output>
+      </sage>
+
+      <sage>
+        <input>
+          J,U=A.jordan_form(transformation=True)
+          U^-1*A*U==J
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
+
+      <p>
+        La forme de Jordan est unique &#xe0; une permutation des blocs de Jordan pr&#xe8;s. Selon
+        les ouvrages, on peut imposer ou non que leur ordre d'apparition sur la
+        diagonale respecte l'ordre des polyn&#xf4;mes invariants, comme dans l'&#xe9;quation
+        <xref ref="eq_jordan" />. On remarque dans l'exemple ci-dessus que <em>Sage</em>  ne respecte
+        pas cet ordre, puisque le premier polyn&#xf4;me invariant (le polyn&#xf4;me minimal) est
+        le polyn&#xf4;me <m>(X-3)(X-2)^2</m>.
       </p>
     </paragraphs>
-    <p>
-      \UndefineShortVerb{\|}
-    </p>
 
-    <p>
-      \newlength{\indentsave}
-    </p>
+    <paragraphs>
+      <title>Forme normale primaire</title>
+      <p>
+        Pour &#xea;tre complet, il faut mentionner une
+        derni&#xe8;re forme normale qui g&#xe9;n&#xe9;ralise la forme de Jordan dans le cas quelconque
+        o&#xf9; le polyn&#xf4;me minimal n'est pas scind&#xe9;. Pour un polyn&#xf4;me irr&#xe9;ductible <m>P</m> de
+        degr&#xe9; <m>k</m>, on d&#xe9;finit le bloc de Jordan de multiplicit&#xe9; <m>m</m> comme la matrice
+        <m>J_{P,m}</m> de dimension <m>km\times km</m> v&#xe9;rifiant
+        <me>
+          J_{P,m} = 
+          \begin{bmatrix}C_P \amp  B\\
+            \amp \ddots \amp  \ddots\\
+            \amp \amp C_P \amp B\\
+            \amp \amp \amp C_P
+          \end{bmatrix}
+        </me>
+        o&#xf9; <m>B</m> est la matrice <m>k\times k</m> dont le seul coefficient non nul est
+        <m>B_{k,1}=1</m>.
+        On note que si <m>P = X-\lambda</m>, on retrouve la notion de bloc de Jordan associ&#xe9; &#xe0;
+        la valeur propre <m>\lambda</m>. On montre de fa&#xe7;on similaire que les polyn&#xf4;mes
+        minimal et caract&#xe9;ristique de cette matrice valent
+        <me>
+          \chi_{J_{P,m}}=\phi_{J_{P,m}}=P^m.
+        </me>
+      </p>
 
-    <p>
-      \begin{savequote}
-      <em>Pour r&#xe9;soudre cette &#xe9;quation diff&#xe9;rentielle, regardez-la
-      jusqu'&#xe0; ce que la solution vienne d'elle-m&#xea;me.</em>
-      \qauthor{ George P&#xf3;lya (1887 - 1985)}
-      \end{savequote}
-    </p>
+      <p>
+        Ainsi on montre qu'il existe une transformation de similitude rempla&#xe7;ant chaque
+        bloc compagnon <m>C_{\psi_i^{m_{i,j}}}</m> de la forme interm&#xe9;diaire
+        <xref ref="eq_formeinter" /> en un bloc de Jordan <m>J_{\psi_i,m_{i,j}}</m>.
+        La matrice ainsi form&#xe9;e est appel&#xe9;e la forme primaire ou encore la deuxi&#xe8;me
+        forme de Frobenius. Il s'agit l&#xe0; encore d'une forme normale, c'est-&#xe0;-dire
+        unique &#xe0; une permutation des blocs diagonaux pr&#xe8;s.
+      </p>
+
+      <p>
+        L'unicit&#xe9; de ces formes normales permet en particulier de tester si deux
+        matrices sont semblables, et par la m&#xea;me occasion de produire une matrice de
+        passage entre l'une et l'autre.
+      </p>
+
+      <exercise xml:id="exo_testsimilitude">
+        <p>
+          &#xc9;crire un programme qui d&#xe9;termine si deux matrices <m>A</m> et <m>B</m> sont semblables et
+          renvoie la matrice <m>U</m> de passage telle que <m>A=U^{-1}BU</m> (on pourra
+          renvoyer <c>None</c> dans le cas o&#xf9; les matrices ne sont pas semblables).
+        </p>
+      </exercise>
+    </paragraphs>
+
+    <blockquote>
+      <p>
+        Pour r&#xe9;soudre cette &#xe9;quation diff&#xe9;rentielle, regardez-la
+        jusqu'&#xe0; ce que la solution vienne d'elle-m&#xea;me.
+      </p>
+      <attribution>George P&#xf3;lya (1887 - 1985)</attribution>
+    </blockquote>
   </subsection>
 </section>
 

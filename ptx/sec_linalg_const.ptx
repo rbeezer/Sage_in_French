@@ -54,48 +54,45 @@
       </output>
     </sage>
 
-    <p>
-      \begin{paragraph}
-      {Groupes de matrices.}
-      On pourra par ailleurs d&#xe9;finir des sous-groupes de l'espace total des
-      matrices. Ainsi le constructeur <c>MatrixGroup([A,B,...])</c> retourne le
-      groupe g&#xe9;n&#xe9;r&#xe9;
-      par les matrices pass&#xe9;es en argument, qui doivent &#xea;tre inversibles.
-    </p>
+    <paragraphs>
+      <title>Groupes de matrices</title>
+      <p>
+        On pourra par ailleurs d&#xe9;finir des sous-groupes de l'espace total des
+        matrices. Ainsi le constructeur <c>MatrixGroup([A,B,...])</c> retourne le
+        groupe g&#xe9;n&#xe9;r&#xe9;
+        par les matrices pass&#xe9;es en argument, qui doivent &#xea;tre inversibles.
+      </p>
 
-    <sage>
-      <input>
-        A=matrix(GF(11),2,2,[1,0,0,2])
-        B=matrix(GF(11),2,2,[0,1,1,0])
-        MG=MatrixGroup([A,B])
-        MG.cardinality()
-      </input>
-      <output>
-        200
-      </output>
-    </sage>
+      <sage>
+        <input>
+          A=matrix(GF(11),2,2,[1,0,0,2])
+          B=matrix(GF(11),2,2,[0,1,1,0])
+          MG=MatrixGroup([A,B])
+          MG.cardinality()
+        </input>
+        <output>
+          200
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        identity_matrix(GF(11),2) in MG
-      </input>
-      <output>
-        True
-      </output>
-    </sage>
+      <sage>
+        <input>
+          identity_matrix(GF(11),2) in MG
+        </input>
+        <output>
+          True
+        </output>
+      </sage>
 
-    <p>
-      Le groupe g&#xe9;n&#xe9;ral lin&#xe9;aire de degr&#xe9; <m>n</m> sur un corps <m>K</m>, not&#xe9; <m>\text{ GL } _n(K)</m>,
-      est le groupe form&#xe9; par les matrices <m>n\times n</m> inversibles de
-      <m>\mathcal{M}_{n,n}(K)</m>. Il se construit naturellement en <em>Sage</em>  avec la commande
-      <c>GL(n,K)</c>. Le groupe sp&#xe9;cial lin&#xe9;aire <m>\text{ SL } _n(K)</m> des
-      &#xe9;l&#xe9;ments de <m>\text{ GL } _n(K)</m> de d&#xe9;terminant 1 se construit avec la
-      commande <c>SL(n,K)</c>.
-    </p>
-
-    <p>
-      \end{paragraph}
-    </p>
+      <p>
+        Le groupe g&#xe9;n&#xe9;ral lin&#xe9;aire de degr&#xe9; <m>n</m> sur un corps <m>K</m>, not&#xe9; <m>\text{ GL } _n(K)</m>,
+        est le groupe form&#xe9; par les matrices <m>n\times n</m> inversibles de
+        <m>\mathcal{M}_{n,n}(K)</m>. Il se construit naturellement en <em>Sage</em>  avec la commande
+        <c>GL(n,K)</c>. Le groupe sp&#xe9;cial lin&#xe9;aire <m>\text{ SL } _n(K)</m> des
+        &#xe9;l&#xe9;ments de <m>\text{ GL } _n(K)</m> de d&#xe9;terminant 1 se construit avec la
+        commande <c>SL(n,K)</c>.
+      </p>
+    </paragraphs>
   </subsection>
 
   <subsection>
@@ -179,201 +176,156 @@
       </output>
     </sage>
 
+    <table xml:id="linalg-constructeurs">
+      <caption>Constructeurs de matrices et de leurs espaces</caption>
+      <tabular>
+        <row bottom="medium">
+          <cell colspan="2" halign="center">Espaces de matrices</cell>
+        </row>
+
+        <row>
+          <cell>construction</cell>
+          <cell><c>MS=MatrixSpace(A, m, n)</c></cell>
+        </row>
+        <row>
+          <cell>construction (creux)</cell>
+          <cell><c>MS=MatrixSpace(A, m, n, sparse = True)</c></cell>
+        </row>
+        <row>
+          <cell>anneau de base <m>A</m></cell>
+          <cell><c>MS.base_ring()</c></cell>
+        </row>
+        <row>
+          <cell>extension de l'anneau</cell>
+          <cell><c>MS.change_ring(B)</c></cell>
+        </row>
+        <row>
+          <cell>groupe engendr&#xe9;</cell>
+          <cell><c>MatrixGroup([M,N])</c></cell>
+        </row>
+        <row>
+          <cell>base de l'espace</cell>
+          <cell><c>MS.basis()</c> <em>ou</em> <c>MS.gens()</c></cell>
+        </row>
+
+        <row bottom="medium">
+          <cell colspan="2" halign="center">Construction de matrices</cell>
+        </row>
+
+        <row>
+          <cell>matrice nulle</cell>
+          <cell><c>MS()</c> <em>ou</em> <c>MS.zero()</c> <em>ou</em> <c>matrix(A,nrows,ncols)</c></cell>
+        </row>
+
+        <row><cell>matrice avec coefficients</cell><cell><c>MS([1,2,3,4]</c> <em>ou</em></cell></row>
+
+        <row><cell></cell><cell><c>matrix(ZZ,2,2,[1,2,3,4])</c> <em>ou</em></cell></row>
+
+        <row><cell></cell><cell><c>matrix([[1,2][3,4]])</c></cell></row>
+
+        <row><cell>matrice identit&#xe9;</cell><cell><c>MS.one()</c> <em>ou</em>  <c>MS.identity_matrix()</c> <em>ou</em></cell>
+
+        </row><row><cell></cell><cell><c>identity_matrix(A,n)</c></cell></row>
+
+        <row><cell>matrice al&#xe9;atoire</cell><cell><c>MS.random_element()</c> <em>ou</em></cell></row>
+
+        <row><cell></cell><cell><c>random_matrix(A,nrows,ncols)</c></cell></row> <row><cell>bloc de Jordan</cell><cell><c>jordan_block(x,n)</c></cell></row>
+
+        <row><cell>matrice par blocs</cell><cell><c>block_matrix([A,1,B,0])</c> , <c>block_diagonal_matrix</c></cell></row>
+
+        <row bottom="medium">
+          <cell colspan="2" halign="center">Manipulations de base</cell>
+        </row>
+
+        <row><cell>acc&#xe8;s &#xe0; un coefficient</cell><cell><c>A[2,3]</c></cell></row>
+
+        <row><cell>acc&#xe8;s &#xe0; une ligne, colonne</cell><cell><c>A[:,2]</c>, <c>A[-1,:]</c></cell></row>
+
+        <row><cell>acc&#xe8;s aux colonnes paires</cell><cell><c>A[:,0:8:2]</c></cell></row>
+
+        <row><cell>sous-matrices</cell><cell><c>A[3:4,2:5]</c>, <c>A[:,2:5]</c>, <c>A[:4,2:5]</c></cell></row>
+
+        <row><cell></cell><cell><c>A.matrix_from_rows([1,2])</c>,</cell></row>
+
+        <row><cell></cell><cell><c>A.matrix_from_columns([2,3])</c>,</cell></row>
+
+        <row><cell></cell><cell><c>A.matrix_from_rows_and_columns([1,2],[2,3])</c></cell></row>
+
+        <row><cell></cell><cell><c>A.submatrix(i,j,nrows,ncols)</c></cell></row>
+
+        <row><cell>concat&#xe9;nation par lignes</cell><cell><c>A.stack(B)</c></cell></row>
+
+        <row><cell>concat&#xe9;nation par colonnes</cell><cell><c>A.augment(B)</c></cell></row>
+
+      </tabular>
+    </table>
+    <paragraphs>
+      <title>Matrices par blocs</title>
+      <p>
+        Pour construire une matrice par blocs &#xe0; partir de sous-matrices, on peut
+        utiliser la fonction <c>block_matrix</c>.
+      </p>
+
+      <sage>
+        <input>
+          A=matrix([[1,2],[3,4]])
+          block_matrix([A,-A,2*A, A^2])
+        </input>
+        <output>
+          [ 1  2|-1 -2]
+          [ 3  4|-3 -4]
+          [-----+-----]
+          [ 2  4| 7 10]
+          [ 6  8|15 22]
+        </output>
+      </sage>
+
+      <p>
+        La structure est carr&#xe9;e par blocs par
+        d&#xe9;faut mais le nombre de blocs ligne ou colonne peut &#xea;tre sp&#xe9;cifi&#xe9; par les
+        arguments optionnels <c>ncols</c> et <c>nrows</c>.
+        Lorsque cela est possible, un coefficient comme <c>0</c> ou <c>1</c> est
+        interpr&#xe9;t&#xe9; comme un block diagonal (ici z&#xe9;ro ou identit&#xe9;) de dimension appropri&#xe9;e.
+        \vbox{
+      </p>
+
+      <sage>
+        <input>
+          A=matrix([[1,2,3],[4,5,6]])
+          block_matrix([1,A,0,0,-A,2], ncols=3)
+        </input>
+        <output>
+          [ 1  0| 1  2  3| 0  0]
+          [ 0  1| 4  5  6| 0  0]
+          [-----+--------+-----]
+          [ 0  0|-1 -2 -3| 2  0]
+          [ 0  0|-4 -5 -6| 0  2]
+        </output>
+      </sage>
+
+      <p>
+        Pour le cas particulier des matrices diagonales par blocs, on passe simplement la
+        liste des blocs diagonaux au constructeur <c>block_diagonal_matrix</c>.
+        \vbox{
+      </p>
+
+      <sage>
+        <input>
+          A=matrix([[1,2,3],[0,1,0]])
+          block_diagonal_matrix(A,A.transpose())
+        </input>
+        <output>
+          [1 2 3|0 0]
+          [0 1 0|0 0]
+          [-----+---]
+          [0 0 0|1 0]
+          [0 0 0|2 1]
+          [0 0 0|3 0]
+        </output>
+      </sage>
+    </paragraphs>
+    
     <p>
-      \begin{cmdtable}{Constructeurs de matrices et de leurs espaces}{linalg:constructeurs}
-
-  
-
-        \toprule
-        Espaces de matrices 
-
-        \midrule
-
-      construction &amp; <c>MS=MatrixSpace(A, m, n)</c>
-    </p>
-
-    <p>
-      construction (creux) &amp; |MS=MatrixSpace(A, m, n, sparse = True)|
-    </p>
-
-    <p>
-      anneau de base <m>A</m> &amp; <c>MS.base_ring()</c>
-    </p>
-
-    <p>
-      extension de l'anneau &amp; <c>MS.base_extend(B)</c>
-    </p>
-
-    <p>
-      changement de l'anneau &amp; <c>MS.change_ring(B)</c>
-    </p>
-
-    <p>
-      groupe engendr&#xe9; &amp; <c>MatrixGroup([M,N])</c>
-    </p>
-
-    <p>
-      base de l'espace &amp; <c>MS.basis()</c><em>ou</em>  <c>MS.gens()</c>
-    </p>
-
-    <p>
-      \toprule
-        Construction de matrices 
-
-        \midrule
-
-      matrice nulle &amp; <c>MS()</c> <em>ou</em>  <c>MS.zero()</c><em>ou</em>  <c>matrix(A,nrows,ncols)</c>
-    </p>
-
-    <p>
-      matrice avec coefficients &amp; <c>MS([1,2,3,4]</c><em>ou</em>
-    </p>
-
-    <p>
-      &amp; <c>matrix(ZZ,2,2,[1,2,3,4])</c><em>ou</em>
-    </p>
-
-    <p>
-      &amp; <c>matrix([[1,2][3,4]])</c>
-    </p>
-
-    <p>
-      matrice identit&#xe9; &amp; <c>MS.one()</c> <em>ou</em>  <c>MS.identity_matrix()</c><em>ou</em>
-    </p>
-
-    <p>
-      &amp; <c>identity_matrix(A,n)</c>
-    </p>
-
-    <p>
-      matrice al&#xe9;atoire &amp; <c>MS.random_element()</c> <em>ou</em>
-    </p>
-
-    <p>
-      &amp; <c>random_matrix(A,nrows,ncols)</c>
-    </p>
-
-    <p>
-      bloc de Jordan &amp; <c>jordan_block(x,n)</c>
-    </p>
-
-    <p>
-      matrice par blocs &amp; <c>block_matrix([A,1,B,0])</c> , <c>block_diagonal_matrix</c>
-    </p>
-
-    <p>
-      \toprule
-        Manipulations de base 
-
-        \midrule
-
-      acc&#xe8;s &#xe0; un coefficient &amp; <c>A[2,3]</c>
-    </p>
-
-    <p>
-      acc&#xe8;s &#xe0; une ligne, colonne &amp; <c>A[:,2]</c>, <c>A[-1,:]</c>
-    </p>
-
-    <p>
-      acc&#xe8;s aux colonnes paires &amp; <c>A[:,0:8:2]</c>
-    </p>
-
-    <p>
-      sous-matrices &amp; <c>A[3:4,2:5]</c>, <c>A[:,2:5]</c>, <c>A[:4,2:5]</c>
-    </p>
-
-    <p>
-      &amp; <c>A.matrix_from_rows([1,2])</c>,
-    </p>
-
-    <p>
-      &amp; <c>A.matrix_from_columns([2,3])</c>,
-    </p>
-
-    <p>
-      &amp; |A.matrix_from_rows_and_columns([1,2],[2,3])|
-    </p>
-
-    <p>
-      &amp; <c>A.submatrix(i,j,nrows,ncols)</c>
-    </p>
-
-    <p>
-      concat&#xe9;nation par lignes &amp; <c>A.stack(B)</c>
-    </p>
-
-    <p>
-      concat&#xe9;nation par colonnes &amp; <c>A.augment(B)</c>
-      \end{cmdtable}
-    </p>
-
-    <p>
-      \begin{paragraph}{Matrices par blocs.}
-      Pour construire une matrice par blocs &#xe0; partir de sous-matrices, on peut
-      utiliser la fonction <c>block_matrix</c>.
-    </p>
-
-    <sage>
-      <input>
-        A=matrix([[1,2],[3,4]])
-        block_matrix([A,-A,2*A, A^2])
-      </input>
-      <output>
-        [ 1  2|-1 -2]
-        [ 3  4|-3 -4]
-        [-----+-----]
-        [ 2  4| 7 10]
-        [ 6  8|15 22]
-      </output>
-    </sage>
-
-    <p>
-      La structure est carr&#xe9;e par blocs par
-      d&#xe9;faut mais le nombre de blocs ligne ou colonne peut &#xea;tre sp&#xe9;cifi&#xe9; par les
-      arguments optionnels <c>ncols</c> et <c>nrows</c>.
-      Lorsque cela est possible, un coefficient comme <c>0</c> ou <c>1</c> est
-      interpr&#xe9;t&#xe9; comme un block diagonal (ici z&#xe9;ro ou identit&#xe9;) de dimension appropri&#xe9;e.
-      \vbox{
-    </p>
-
-    <sage>
-      <input>
-        A=matrix([[1,2,3],[4,5,6]])
-        block_matrix([1,A,0,0,-A,2], ncols=3)
-      </input>
-      <output>
-        [ 1  0| 1  2  3| 0  0]
-        [ 0  1| 4  5  6| 0  0]
-        [-----+--------+-----]
-        [ 0  0|-1 -2 -3| 2  0]
-        [ 0  0|-4 -5 -6| 0  2]
-      </output>
-    </sage>
-
-    <p>
-      Pour le cas particulier des matrices diagonales par blocs, on passe simplement la
-      liste des blocs diagonaux au constructeur <c>block_diagonal_matrix</c>.
-      \vbox{
-    </p>
-
-    <sage>
-      <input>
-        A=matrix([[1,2,3],[0,1,0]])
-        block_diagonal_matrix(A,A.transpose())
-      </input>
-      <output>
-        [1 2 3|0 0]
-        [0 1 0|0 0]
-        [-----+---]
-        [0 0 0|1 0]
-        [0 0 0|2 1]
-        [0 0 0|3 0]
-      </output>
-    </sage>
-
-    <p>
-      }
-      \end{paragraph}
       La structure par blocs n'est qu'une commodit&#xe9; d'affichage, et <em>Sage</em>  traite la
       matrice comme toute autre matrice. On peut par ailleurs d&#xe9;sactiver cet affichage
       en ajoutant l'argument <c>subdivide=False</c> au constructeur <c>block_matrix</c>.
@@ -382,95 +334,89 @@
 
   <subsection>
     <title>Manipulations de base et arithm&#xe9;tique sur les matrices</title>
-    <p>
-      \begin{paragraph}
-      {Indices et acc&#xe8;s aux coefficients.}
-      L'acc&#xe8;s aux coefficients ainsi qu'&#xe0; des sous-matrices extraites se fait de fa&#xe7;on
-      unifi&#xe9;e par l'op&#xe9;rateur crochet <c>A[i,j]</c>, selon les conventions
-      usuelles de <em>Python</em> . Les indices de ligne <m>i</m> et de colonne
-      <m>j</m> peuvent &#xea;tre des entiers (pour l'acc&#xe8;s &#xe0; des coefficients) ou des
-      intervalles sous la forme <c>1:3</c> ou <c>[1..3]</c> (on rappelle que par convention, en
-      <em>Python</em>  les indices commencent &#xe0; <m>0</m>, et les intervalles sont toujours inclusifs
-      pour la borne inf&#xe9;rieure et
-      exclusifs pour la borne sup&#xe9;rieure). L'intervalle <c>:</c> sans valeurs correspond
-      &#xe0; la totalit&#xe9; des indices possibles dans la dimension consid&#xe9;r&#xe9;e. La notation
-      <c>a:b:k</c> permet d'acc&#xe9;der aux indices compris entre <m>a</m> et <m>b-1</m> par pas de
-      <m>k</m>. Enfin, les indices n&#xe9;gatifs sont aussi valides, et permettent de parcourir
-      les indices &#xe0; partir de la fin. Ainsi <c>A[-2,:]</c> correspond &#xe0; l'avant derni&#xe8;re ligne.
-      L'acc&#xe8;s &#xe0; ces sous-matrices se fait aussi bien en lecture qu'en &#xe9;criture.
-      On peut par exemple modifier une colonne donn&#xe9;e de la fa&#xe7;on suivante:
-    </p>
+    <paragraphs>
+      <title>Indices et acc&#xe8;s aux coefficients</title>
+      <p>
+        L'acc&#xe8;s aux coefficients ainsi qu'&#xe0; des sous-matrices extraites se fait de fa&#xe7;on
+        unifi&#xe9;e par l'op&#xe9;rateur crochet <c>A[i,j]</c>, selon les conventions
+        usuelles de <em>Python</em> . Les indices de ligne <m>i</m> et de colonne
+        <m>j</m> peuvent &#xea;tre des entiers (pour l'acc&#xe8;s &#xe0; des coefficients) ou des
+        intervalles sous la forme <c>1:3</c> ou <c>[1..3]</c> (on rappelle que par convention, en
+        <em>Python</em>  les indices commencent &#xe0; <m>0</m>, et les intervalles sont toujours inclusifs
+        pour la borne inf&#xe9;rieure et
+        exclusifs pour la borne sup&#xe9;rieure). L'intervalle <c>:</c> sans valeurs correspond
+        &#xe0; la totalit&#xe9; des indices possibles dans la dimension consid&#xe9;r&#xe9;e. La notation
+        <c>a:b:k</c> permet d'acc&#xe9;der aux indices compris entre <m>a</m> et <m>b-1</m> par pas de
+        <m>k</m>. Enfin, les indices n&#xe9;gatifs sont aussi valides, et permettent de parcourir
+        les indices &#xe0; partir de la fin. Ainsi <c>A[-2,:]</c> correspond &#xe0; l'avant derni&#xe8;re ligne.
+        L'acc&#xe8;s &#xe0; ces sous-matrices se fait aussi bien en lecture qu'en &#xe9;criture.
+        On peut par exemple modifier une colonne donn&#xe9;e de la fa&#xe7;on suivante:
+      </p>
 
-    <sage>
-      <input>
-        A=matrix(3,3,range(9))
-        A[:,1]=vector([1,1,1]); A
-      </input>
-      <output>
-        [0 1 2]
-        [3 1 5]
-        [6 1 8]
-      </output>
-    </sage>
+      <sage>
+        <input>
+          A=matrix(3,3,range(9))
+          A[:,1]=vector([1,1,1]); A
+        </input>
+        <output>
+          [0 1 2]
+          [3 1 5]
+          [6 1 8]
+        </output>
+      </sage>
 
-    <p>
-      L'indice de pas <m>c</m> peut aussi &#xea;tre n&#xe9;gatif, indiquant un parcours par valeurs
-      d&#xe9;croissantes.
-    </p>
+      <p>
+        L'indice de pas <m>c</m> peut aussi &#xea;tre n&#xe9;gatif, indiquant un parcours par valeurs
+        d&#xe9;croissantes.
+      </p>
 
-    <sage>
-      <input>
-        A[::-1], A[:,::-1], A[::2,-1]
-      </input>
-      <output>
-        (
-        [6 1 8]  [2 1 0]     
-        [3 1 5]  [5 1 3]  [2]
-        [0 1 2], [8 1 6], [8]
-        )
-      </output>
-    </sage>
+      <sage>
+        <input>
+          A[::-1], A[:,::-1], A[::2,-1]
+        </input>
+        <output>
+          (
+          [6 1 8]  [2 1 0]     
+          [3 1 5]  [5 1 3]  [2]
+          [0 1 2], [8 1 6], [8]
+          )
+        </output>
+      </sage>
+    </paragraphs>
 
-    <p>
-      \end{paragraph}
-    </p>
+    <paragraphs>
+      <title>Extraction de sous-matrices</title>
+      <p>
+        Pour extraire une matrice &#xe0; partir d'une liste d'indices de ligne ou de colonnes non
+        n&#xe9;cessairement contigus, on utilise les m&#xe9;thodes
+        <c>A.matrix_from_rows</c>, ou <c>A.matrix_from_columns</c> ou dans
+        le cas g&#xe9;n&#xe9;ral, la m&#xe9;thode
+        <c>A.matrix_from_rows_and_columns</c>.
+      </p>
 
-    <p>
-      \begin{paragraph}
-      {Extraction de sous-matrices.}
-      Pour extraire une matrice &#xe0; partir d'une liste d'indices de ligne ou de colonnes non
-      n&#xe9;cessairement contigus, on utilise les m&#xe9;thodes
-      <c>A.matrix_from_rows</c>, ou <c>A.matrix_from_columns</c> ou dans
-      le cas g&#xe9;n&#xe9;ral, la m&#xe9;thode
-      <c>A.matrix_from_rows_and_columns</c>.
-    </p>
+      <sage>
+        <input>
+          A=matrix(ZZ,4,4,range(16)); A
+        </input>
+        <output>
+          [ 0  1  2  3]
+          [ 4  5  6  7]
+          [ 8  9 10 11]
+          [12 13 14 15]
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        A=matrix(ZZ,4,4,range(16)); A
-      </input>
-      <output>
-        [ 0  1  2  3]
-        [ 4  5  6  7]
-        [ 8  9 10 11]
-        [12 13 14 15]
-      </output>
-    </sage>
-
-    <sage>
-      <input>
-        A.matrix_from_rows_and_columns([0,2,3],[1,2])
-      </input>
-      <output>
-        [ 1  2]
-        [ 9 10]
-        [13 14]
-      </output>
-    </sage>
-
-    <p>
-      \end{paragraph}
-    </p>
+      <sage>
+        <input>
+          A.matrix_from_rows_and_columns([0,2,3],[1,2])
+        </input>
+        <output>
+          [ 1  2]
+          [ 9 10]
+          [13 14]
+        </output>
+      </sage>
+    </paragraphs>
 
     <p>
       Pour extraire une sous-matrice de lignes et de colonnes contigu&#xeb;s, on pourra
@@ -479,58 +425,54 @@
       <m>(i,j)</m>.
     </p>
 
-    <p>
-      \begin{paragraph} {Plongements et extensions.}
-      Lorsque l'on veut plonger un espace de matrices dans l'espace des matrices de
-      m&#xea;me dimension mais &#xe0; coefficients dans une extension de l'anneau de base,
-      on pourra utiliser la m&#xe9;thode <c>base_extend</c> de l'espace de matrice. Cette
-      op&#xe9;ration n'est toutefois valide que pour les op&#xe9;rations d'extension de corps ou
-      d'anneau.
-      Pour effectuer le changement de l'anneau de base suivant un morphisme (lorsqu'il
-      existe), on utilise plut&#xf4;t la m&#xe9;thode <c>change_ring</c>.
-    </p>
+    <paragraphs>
+      <title>Plongements et extensions</title>
+      <p>
+        Lorsque l'on veut plonger un espace de matrices dans l'espace des matrices de
+        m&#xea;me dimension mais Plongements et extensions&#xe0; coefficients dans une extension de l'anneau de base,
+        on pourra utiliser la m&#xe9;thode <c>base_extend</c> de l'espace de matrice. Cette
+        op&#xe9;ration n'est toutefois valide que pour les op&#xe9;rations d'extension de corps ou
+        d'anneau.
+        Pour effectuer le changement de l'anneau de base suivant un morphisme (lorsqu'il
+        existe), on utilise plut&#xf4;t la m&#xe9;thode <c>change_ring</c>.
+      </p>
 
-    <sage>
-      <input>
-        MS=MatrixSpace(GF(3),2,3)
-        MS.base_extend(GF(9,'x'))
-      </input>
-      <output>
-        Full MatrixSpace of 2 by 3 dense matrices over Finite Field 
-        in x of size 3^2
-      </output>
-    </sage>
+      <sage>
+        <input>
+          MS=MatrixSpace(GF(3),2,3)
+          MS.base_extend(GF(9,'x'))
+        </input>
+        <output>
+          Full MatrixSpace of 2 by 3 dense matrices over Finite Field 
+          in x of size 3^2
+        </output>
+      </sage>
 
-    <sage>
-      <input>
-        MS=MatrixSpace(ZZ,2,3)
-        MS.change_ring(GF(3))
-      </input>
-      <output>
-        Full MatrixSpace of 2 by 3 dense matrices over Finite Field 
-        of size 3
-      </output>
-    </sage>
+      <sage>
+        <input>
+          MS=MatrixSpace(ZZ,2,3)
+          MS.change_ring(GF(3))
+        </input>
+        <output>
+          Full MatrixSpace of 2 by 3 dense matrices over Finite Field 
+          of size 3
+        </output>
+      </sage>
+    </paragraphs>
 
-    <p>
-      \end{paragraph}
-    </p>
-
-    <p>
-      \begin{paragraph}{Mutabilit&#xe9; et mise en cache.}
-      Les objets repr&#xe9;sentant les matrices sont par d&#xe9;faut mutables, c'est-&#xe0;-dire que
-      l'on peut librement en modifier leurs membres (ici leurs coefficients) apr&#xe8;s leur
-      construction. Si on souhaite prot&#xe9;ger la matrice contre les modifications, on
-      utilise la fonction <c>A.set_immutable()</c>. Il est alors toujours possible
-      d'en tirer des copies mutables par la fonction <c>copy(A)</c>. &#xc0; noter que le
-      m&#xe9;canisme de mise en cache des r&#xe9;sultats calcul&#xe9;s (tels que le rang, le
-      d&#xe9;terminant, ...) reste toujours fonctionnel, quel que soit l'&#xe9;tat de
-      mutabilit&#xe9;.
-    </p>
-
-    <p>
-      \end{paragraph}
-    </p>
+      <paragraphs>
+        <title>Mutabilit&#xe9; et mise en cache</title>
+      <p>
+        Les objets repr&#xe9;sentant les matrices sont par d&#xe9;faut mutables, c'est-&#xe0;-dire que
+        l'on peut librement en modifier leurs membres (ici leurs coefficients) apr&#xe8;s leur
+        construction. Si on souhaite prot&#xe9;ger la matrice contre les modifications, on
+        utilise la fonction <c>A.set_immutable()</c>. Il est alors toujours possible
+        d'en tirer des copies mutables par la fonction <c>copy(A)</c>. &#xc0; noter que le
+        m&#xe9;canisme de mise en cache des r&#xe9;sultats calcul&#xe9;s (tels que le rang, le
+        d&#xe9;terminant, ...) reste toujours fonctionnel, quel que soit l'&#xe9;tat de
+        mutabilit&#xe9;.
+      </p>
+    </paragraphs>
   </subsection>
 
   <subsection>
@@ -548,27 +490,27 @@
       <c>elementwise_product</c>.
     </p>
 
-    <p>
-      \begin{cmdtable}{Op&#xe9;rations de base et arithm&#xe9;tique sur les matrices}{linalg:operationsdebase}
+    <table xml:id="linalg-operationsdebase">
+      <caption>Op&#xe9;rations de base et arithm&#xe9;tique sur les matrices</caption>
+      <tabular>
+        <row bottom="medium">
+          <cell colspan="2" halign="center">Op&#xe9;rations de base</cell>
+        </row>
+        <row>
+          <cell>transpos&#xe9;e, conjugu&#xe9;e</cell>
+          <cell><c>A.tranpose()</c>, <c>A.conjugate()</c></cell>
+        </row>
+        <row>
+          <cell>produit externe</cell>
+          <cell><c>a*A</c></cell>
+        </row>
+        <row>
+          <cell>somme, produit, puissance <m>k</m>-i&#xe8;me, inverse</cell>
+          <cell><c>A + B</c>, <c>A * B</c>, <c>A^k</c>, <c>A^-1</c>, <c><nbsp />A</c></cell>
+        </row>
+      </tabular>
+    </table>
 
-  
-
-        \toprule
-        Op&#xe9;rations de base 
-
-        \midrule
-
-      transpos&#xe9;e, conjugu&#xe9;e &amp; <c>A.tranpose()</c>, <c>A.conjugate()</c>
-    </p>
-
-    <p>
-      produit externe &amp; <c>a*A</c>
-    </p>
-
-    <p>
-      somme, produit, puissance <m>k</m>-i&#xe8;me, inverse &amp; <c>A + B</c>, <c>A * B</c>, <c>A^k</c>, <c>A^-1</c>, <c><nbsp />A</c>
-      \end{cmdtable}
-    </p>
   </subsection>
 </section>
 
