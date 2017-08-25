@@ -353,8 +353,7 @@
 
       <sage>
         <input>
-          A=matrix(GF(7),4,5,[4,4,0,2,4,5,1,6,5,4,1,1,0,1,0,
-          5,1,6,6,2]); A, A.echelon_form()
+          A=matrix(GF(7),4,5,[4,4,0,2,4,5,1,6,5,4,1,1,0,1,0,5,1,6,6,2]); A, A.echelon_form()
         </input>
         <output>
           (
@@ -488,8 +487,7 @@
 
       <sage>
         <input>
-          a=matrix(ZZ, 4, 6, [2,1,2,2,2,-1,1,2,-1,2,1,-1,2,1,-1,-1,\
-          2,2,2,1,1,-1,-1,-1]); a.echelon_form()
+          a=matrix(ZZ, 4, 6, [2,1,2,2,2,-1,1,2,-1,2,1,-1,2,1,-1,-1,2,2,2,1,1,-1,-1,-1]); a.echelon_form()
         </input>
         <output>
           [ 1  2  0  5  4 -1]
@@ -519,8 +517,7 @@
 
       <sage>
         <input>
-          A=matrix(ZZ,4,5,[4,4,0,2,4,5,1,6,5,4,\
-          1,1,0,1,0,5,1,6,6,2])
+          A=matrix(ZZ,4,5,[4,4,0,2,4,5,1,6,5,4,1,1,0,1,0,5,1,6,6,2])
           E,U=A.echelon_form(transformation=True); E,U
         </input>
         <output>
@@ -566,8 +563,7 @@
 
       <sage>
         <input>
-          A=matrix(ZZ,4,5,[-1,-1,-1,-2,-2,-2,1,1,-1,2,2,2,2,2,-1,\
-          2,2,2,2,2])
+          A=matrix(ZZ,4,5,[-1,-1,-1,-2,-2,-2,1,1,-1,2,2,2,2,2,-1,2,2,2,2,2])
           A.smith_form()
         </input>
         <output>
@@ -656,8 +652,7 @@
 
       <sage>
         <input>
-          B=matrix(GF(7),5,4,[4,5,1,5,4,1,1,1,0,6,0,6,2,5,1,6,\
-          4,4,0,2])
+          B=matrix(GF(7),5,4,[4,5,1,5,4,1,1,1,0,6,0,6,2,5,1,6,4,4,0,2])
           B.transpose().echelon_form()
         </input>
         <output>
@@ -780,8 +775,7 @@
 
       <sage>
         <input>
-          a=matrix(QQ,3,5,[2,2,-1,-2,-1,2,-1,1,2,-1/2,2,-2,\
-          -1,2,-1/2]) 
+          a=matrix(QQ,3,5,[2,2,-1,-2,-1,2,-1,1,2,-1/2,2,-2,-1,2,-1/2])
           a.image()
         </input>
         <output>
@@ -819,8 +813,7 @@
 
       <sage>
         <input>
-          a=matrix(ZZ,5,3,[1,1,122,-1,-2,1,-188,2,1,1,-10,1,\
-          -1,-1,-1])
+          a=matrix(ZZ,5,3,[1,1,122,-1,-2,1,-188,2,1,1,-10,1,-1,-1,-1])
           a.kernel()
         </input>
         <output>
@@ -871,7 +864,7 @@
         <row bottom="medium">
           <cell colspan="2" halign="center">&#xc9;limination de Gauss et applications</cell>
         </row>
-        
+
         <row><cell>transvection sur les lignes</cell><cell><c>add_multiple_of_row(i,j,s)</c></cell></row>
         <row><cell>transvection sur les colonnes</cell><cell><c>add_multiple_of_column(i,j,s)</c></cell></row>
         <row><cell>transposition de lignes, colonnes</cell><cell><c>swap_rows(i,j)</c>, <c>swap_columns(i,j)</c></cell></row>
@@ -1117,8 +1110,7 @@
 
     <sage>
       <input>
-        A=matrix(GF(97),4,4,[86,1,6,68,34,24,8,35,15,36,68,42,\
-        27,1,78,26])
+        A=matrix(GF(97),4,4,[86,1,6,68,34,24,8,35,15,36,68,42,27,1,78,26])
         e1=identity_matrix(GF(97),4)[0]
         U=matrix(A.transpose().maxspin(e1)).transpose()
         F=U^-1*A*U; F
@@ -1258,10 +1250,15 @@
 
     <sage>
       <input>
-        A=matrix(ZZ,8,[[6,0,-2,4,0,0,0,-2],[14,-1,0,6,0,-1,-1,1],\
-        [2,2,0,1,0,0,1,0],[-12,0,5,-8,0,0,0,4],\
-        [0,4,0,0,0,0,4,0],[0,0,0,0,1,0,0,0],\
-        [-14,2,0,-6,0,2,2,-1],[-4,0,2,-4,0,0,0,4]])
+        A=matrix(ZZ,8,
+          [[6,0,-2,4,0,0,0,-2],
+          [14,-1,0,6,0,-1,-1,1],
+          [2,2,0,1,0,0,1,0],
+          [-12,0,5,-8,0,0,0,4],
+          [0,4,0,0,0,0,4,0],
+          [0,0,0,0,1,0,0,0],
+          [-14,2,0,-6,0,2,2,-1],
+          [-4,0,2,-4,0,0,0,4]])
         A.frobenius()
       </input>
       <output>
